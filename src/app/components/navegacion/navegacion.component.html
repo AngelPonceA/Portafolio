@@ -7,15 +7,15 @@
 </div>
 
 <ion-footer>
-    <ion-button >    
+    <ion-button (click)="navegar('/home')">    
       <ion-icon name="home"></ion-icon>
       Inicio
     </ion-button>
-    <ion-button >
+    <ion-button (click)="navegar('/favoritos')">
       <ion-icon name="heart"></ion-icon>
       Favoritos
     </ion-button>
-    <ion-button >
+    <ion-button (click)="navegar('/carrito')">
       <ion-icon name="basket"></ion-icon>
       Carrito
     </ion-button>
