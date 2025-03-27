@@ -1,0 +1,26 @@
+<ion-header>
+    <ion-searchbar></ion-searchbar>
+</ion-header>
+
+<div class="contenido">
+  <ng-content></ng-content>
+</div>
+
+<ion-footer>
+    <ion-button >    
+      <ion-icon name="home"></ion-icon>
+      Inicio
+    </ion-button>
+    <ion-button >
+      <ion-icon name="heart"></ion-icon>
+      Favoritos
+    </ion-button>
+    <ion-button >
+      <ion-icon name="basket"></ion-icon>
+      Carrito
+    </ion-button>
+    <ion-button (click)="navegar('/perfil')">
+      <ion-icon name="person"></ion-icon>
+      Perfíl
+    </ion-button>
+</ion-footer>

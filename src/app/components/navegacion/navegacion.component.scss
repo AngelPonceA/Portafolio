@@ -1,0 +1,35 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
+  }
+  
+.contenido {
+      height: 80%; /* El contenido ocupa el 80% de la altura */
+      overflow-y: auto; /* Permite scroll si el contenido excede el 80% */
+  }
+  
+ion-header {
+    height: 10%; /* El header ocupa el 10% de la altura */
+    background-color: #D2B48C; /* Color beige claro */
+    display: flex;
+  }
+
+ion-footer {
+    display: flex;
+    justify-content: space-between;
+    height: 10%; /* El footer ocupa el 10% de la altura */
+    background-color: #D2B48C; /* Color beige claro */
+  }
+
+ion-button{
+    font-size: 60%;
+    max-width: 25%;
+    color: black;
+    border-radius: 32rem;
+    background-color:#ffffff;    
+    --box-shadow: none;
+    --border-style: none;
+    --background: transparent;
+  }
+
