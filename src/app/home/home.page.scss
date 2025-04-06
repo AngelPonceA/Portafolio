@@ -1,27 +1,63 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // 2 productos por fila
+  gap: 12px;
+  padding: 10px;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
-}
-
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
+.producto-card {
+  padding: 0;
   margin: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+
+  ion-card-content {
+    padding: 8px;
+
+    .nombre {
+      font-size: 14px;
+      font-weight: 500;
+      margin: 4px 0;
+      line-height: 1.2;
+    }
+
+    .precio {
+      font-size: 16px;
+      color: #D32F2F;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .descripcion {
+      font-size: 12px;
+      color: #666;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
 }
 
-#container a {
-  text-decoration: none;
+.precio-original {
+  color: #000000; // gris para que se vea rebajado
+  font-size: 14px;
+}
+
+.precio-original-tachado {
+  text-decoration: line-through;
+  color: #888; // gris para que se vea rebajado
+  font-size: 14px;
+}
+
+.precio-oferta {
+  color: #d32f2f; // rojo para resaltar
+  font-weight: bold;
+  font-size: 16px;
 }

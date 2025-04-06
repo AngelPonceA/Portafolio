@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { CarritoPageRoutingModule } from './carrito-routing.module';
 
 import { CarritoPage } from './carrito.page';
+import { NavegacionComponent } from '../../components/navegacion/navegacion.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    CarritoPageRoutingModule
+    CarritoPageRoutingModule,
+    NavegacionComponent
   ],
   declarations: [CarritoPage]
 })

@@ -1,26 +1,28 @@
 <ion-header>
-    <ion-searchbar></ion-searchbar>
-</ion-header>
-
+  <ion-searchbar></ion-searchbar>
+    <ion-button class="footer-header-button">
+      <ion-icon name="notifications"></ion-icon>
+      <div *ngIf="notificaciones > 0 && notificaciones < 100" class="notification-badge">{{ notificaciones }}</div>
+      <div *ngIf="notificaciones > 99" class="notification-badge">!</div>
+    </ion-button>
+  </ion-header>
+  
 <div class="contenido">
   <ng-content></ng-content>
 </div>
 
 <ion-footer>
-    <ion-button (click)="navegar('/home')">    
-      <ion-icon name="home"></ion-icon>
-      Inicio
-    </ion-button>
-    <ion-button (click)="navegar('/favoritos')">
-      <ion-icon name="heart"></ion-icon>
-      Favoritos
-    </ion-button>
-    <ion-button (click)="navegar('/carrito')">
-      <ion-icon name="basket"></ion-icon>
-      Carrito
-    </ion-button>
-    <ion-button (click)="navegar('/perfil')">
-      <ion-icon name="person"></ion-icon>
-      Perfíl
-    </ion-button>
+  <ion-button (click)="navegar('/home')" class="footer-header-button">
+    <ion-icon name="home"></ion-icon>
+  </ion-button>
+  <ion-button (click)="navegar('/favoritos')" class="footer-header-button">
+    <ion-icon name="heart"></ion-icon>
+  </ion-button>
+  <ion-button (click)="navegar('/carrito')" class="footer-header-button">
+    <ion-icon name="basket"></ion-icon>
+    <div *ngIf="productos > 0" class="notification-badge">{{ productos }}</div>
+  </ion-button>
+  <ion-button (click)="navegar('/perfil')" class="footer-header-button">
+    <ion-icon name="person"></ion-icon>
+  </ion-button>
 </ion-footer>

@@ -1,0 +1,16 @@
+.precio-original {
+    color: #000000; // gris para que se vea rebajado
+    font-size: 14px;
+  }
+  
+  .precio-original-tachado {
+    text-decoration: line-through;
+    color: #888; // gris para que se vea rebajado
+    font-size: 14px;
+  }
+  
+  .precio-oferta {
+    color: #d32f2f; // rojo para resaltar
+    font-weight: bold;
+    font-size: 16px;
+  }

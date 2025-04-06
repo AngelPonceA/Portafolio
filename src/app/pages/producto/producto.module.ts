@@ -4,9 +4,11 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { FavoritosPageRoutingModule } from './favoritos-routing.module';
+import { ProductoPageRoutingModule } from './producto-routing.module';
 
-import { FavoritosPage } from './favoritos.page';
+import { ProductoPage } from './producto.page';
+
+// Importar acá abajo para no confundirnos
 import { NavegacionComponent } from "../../components/navegacion/navegacion.component";
 
 @NgModule({
@@ -14,9 +16,9 @@ import { NavegacionComponent } from "../../components/navegacion/navegacion.comp
     CommonModule,
     FormsModule,
     IonicModule,
-    FavoritosPageRoutingModule,
+    ProductoPageRoutingModule,
     NavegacionComponent
   ],
-  declarations: [FavoritosPage]
+  declarations: [ProductoPage]
 })
-export class FavoritosPageModule {}
+export class ProductoPageModule {}

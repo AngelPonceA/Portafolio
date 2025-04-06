@@ -1,35 +1,121 @@
 :host {
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
+  --header-background-light: #D2B48C;  /* Beige claro para modo claro */
+  --header-background-dark: transparent; /* Fondo transparente para modo oscuro */
+  --footer-background-light: #D2B48C;  /* Beige claro para modo claro */
+  --footer-background-dark: transparent; /* Fondo transparente para el footer en modo oscuro */
+  --button-background-light: #D1A15A; /* Color claro para botones en modo claro */
+  --button-background-dark: #4E4E4E; /* Color oscuro para botones en modo noche */
+  --button-icon-light: #FFFFFF; /* Blanco para iconos en modo claro */
+  --button-icon-dark: #FFFFFF;  /* Blanco para iconos en modo noche */
+}
+
 .contenido {
-      height: 80%; /* El contenido ocupa el 80% de la altura */
-      overflow-y: auto; /* Permite scroll si el contenido excede el 80% */
-  }
-  
+  height: 80%; /* El contenido ocupa el 80% de la altura */
+  overflow-y: auto; /* Permite scroll si el contenido excede el 80% */
+}
+
+ion-header, ion-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  height: 10%; /* Header y footer ocupan el 10% de la altura */
+  border: 2px solid transparent; /* Asegura que el borde sea transparente en ambos modos */
+  box-shadow: none; /* Eliminar cualquier sombra */
+  transition: background-color 3s ease; /* Transición de 2 segundos */
+}
+
 ion-header {
-    height: 10%; /* El header ocupa el 10% de la altura */
-    background-color: #D2B48C; /* Color beige claro */
-    display: flex;
-  }
+  background-color: var(--header-background-light); /* Fondo en modo claro */
+  padding: 0 10px; /* Agregar algo de espacio en los laterales */
+}
 
 ion-footer {
-    display: flex;
-    justify-content: space-between;
-    height: 10%; /* El footer ocupa el 10% de la altura */
-    background-color: #D2B48C; /* Color beige claro */
+  justify-content: space-evenly;
+  background-color: var(--footer-background-light); /* Fondo en modo claro */
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.1); /* Sombra sutil para darle profundidad */
+  margin-bottom: 0; /* Eliminar cualquier margen que cause una franja debajo del footer */
+  padding-bottom: 0; /* Asegura que no haya espacio extra debajo del footer */
+}
+
+ion-header::before, ion-footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1; /* Para asegurar que el fondo esté detrás de los botones */
+  box-shadow: none; /* Eliminar cualquier sombra */
+  transition: background-color 3s ease; /* Transición de 2 segundos */
+}
+
+.footer-header-button, .header-button {
+  padding: 0; /* Eliminar padding para que los iconos estén centrados */
+  font-size: 0; /* Eliminar el texto */
+  max-width: 20%; /* El tamaño de los botones se ajusta al 20% del ancho */
+  color: var(--button-icon-light); /* Blanco para iconos en modo claro */
+  background-color: var(--button-background-light); /* Fondo de los botones en modo claro */
+  border-radius: 50%; /* Hacer los botones circulares */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px; /* Altura específica para los botones */
+  width: 50px; /* Ancho específico para los botones */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil para los botones */
+  border: none; /* Eliminar borde predeterminado */
+  --background: transparent; /* Eliminar cualquier fondo de botón por defecto */
+  --box-shadow: none; /* Quitar sombra del botón predeterminado */
+  transition: background-color 3s ease; /* Transición de 2 segundos */
+}
+
+.footer-header-button:hover, .header-button:hover {
+  background-color: #D09A58; /* Cambia el fondo al pasar el mouse */
+}
+
+ion-icon {
+  font-size: 24px; /* Ajustar el tamaño del icono */
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  ion-header, ion-footer {
+    background-color: var(--header-background-dark); /* Fondo transparente para el header y footer en modo noche */
+    box-shadow: none !important; /* Asegura que no haya sombra en el header y footer */
   }
 
-ion-button{
-    font-size: 60%;
-    max-width: 25%;
-    color: black;
-    border-radius: 32rem;
-    background-color:#ffffff;    
-    --box-shadow: none;
-    --border-style: none;
-    --background: transparent;
+  ion-header::before, ion-footer::before {
+    background-color: var(--footer-background-dark); /* Fondo transparente para el footer en modo noche */
   }
 
+  .footer-header-button, .header-button {
+    background-color: var(--button-background-dark); /* Fondo oscuro para los botones */
+    color: var(--button-icon-dark); /* Blanco para iconos en modo oscuro */
+  }
+
+  .footer-header-button:hover, .header-button:hover {
+    background-color: #6D6D6D; /* Cambia el fondo al pasar el mouse */
+  }
+}
+
+/* navegacion.component.scss */
+.notification-badge {
+  position: absolute;
+  top: -5px; /* Ajustar la posición hacia arriba */
+  right: -0px; /* Ajustar la posición hacia la izquierda */
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 6px;
+  font-size: 12px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10; /* Asegura que la burbuja esté por encima del botón */
+  border: 2px solid white; /* Añade un borde blanco alrededor de la burbuja para mayor visibilidad */
+}
