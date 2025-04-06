@@ -27,6 +27,22 @@ const routes: Routes = [
     path: 'producto',
     loadChildren: () => import('./pages/producto/producto.module').then( m => m.ProductoPageModule)
   },
+  {
+    path: 'busqueda',
+    loadChildren: () => import('./pages/busqueda/busqueda.module').then( m => m.BusquedaPageModule)
+  },
+  {
+    path: 'registro',
+    loadChildren: () => import('./pages/auth/registro/registro.module').then( m => m.RegistroPageModule)
+  },
+  {
+    path: 'ingreso',
+    loadChildren: () => import('./pages/auth/ingreso/ingreso.module').then( m => m.IngresoPageModule)
+  },
+  {
+    path: 'notificaciones',
+    loadChildren: () => import('./pages/notificaciones/notificaciones.module').then( m => m.NotificacionesPageModule)
+  },
 
 ];
 

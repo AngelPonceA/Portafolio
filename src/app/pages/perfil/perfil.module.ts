@@ -8,6 +8,8 @@ import { PerfilPageRoutingModule } from './perfil-routing.module';
 
 import { PerfilPage } from './perfil.page';
 
+// Importar acá abajo para no confundirnos
+import { NavegacionComponent } from "../../components/navegacion/navegacion.component";
 
 @NgModule({
   imports: [
@@ -15,6 +17,7 @@ import { PerfilPage } from './perfil.page';
     FormsModule,
     IonicModule,
     PerfilPageRoutingModule,
+    NavegacionComponent
   ],
   declarations: [PerfilPage]
 })

@@ -1,16 +1,86 @@
-.precio-original {
-    color: #000000; // gris para que se vea rebajado
-    font-size: 14px;
-  }
+.producto-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
   
-  .precio-original-tachado {
-    text-decoration: line-through;
-    color: #888; // gris para que se vea rebajado
-    font-size: 14px;
+  &:hover {
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
   }
-  
-  .precio-oferta {
-    color: #d32f2f; // rojo para resaltar
-    font-weight: bold;
-    font-size: 16px;
+}
+
+.producto-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.producto-header {
+  padding: 15px;
+  background-color: #fff;
+}
+
+.producto-nombre {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.producto-descripcion {
+  font-size: 1em;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.producto-precio-original {
+  font-size: 1.1em;
+  color: #888;
+  text-decoration: none;
+}
+
+.producto-precio-original-tachado {
+  font-size: 1.1em;
+  color: #6a6a6a;
+  text-decoration: line-through;
+  margin-right: 10px;
+}
+
+.producto-precio-oferta {
+  font-size: 1.3em;
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.producto-stock {
+  font-size: 1em;
+  color: #4caf50;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+
+  ion-icon {
+    margin-right: 5px;
   }
+}
+
+.etiquetas-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 2% 0;
+  gap: 2%; // Espacio entre etiquetas relativo al contenedor
+  width: 100%;
+  padding: 0 2%;
+}
+
+.etiqueta {
+  background-color: #e0e0e0;
+  color: #333;
+  padding: 1% 5%; // Relativo al tamaño del contenedor
+  border-radius: 20px;
+  font-size: 4vw; // Escala con el ancho de la pantalla
+  min-width: 20%; // Mínimo de ancho para cada etiqueta
+  max-width: 40%; // Máximo para que no sean demasiado grandes
+  text-align: center;
+  box-shadow: 0 1% 2% rgba(0, 0, 0, 0.1);
+}

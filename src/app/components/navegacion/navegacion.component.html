@@ -1,6 +1,6 @@
 <ion-header>
   <ion-searchbar></ion-searchbar>
-    <ion-button class="footer-header-button">
+    <ion-button (click)="navegar('/notificaciones')" class="footer-header-button">
       <ion-icon name="notifications"></ion-icon>
       <div *ngIf="notificaciones > 0 && notificaciones < 100" class="notification-badge">{{ notificaciones }}</div>
       <div *ngIf="notificaciones > 99" class="notification-badge">!</div>
