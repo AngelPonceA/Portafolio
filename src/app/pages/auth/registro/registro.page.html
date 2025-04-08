@@ -1,13 +1,50 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>registro</ion-title>
+    <ion-title>Registro</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">registro</ion-title>
+      <ion-title size="large">Registro de Usuario</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <!-- Formulario de Registro -->
+  <div class="login-content">
+    <div class="logo-container">
+      <!-- Aquí puedes poner tu logo -->
+      <img class="logo-img" src="assets/logo.png" alt="Logo">
+    </div>
+
+    <div class="register-box">
+      <ion-item>
+        <ion-label position="floating">Nombre de Usuario</ion-label>
+        <ion-input type="text" [(ngModel)]="username" placeholder="Introduce tu nombre de usuario"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Correo Electrónico</ion-label>
+        <ion-input type="email" [(ngModel)]="email" placeholder="Introduce tu correo electrónico"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Contraseña</ion-label>
+        <ion-input type="password" [(ngModel)]="password" placeholder="Introduce tu contraseña"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Confirmar Contraseña</ion-label>
+        <ion-input type="password" [(ngModel)]="confirmPassword" placeholder="Confirma tu contraseña"></ion-input>
+      </ion-item>
+
+      <ion-button expand="full" class="register-button" (click)="onRegister()">Registrar</ion-button>
+    </div>
+
+    <!-- Enlace para redirigir al login si ya tiene cuenta -->
+    <div class="register-link">
+      <p>¿Ya tienes una cuenta? <ion-router-link routerLink="/login">Iniciar sesión</ion-router-link></p>
+    </div>
+  </div>
 </ion-content>

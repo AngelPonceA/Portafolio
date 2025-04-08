@@ -1,0 +1,144 @@
+* {
+    box-sizing: border-box;
+}
+
+ion-content {
+    --background: #f5f2ef;
+    padding: 10px;
+}
+
+.perfil-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.perfil-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.cambiar-imagen {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    padding: 5px;
+}
+
+.info-usuario {
+    width: 90%;
+    max-width: 400px;
+    margin-top: 20px;
+}
+
+ion-item {
+    margin-bottom: 15px;
+}
+
+ion-label {
+    color: #5d3e2c;
+    font-weight: bold;
+    margin-bottom: 8px; /* Separar el título del cuadro de texto */
+}
+
+ion-input {
+    --padding-start: 10px;
+    margin-top: 8px; /* Añadir espacio superior al input */
+}
+
+.acciones {
+    margin-top: 30px;
+    width: 90%;
+    max-width: 400px;
+}
+
+.accion-btn {
+    --background: #5d3e2c;
+    --color: white;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.accion-btn:hover {
+    --background: #703c3c;
+}
+
+ion-icon {
+    color: white;
+    margin-right: 10px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .perfil-container {
+        padding: 10px;
+    }
+
+    .avatar {
+        width: 80px; /* Reducir el tamaño del avatar en pantallas pequeñas */
+        height: 80px;
+    }
+
+    .info-usuario {
+        width: 90%; /* Ajustar el tamaño de la caja de información */
+    }
+
+    .acciones {
+        width: 90%; /* Ajustar el tamaño de los botones */
+    }
+
+    .accion-btn {
+        font-size: 12px; /* Reducir el tamaño de fuente de los botones */
+    }
+
+    ion-label {
+        font-size: 14px; /* Reducir el tamaño de la fuente de los labels */
+    }
+
+    ion-input {
+        font-size: 14px; /* Reducir el tamaño de la fuente de los inputs */
+    }
+}
+
+@media (min-width: 1024px) {
+    .perfil-container {
+        padding: 20px;
+    }
+
+    .avatar {
+        width: 120px; /* Aumentar el tamaño del avatar en pantallas grandes */
+        height: 120px;
+    }
+
+    .info-usuario {
+        width: 60%; /* Aumentar el tamaño de la caja de información en pantallas grandes */
+    }
+
+    .acciones {
+        width: 60%; /* Aumentar el tamaño de los botones en pantallas grandes */
+    }
+
+    .accion-btn {
+        font-size: 16px; /* Aumentar el tamaño de fuente de los botones */
+    }
+
+    ion-label {
+        font-size: 16px; /* Aumentar el tamaño de la fuente de los labels */
+    }
+
+    ion-input {
+        font-size: 16px; /* Aumentar el tamaño de la fuente de los inputs */
+    }
+}

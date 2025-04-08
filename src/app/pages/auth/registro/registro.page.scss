@@ -1,0 +1,138 @@
+* {
+    box-sizing: border-box;
+}
+
+ion-content {
+    --background: #f5f2ef; /* Fondo suave para toda la página */
+    height: 100%; /* Asegura que ocupe toda la altura disponible */
+}
+
+.login-content {
+    --background: #f5f2ef;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Empuja el contenido hacia la parte superior */
+    padding-top: 5%; /* Espacio superior ajustado para móviles */
+    padding-bottom: 5%; /* Espacio inferior */
+}
+
+.logo-container {
+    background: linear-gradient(to bottom, #c6a98a 60%, #703c3c 40%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10% 0 8%; /* Ajustado con porcentaje para mayor flexibilidad */
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.logo-img {
+    width: 30%; /* Ajustado al 30% del ancho de la pantalla */
+    height: auto;
+    object-fit: contain;
+    border-radius: 100px;
+    background: #fff;
+    padding: 3%;
+}
+
+.register-box {
+    background: white;
+    margin-top: -5%;
+    padding: 6% 5%;
+    width: 85%;
+    max-width: 380px;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ion-item {
+    margin-bottom: 10px; /* Se aumenta el margen entre los items */
+    --background: #f0f0f0;
+    --border-radius: 10px;
+}
+
+ion-label {
+    font-weight: bold; /* Los títulos tendrán más peso */
+    color: #5d3e2c; /* Color para los títulos */
+}
+
+.register-button {
+    --background: #5d3e2c;
+    --color: white;
+    margin-top: 5%;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+    --background: #703c3c;
+}
+
+.forgot-password a, 
+.register-link a {
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.forgot-password a:hover, 
+.register-link a:hover {
+    color: #703c3c;
+    text-decoration: underline;
+}
+
+.forgot-password {
+    text-align: right;
+    font-size: 14px;
+    margin-top: 4%;
+    margin-bottom: 8%;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 8%;
+    font-size: 14px;
+}
+
+.register-link a {
+    margin-left: 5%;
+    color: #5d3e2c;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .register-box {
+        width: 90%;
+    }
+
+    .forgot-password {
+        font-size: 12px;
+    }
+
+    .register-link {
+        font-size: 12px;
+        margin-top: 10%;
+    }
+
+    .register-button {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .register-box {
+        width: 70%;
+    }
+
+    .forgot-password {
+        font-size: 16px;
+    }
+
+    .register-link {
+        font-size: 16px;
+        margin-top: 15%;
+    }
+}

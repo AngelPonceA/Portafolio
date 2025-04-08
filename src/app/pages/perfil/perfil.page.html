@@ -1,5 +1,51 @@
 <app-navegacion>
 
-  <ng-content></ng-content>
+  <ion-content>
+
+    <div class="perfil-container">
+      <!-- Sección de la imagen de perfil y nombre de usuario -->
+      <div class="perfil-header">
+        <ion-avatar class="avatar">
+          <img src="assets/default-avatar.png" alt="Imagen de perfil">
+        </ion-avatar>
+        <ion-button fill="clear" class="cambiar-imagen">
+          <ion-icon name="camera" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+
+      <!-- Información de usuario -->
+      <div class="info-usuario">
+        <ion-item lines="none">
+          <ion-label position="floating">Correo Electrónico</ion-label>
+          <ion-input type="email" value="usuario@ejemplo.com" disabled></ion-input>
+        </ion-item>
+
+        <ion-item lines="none">
+          <ion-label position="floating">Nombre de Usuario</ion-label>
+          <ion-input type="text" value="nombreusuario" disabled></ion-input>
+        </ion-item>
+      </div>
+
+      <!-- Sección de botones (solo visual) -->
+      <div class="acciones">
+        <ion-button expand="full" class="accion-btn" fill="clear">
+          <ion-icon name="key" slot="start"></ion-icon>
+          Cambiar Contraseña
+        </ion-button>
+
+        <ion-button expand="full" class="accion-btn" fill="clear">
+          <ion-icon name="create" slot="start"></ion-icon>
+          Cambiar Nombre de Usuario
+        </ion-button>
+
+        <ion-button expand="full" class="accion-btn" fill="clear">
+          <ion-icon name="list" slot="start"></ion-icon>
+          Ver Historial de Compras
+        </ion-button>
+      </div>
+
+    </div>
+
+  </ion-content>
 
 </app-navegacion>

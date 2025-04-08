@@ -1,0 +1,143 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  ion-content {
+    --background: #f5f2ef; /* Fondo suave para toda la página */
+    height: 100%; /* Asegura que ocupe toda la altura disponible */
+  }
+  
+  .login-content {
+    --background: #f5f2ef;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start; /* Empuja el contenido hacia la parte superior */
+    padding-top: 5%; /* Espacio superior ajustado para móviles */
+    padding-bottom: 5%; /* Espacio inferior */
+  }
+  
+  .logo-container {
+    background: linear-gradient(to bottom, #c6a98a 60%, #703c3c 40%);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10% 0 8%; /* Ajustado con porcentaje para mayor flexibilidad */
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+  
+  .logo-img {
+    width: 30%; /* Ajustado al 30% del ancho de la pantalla */
+    height: auto;
+    object-fit: contain;
+    border-radius: 100px;
+    background: #fff;
+    padding: 3%;
+  }
+  
+  .login-box {
+    background: white;
+    margin-top: -5%; /* Ajustado para el espaciado superior */
+    padding: 6% 5%; /* Ajustado para mejor visualización */
+    width: 85%; /* Ajustado al 85% del ancho de la pantalla */
+    max-width: 380px; /* Máximo ancho para que no se estire demasiado */
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    margin-left: auto;
+    margin-right: auto; /* Centrado automático */
+  }
+  
+  ion-item {
+    margin-bottom: 5%; /* Ajustado con porcentaje para espaciado entre campos */
+    --background: #f0f0f0;
+    --border-radius: 10px;
+  }
+  
+  .login-button {
+    --background: #5d3e2c;
+    --color: white;
+    margin-top: 5%; /* Ajustado con porcentaje */
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-button:hover {
+    --background: #703c3c; /* Color más oscuro al pasar el cursor */
+  }
+  
+  .forgot-password a, 
+  .register-link a {
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+  }
+  
+  .forgot-password a:hover, 
+  .register-link a:hover {
+    color: #703c3c;
+    text-decoration: underline;
+  }
+  
+  .forgot-password {
+    text-align: right;
+    font-size: 14px; /* Ajustado para mejor visibilidad */
+    margin-top: 4%;
+    margin-bottom: 8%; /* Ajustado con porcentaje */
+  }
+  
+  .register-link {
+    text-align: center;
+    margin-top: 8%; /* Ajustado con porcentaje */
+    font-size: 14px;
+  }
+  
+  .register-link a {
+    margin-left: 5%;
+    color: #5d3e2c;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  /* Media Queries para pantallas más pequeñas */
+  @media (max-width: 768px) {
+    .logo-img {
+      width: 40%; /* Aumenta el tamaño del logo en pantallas más pequeñas */
+    }
+  
+    .login-box {
+      width: 90%; /* Aumenta el tamaño del formulario */
+    }
+  
+    .forgot-password {
+      font-size: 12px; /* Más pequeño para pantallas más pequeñas */
+    }
+  
+    .register-link {
+      font-size: 12px; /* Texto más pequeño */
+      margin-top: 10%; /* Ajuste del espacio */
+    }
+  
+    .login-button {
+      width: 100%; /* Asegura que el botón de inicio de sesión ocupe todo el ancho */
+    }
+  }
+  
+  /* Media Queries para pantallas grandes, como tabletas o pantallas más grandes */
+  @media (min-width: 1024px) {
+    .logo-img {
+      width: 20%; /* Logo más pequeño en pantallas grandes */
+    }
+  
+    .login-box {
+      width: 70%; /* Formulario más estrecho */
+    }
+  
+    .forgot-password {
+      font-size: 16px; /* Tamaño de texto más grande para pantallas grandes */
+    }
+  
+    .register-link {
+      font-size: 16px; /* Texto más grande */
+      margin-top: 15%; /* Ajuste del espacio */
+    }
+  }
+  
