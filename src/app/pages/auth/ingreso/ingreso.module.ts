@@ -1,7 +1,17 @@
 import { NgModule } from '@angular/core';
-import { IngresoPageRoutingModule } from './ingreso-routing.module';
-
-@NgModule({
-  imports: [IngresoPageRoutingModule], // Solo se importa la ruta si es necesario
-})
-export class IngresoPageModule {}
+ import { CommonModule } from '@angular/common';
+ import { FormsModule } from '@angular/forms';
+ import { IonicModule } from '@ionic/angular';
+ import { IngresoPageRoutingModule } from './ingreso-routing.module';
+ import { IngresoPage } from './ingreso.page';
+ 
+ @NgModule({
+   imports: [
+     CommonModule,
+     FormsModule,
+     IonicModule,
+     IngresoPageRoutingModule
+   ],
+   declarations: [IngresoPage]
+ })
+ export class IngresoPageModule {}
