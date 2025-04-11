@@ -13,10 +13,9 @@ import { Router } from '@angular/router';
 })
 export class CarritoPage {
   productos = [
-    { id: 1, nombre: 'Producto 1', precio: 19.99, cantidad: 1, precioOriginal: 29.99 },
-    { id: 2, nombre: 'Producto 2', precio: 15.49, cantidad: 1, precioOriginal: 20.00 },
-    { id: 3, nombre: 'Producto 3', precio: 9.99, cantidad: 1, precioOriginal: 12.00 },
-    { id: 4, nombre: 'Producto 4', precio: 24.99, cantidad: 1, precioOriginal: 30.00 }
+    { id: 1, nombre: 'Botas', precio: 50000, cantidad: 1, stock: 5, oferta: 50, imagen: "https://imgs.search.brave.com/VUlm4eamkknVVPCZ1wIZRKifh8YVPS19JnhzVf8_EiA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jYXRl/cnBpbGxhcnN2LmNv/bS9jZG4vc2hvcC9m/aWxlcy8zMDA3MTA2/Nl80MDY1NmEwMC05/NDFiLTQ1YWMtOTU5/Ny05Mzc1MTAyMmMx/MmFfMTAyNHgxMDI0/LmpwZz92PTE3NDA3/MjcxNzk"},
+    { id: 2, nombre: 'Botas 2', precio: 50000, cantidad: 1, stock: 5, oferta: 50, imagen: "https://imgs.search.brave.com/VUlm4eamkknVVPCZ1wIZRKifh8YVPS19JnhzVf8_EiA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jYXRl/cnBpbGxhcnN2LmNv/bS9jZG4vc2hvcC9m/aWxlcy8zMDA3MTA2/Nl80MDY1NmEwMC05/NDFiLTQ1YWMtOTU5/Ny05Mzc1MTAyMmMx/MmFfMTAyNHgxMDI0/LmpwZz92PTE3NDA3/MjcxNzk"},
+
   ];
 
   constructor(private router: Router) {}
@@ -30,9 +29,13 @@ export class CarritoPage {
 
   sumarProducto(id: number) {
     const producto = this.productos.find(p => p.id === id);
-    if (producto) {
+    if (producto && producto.stock >= producto.cantidad+1) {
       producto.cantidad++;
     }
+  }
+
+  quitarProducto(id: number) {
+    this.productos = this.productos.filter(p => p.id !== id);
   }
 
   comprarProducto(id: number) {
@@ -55,6 +58,6 @@ export class CarritoPage {
   }
 
   volverAtras() {
-    this.router.navigate(['/']);  // Redirige a la página anterior (ajusta la ruta según tu necesidad)
+    this.router.navigate(['/']);
   }
 }

@@ -12,16 +12,16 @@
 
     <!-- Precio original y tachado si hay oferta -->
     <ion-card-subtitle *ngIf="producto.oferta == 0" class="producto-precio-original">
-      Precio: {{ producto.precio | currency }} CLP
+      Precio: {{ producto.precio | number }} CLP
     </ion-card-subtitle>
 
     <ion-card-subtitle *ngIf="producto.oferta > 0" class="producto-precio-original-tachado">
-      Precio original: {{ producto.precio | currency }} CLP
+      Precio original: {{ producto.precio | number }} CLP
     </ion-card-subtitle>
 
     <!-- Precio con descuento de la oferta -->
     <ion-card-subtitle *ngIf="producto.oferta > 0" class="producto-precio-oferta">
-      Precio oferta: {{ producto.precio - (producto.precio * (producto.oferta / 100)) | currency }} CLP
+      Precio oferta: {{ producto.precio - (producto.precio * (producto.oferta / 100)) | number }} CLP
     </ion-card-subtitle>
 
     <!-- Stock disponible -->

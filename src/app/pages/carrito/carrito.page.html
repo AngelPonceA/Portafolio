@@ -12,26 +12,27 @@
 <ion-content [fullscreen]="true">
   <div class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productos">
-      <img [src]="'assets/producto' + producto.id + '.jpg'" [alt]="producto.nombre">
+      <img src= '{{ producto.imagen }} ' />
       <ion-card-content>
         <div class="nombre">{{ producto.nombre }}</div>
-        <div class="precio-oferta">\${{ producto.precio.toFixed(2) }}</div>
-        <div class="precio-original-tachado">\${{ producto.precioOriginal.toFixed(2) }}</div>
+        <div class="precio-oferta">${{ producto.precio }}</div>
+        <div class="precio-original-tachado">${{ producto.precio }}</div>
         <div class="descripcion">Descripción corta del producto que es interesante para los usuarios.</div>
 
         <div class="producto-controles">
           <ion-button fill="outline" color="medium" (click)="restarProducto(producto.id)">➖</ion-button>
           <span class="cantidad">{{ producto.cantidad }}</span>
           <ion-button fill="outline" color="medium" (click)="sumarProducto(producto.id)">➕</ion-button>
-          <ion-button fill="solid" color="danger" (click)="comprarProducto(producto.id)">🛒</ion-button>
+          <ion-button fill="solid" color="success" (click)="comprarProducto(producto.id)">🛒</ion-button>
+          <ion-button fill="solid" color="danger" (click)="quitarProducto(producto.id)">🗑️</ion-button>
         </div>
       </ion-card-content>
     </div>
+    <div class="pagar-todo">
+      <ion-button expand="block" class="pagar-button" (click)="pagarTodo()">
+        Pagar Todo - Total: ${{ obtenerTotalCarrito() }}
+      </ion-button>
+    </div>
   </div>
 
-  <div class="pagar-todo">
-    <ion-button expand="block" class="pagar-button" (click)="pagarTodo()">
-      Pagar Todo - Total: \${{ obtenerTotalCarrito().toFixed(2) }}
-    </ion-button>
-  </div>
 </ion-content>

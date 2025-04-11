@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./producto.page.scss'],
   standalone: false
 })
+
 export class ProductoPage implements OnInit {
 
   producto: any;

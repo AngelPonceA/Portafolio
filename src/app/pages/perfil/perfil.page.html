@@ -6,23 +6,20 @@
       <!-- Sección de la imagen de perfil y nombre de usuario -->
       <div class="perfil-header">
         <ion-avatar class="avatar">
-          <img src="assets/default-avatar.png" alt="Imagen de perfil">
+          <img src="https://preview.redd.it/colored-this-kirby-meme-a-friend-sent-me-v0-rpau79c9o31a1.png?width=640&crop=smart&auto=webp&s=fafd4b695974a98b6795b8cc326cf1c45fb2f571" alt="Imagen de perfil">
         </ion-avatar>
-        <ion-button fill="clear" class="cambiar-imagen">
-          <ion-icon name="camera" slot="icon-only"></ion-icon>
-        </ion-button>
       </div>
 
       <!-- Información de usuario -->
       <div class="info-usuario">
         <ion-item lines="none">
           <ion-label position="floating">Correo Electrónico</ion-label>
-          <ion-input type="email" value="usuario@ejemplo.com" disabled></ion-input>
+          <ion-input type="email" value=" {{ this.usuario.correo }} " disabled></ion-input>
         </ion-item>
 
         <ion-item lines="none">
           <ion-label position="floating">Nombre de Usuario</ion-label>
-          <ion-input type="text" value="nombreusuario" disabled></ion-input>
+          <ion-input type="text" value=" {{ this.usuario.nombre }} " disabled></ion-input>
         </ion-item>
       </div>
 
@@ -40,7 +37,17 @@
 
         <ion-button expand="full" class="accion-btn" fill="clear">
           <ion-icon name="list" slot="start"></ion-icon>
-          Ver Historial de Compras
+          Historial de Compras
+        </ion-button>
+
+        <ion-button expand="full" class="accion-btn" fill="clear">
+          <ion-icon name="list" slot="start"></ion-icon>
+          Historial de Ventas
+        </ion-button>
+        
+        <ion-button (click)="cerrarSesion()" expand="full" class="accion-btn" fill="solid" color="danger" >
+          <ion-icon name="list" slot="start"></ion-icon>
+          Cerrar Sesión
         </ion-button>
       </div>
 
