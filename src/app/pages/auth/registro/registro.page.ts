@@ -31,6 +31,6 @@ export class RegistroPage implements OnInit {
     }
 
     console.log('Registrando usuario:', this.username, this.email);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/ingreso']);
   }
 }

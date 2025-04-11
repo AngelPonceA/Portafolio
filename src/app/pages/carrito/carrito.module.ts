@@ -12,6 +12,6 @@ import { CarritoPageRoutingModule } from './carrito-routing.module';
     IonicModule,
     CarritoPageRoutingModule
   ],
-
+declarations: [CarritoPage],
 })
 export class CarritoPageModule {}

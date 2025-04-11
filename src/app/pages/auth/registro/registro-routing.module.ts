@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RegistroPage } from './registro.page';  // Importa el componente standalone
+import { RegistroPage } from './registro.page'; 
 
 const routes: Routes = [
   {
     path: '',
-    component: RegistroPage  // Usamos el componente directamente aquí
+    component: RegistroPage  
   }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],  // Configuramos las rutas
+  imports: [RouterModule.forChild(routes)],  
   exports: [RouterModule]
 })
 export class RegistroPageRoutingModule {}
