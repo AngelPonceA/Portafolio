@@ -43,6 +43,10 @@ const routes: Routes = [
     path: 'notificaciones',
     loadChildren: () => import('./pages/notificaciones/notificaciones.module').then( m => m.NotificacionesPageModule)
   },
+  {
+    path: 'cambio-clave',
+    loadChildren: () => import('./pages/user/cambio-clave/cambio-clave.module').then( m => m.CambioClavePageModule)
+  },
 
 ];
 

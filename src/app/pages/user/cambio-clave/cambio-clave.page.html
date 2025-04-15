@@ -1,0 +1,80 @@
+<app-navegacion>
+  
+  <ion-content [fullscreen]="true" class="cambioclave-page">
+    <!-- Título -->
+    <div class="title-container">
+      <h1>CAMBIA TÚ CONTRASEÑA</h1>
+    </div>
+  
+    <!-- Formulario -->
+    <div class="form-container">
+      <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
+        <!-- Contraseña actual -->
+        <ion-item>
+          <ion-input
+            placeholder="Contraseña actual"
+            [type]="currentPasswordType"
+            formControlName="currentPassword"
+          ></ion-input>
+          <ion-icon
+            [name]="currentPasswordType === 'password' ? 'eye-off' : 'eye'"
+            slot="end"
+            (click)="toggleCurrentPasswordType()"
+          ></ion-icon>
+        </ion-item>
+        <ion-text color="danger" *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors?.['required']">
+          La contraseña actual es obligatoria.
+        </ion-text>
+  
+        <!-- Nueva contraseña -->
+        <ion-item>
+          <ion-input
+            placeholder="Nueva contraseña"
+            [type]="newPasswordType"
+            formControlName="newPassword"
+          ></ion-input>
+          <ion-icon
+            [name]="newPasswordType === 'password' ? 'eye-off' : 'eye'"
+            slot="end"
+            (click)="toggleNewPasswordType()"
+          ></ion-icon>
+        </ion-item>
+        <ion-text color="danger" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['required']">
+          La nueva contraseña es obligatoria.
+        </ion-text>
+        <ion-text color="danger" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['minlength']">
+          La nueva contraseña debe tener al menos 8 caracteres.
+        </ion-text>
+        <ion-text color="danger" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['pattern']">
+          La nueva contraseña debe incluir mayúsculas, minúsculas y números.
+        </ion-text>
+  
+        <!-- Confirmar nueva contraseña -->
+        <ion-item>
+          <ion-input
+            placeholder="Repite tú contraseña"
+            [type]="confirmPasswordType"
+            formControlName="confirmPassword"
+          ></ion-input>
+          <ion-icon
+            [name]="confirmPasswordType === 'password' ? 'eye-off' : 'eye'"
+            slot="end"
+            (click)="toggleConfirmPasswordType()"
+          ></ion-icon>
+        </ion-item>
+        <ion-text color="danger" *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.errors?.['required']">
+          La confirmación de contraseña es obligatoria.
+        </ion-text>
+        <ion-text color="danger" *ngIf="passwordForm.errors?.['passwordsMismatch']">
+          Las contraseñas no coinciden.
+        </ion-text>
+  
+        <!-- Botón de enviar -->
+        <ion-button expand="block" class="submit-button" type="submit" [disabled]="passwordForm.invalid">
+          Cambiar contraseña
+        </ion-button>
+      </form>
+    </div>
+  </ion-content>
+
+</app-navegacion>

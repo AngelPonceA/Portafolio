@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
   selector: 'app-carrito',
   templateUrl: './carrito.page.html',
   styleUrls: ['./carrito.page.scss'],
-  standalone: true,
-  imports: [CommonModule, IonicModule, FormsModule]
+  standalone: false,
 })
 export class CarritoPage {
   productos = [
