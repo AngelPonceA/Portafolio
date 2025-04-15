@@ -36,5 +36,10 @@ export class IngresoPage implements OnInit {
     const dummyUsers = ['test@example.com', 'user@example.com']; // Usuarios de prueba
     return dummyUsers.includes(email);
   }
+
+  redireccionRegistro() {
+    this.router.navigate(['/registro']);
+  }
+  
 }
 
