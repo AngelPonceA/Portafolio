@@ -1,19 +1,18 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-carrito',
   templateUrl: './carrito.page.html',
   styleUrls: ['./carrito.page.scss'],
-  standalone: false,
+  standalone: true,
+  imports: [CommonModule, IonicModule, FormsModule]
 })
 export class CarritoPage {
   productos = [
     { id: 1, nombre: 'Botas', precio: 50000, cantidad: 1, stock: 5, oferta: 50, imagen: "https://imgs.search.brave.com/VUlm4eamkknVVPCZ1wIZRKifh8YVPS19JnhzVf8_EiA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jYXRl/cnBpbGxhcnN2LmNv/bS9jZG4vc2hvcC9m/aWxlcy8zMDA3MTA2/Nl80MDY1NmEwMC05/NDFiLTQ1YWMtOTU5/Ny05Mzc1MTAyMmMx/MmFfMTAyNHgxMDI0/LmpwZz92PTE3NDA3/MjcxNzk"},
     { id: 2, nombre: 'Botas 2', precio: 50000, cantidad: 1, stock: 5, oferta: 50, imagen: "https://imgs.search.brave.com/VUlm4eamkknVVPCZ1wIZRKifh8YVPS19JnhzVf8_EiA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jYXRl/cnBpbGxhcnN2LmNv/bS9jZG4vc2hvcC9m/aWxlcy8zMDA3MTA2/Nl80MDY1NmEwMC05/NDFiLTQ1YWMtOTU5/Ny05Mzc1MTAyMmMx/MmFfMTAyNHgxMDI0/LmpwZz92PTE3NDA3/MjcxNzk"},
+
   ];
 
   constructor(private router: Router) {}
@@ -27,7 +26,7 @@ export class CarritoPage {
 
   sumarProducto(id: number) {
     const producto = this.productos.find(p => p.id === id);
-    if (producto && producto.stock >= producto.cantidad+1) {
+    if (producto && producto.stock >= producto.cantidad + 1) {
       producto.cantidad++;
     }
   }

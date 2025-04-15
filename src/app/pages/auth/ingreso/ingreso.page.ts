@@ -6,7 +6,7 @@ import { AuthService } from '../../../services/auth/auth.service';
   selector: 'app-ingreso',
   templateUrl: './ingreso.page.html',
   styleUrls: ['./ingreso.page.scss'],
-  standalone: false  
+  standalone: false 
 })
 export class IngresoPage implements OnInit {
   email: string = '';
@@ -26,8 +26,15 @@ export class IngresoPage implements OnInit {
     this.authService.login(email, password);
   }
 
-  redireccionRegistro() {
+  onRegister() {
     console.log('Redirigir a la página de registro');
     this.router.navigate(['/registro']);
   }
+
+  private checkUserExists(email: string): boolean {
+    // aqui se simula la verificacion de usuario
+    const dummyUsers = ['test@example.com', 'user@example.com']; // Usuarios de prueba
+    return dummyUsers.includes(email);
+  }
 }
+

@@ -12,7 +12,7 @@ import { CarritoPageRoutingModule } from './carrito-routing.module';
     IonicModule,
     CarritoPageRoutingModule
   ],
-  declarations: [CarritoPage]
+declarations: [CarritoPage],
 })
 
 export class CarritoPageModule {}

@@ -14,7 +14,7 @@
   <!-- Formulario de Registro -->
   <div class="login-content">
     <div class="logo-container">
-      <!-- Aquí puedes poner tu logo -->
+      <!-- Aquí se debe poner el logo -->
       <img class="logo-img" src="assets/logo.png" alt="Logo">
     </div>
 
@@ -42,9 +42,12 @@
       <ion-button expand="full" class="register-button" (click)="onRegister()">Registrar</ion-button>
     </div>
 
-    <!-- Enlace para redirigir al login si ya tiene cuenta -->
+    <!-- Botón para redirigir al ingreso de sesion si el usuario ya tiene cuenta -->
     <div class="register-link">
-      <p>¿Ya tienes una cuenta? <ion-router-link routerLink="/login">Iniciar sesión</ion-router-link></p>
+      <p>¿Ya tienes una cuenta?</p>
+      <ion-button fill="clear" routerLink="/ingreso" color="primary">
+        Iniciar sesión
+      </ion-button>
     </div>
   </div>
 </ion-content>
