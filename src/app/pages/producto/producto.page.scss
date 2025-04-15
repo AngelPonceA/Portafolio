@@ -84,3 +84,15 @@
   text-align: center;
   box-shadow: 0 1% 2% rgba(0, 0, 0, 0.1);
 }
+
+.mensaje-wsp-container {
+  margin: 16px;
+  text-align: center;
+}
+
+ion-button {
+  --border-radius: 8px;
+  --background: #25d366;
+  --color: white;
+  font-weight: bold;
+}

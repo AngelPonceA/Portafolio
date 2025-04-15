@@ -2,7 +2,7 @@
 
   <ion-content>
 
-    <div class="perfil-container">
+    <div class="perfil-container" *ngIf="estado == 1; else invitado">
       <!-- Sección de la imagen de perfil y nombre de usuario -->
       <div class="perfil-header">
         <ion-avatar class="avatar">
@@ -14,12 +14,12 @@
       <div class="info-usuario">
         <ion-item lines="none">
           <ion-label position="floating">Correo Electrónico</ion-label>
-          <ion-input type="email" value=" {{ this.usuario.correo }} " disabled></ion-input>
+          <ion-input type="email" value=" {{ usuario.correo }} " disabled></ion-input>
         </ion-item>
 
         <ion-item lines="none">
           <ion-label position="floating">Nombre de Usuario</ion-label>
-          <ion-input type="text" value=" {{ this.usuario.nombre }} " disabled></ion-input>
+          <ion-input type="text" value=" {{ usuario.nombre }} " disabled></ion-input>
         </ion-item>
       </div>
 
@@ -52,6 +52,30 @@
       </div>
 
     </div>
+
+    <ng-template #invitado>
+      <div class="invitado-container">
+        <h2>¡Bienvenido!</h2>
+        <p>¿Aún no tienes cuenta o ya tienes una? Elige una opción:</p>
+        <ion-button expand="block" fill="solid" color="primary" [routerLink]="['/registro']">
+          <ion-icon name="person-add" slot="start"></ion-icon>
+          Registrarse
+        </ion-button>
+    
+        <ion-button expand="block" fill="solid" color="secondary" [routerLink]="['/ingreso']">
+          <ion-icon name="log-in" slot="start"></ion-icon>
+          Ingresar
+        </ion-button>
+
+        <ion-button expand="block" fill="solid" color="secondary" (click)="cambiarEstado()">
+          <ion-icon name="log-in" slot="start"></ion-icon>
+          Cambiar Estado = 1
+        </ion-button>
+      </div>
+    </ng-template>
+    
+  
+
 
   </ion-content>
 

@@ -28,13 +28,13 @@
       <a href="#" (click)="onForgotPassword()">¿Olvidaste tu contraseña?</a>
     </div>
 
-    <ion-button expand="block" class="login-button" (click)="onLogin()">
+    <ion-button expand="block" class="login-button" (click)="iniciarSesion(this.email, this.password)">
       Iniciar sesión
     </ion-button>
 
     <div class="register-link">
       ¿No tienes una cuenta?
-      <a href="#" (click)="onRegister()">Regístrate</a>
+      <a href="#" (click)="redireccionRegistro()">Regístrate</a>
     </div>
   </div>
 </ion-content>

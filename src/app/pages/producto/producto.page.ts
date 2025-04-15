@@ -22,5 +22,10 @@ export class ProductoPage implements OnInit {
     ngOnInit() {
     }
 
+    mensajeWhatsApp(numero:number){
+      const url = `https://wa.me/${numero}?text=Hola, tengo interés en su producto`;
+
+      window.open(url, '_blank');
+    }
   
 }

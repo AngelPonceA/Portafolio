@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router'; 
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-ingreso',
@@ -11,7 +12,7 @@ export class IngresoPage implements OnInit {
   email: string = '';
   password: string = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
     console.log('IngresoPage cargado');
@@ -21,11 +22,11 @@ export class IngresoPage implements OnInit {
     console.log('Recuperar contraseña');
   }
 
-  onLogin() {
-    console.log('Iniciar sesión con', this.email, this.password);
+  iniciarSesion(email:string, password:string) {
+    this.authService.login(email, password);
   }
 
-  onRegister() {
+  redireccionRegistro() {
     console.log('Redirigir a la página de registro');
     this.router.navigate(['/registro']);
   }
