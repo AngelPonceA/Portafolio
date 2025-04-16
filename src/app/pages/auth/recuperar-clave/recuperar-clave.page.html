@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="recuperar-clave-page">
+  <div class="title-container">
+    <h1>RECUPERAR<br>CONTRASEÑA</h1>
+  </div>
+
+    <div class="icon-container">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+    </div>
+
+    <div class="description-container">
+      <h2>¿Tienes problemas iniciando sesión?</h2>
+      <p>Ingresa tu correo para enviarte así un código con el cuál podrás recuperar tu cuenta.</p>
+    </div>
+
+    <div class="form-container">
+      <form [formGroup]="forgetPasswordForm" (ngSubmit)="onSubmit()">
+        <ion-item>
+          <ion-input
+            placeholder="Correo"
+            type="email"
+            formControlName="email"
+          ></ion-input>
+        </ion-item>
+        <!-- Mensajes de error -->
+        <ion-text color="danger" *ngIf="forgetPasswordForm.get('email')?.touched && forgetPasswordForm.get('email')?.errors?.['required']">
+          El correo es obligatorio.
+        </ion-text>
+        <ion-text color="danger" *ngIf="forgetPasswordForm.get('email')?.touched && forgetPasswordForm.get('email')?.errors?.['email']">
+          Ingresa un formato de correo válido.
+        </ion-text>
+        <ion-text color="danger" *ngIf="forgetPasswordForm.get('email')?.touched && forgetPasswordForm.get('email')?.errors?.['maxlength']">
+          El correo no debe superar los 30 caracteres.
+        </ion-text>
+        <ion-button expand="block" class="send-button" type="submit" [disabled]="forgetPasswordForm.invalid">
+          Enviar código
+        </ion-button>
+      </form>
+    </div>
+  </ion-content>
+  
