@@ -1,0 +1,71 @@
+.cambio-nombre-usuario-page {
+    --background: #c8ab8d;
+  
+    ion-content {
+      --padding-start: 0;
+      --padding-end: 0;
+    }
+  
+    .title-container {
+      text-align: center;
+      margin-top: 60px;
+      margin-bottom: 40px;
+  
+      h1 {
+        font-size: 24px;
+        font-weight: bold;
+        color: rgb(255, 255, 255);
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        line-height: 1.4;
+      }
+    }
+  
+    .form-container {
+      padding: 0 20px;
+  
+      ion-item {
+        --background: white;
+        --border-radius: 999px;
+        margin-bottom: 16px;
+        padding-left: 16px;
+        padding-right: 10px;
+        border-radius: 999px;
+        box-shadow: none;
+        height: 48px;
+  
+        ion-input {
+          font-size: 14px;
+          color: #000000;
+  
+          &::placeholder {
+            color: #000000;
+          }
+        }
+  
+        ion-icon {
+          color: #8d8d8d;
+          font-size: 20px;
+        }
+      }
+  
+      ion-text {
+        font-size: 12px;
+        margin: 0 16px 8px 16px;
+        display: block;
+      }
+  
+      .submit-button {
+        --background: #8b6b4c;
+        --border-radius: 999px;
+        font-weight: bold;
+        font-size: 16px;
+        margin-top: 24px;
+        height: 48px;
+  
+        &:disabled {
+          opacity: 0.6;
+        }
+      }
+    }
+  }
+  

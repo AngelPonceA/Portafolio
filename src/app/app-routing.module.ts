@@ -47,6 +47,10 @@ const routes: Routes = [
     path: 'cambio-clave',
     loadChildren: () => import('./pages/user/cambio-clave/cambio-clave.module').then( m => m.CambioClavePageModule)
   },
+  {
+    path: 'cambio-nombre-usuario',
+    loadChildren: () => import('./pages/user/cambio-nombre-usuario/cambio-nombre-usuario.module').then( m => m.CambioNombreUsuarioPageModule)
+  },
 
 ];
 
