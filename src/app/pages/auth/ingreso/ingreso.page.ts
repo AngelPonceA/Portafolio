@@ -22,8 +22,12 @@ export class IngresoPage implements OnInit {
     console.log('Recuperar contraseña');
   }
 
-  iniciarSesion(email:string, password:string) {
-    this.authService.login(email, password);
+  // iniciarSesion(email:string, password:string) {
+  //   this.authService.login(email, password);
+  // }
+
+  iniciarSesion(email:string) {
+    this.authService.verificarUsuarioExiste(email);
   }
 
   onRegister() {
@@ -40,6 +44,7 @@ export class IngresoPage implements OnInit {
   redireccionRegistro() {
     this.router.navigate(['/registro']);
   }
+  
   
 }
 
