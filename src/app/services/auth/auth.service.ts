@@ -1,13 +1,15 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { Router } from '@angular/router'; // Importa el Router
-
+import { Firestore, collection, query, where, getDocs } from '@angular/fire/firestore';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
   private usuario = "usuario";
+
+  firestore: Firestore = inject(Firestore);
 
   constructor(private nativeStorage: NativeStorage, private router: Router) { }
 
@@ -54,5 +56,25 @@ export class AuthService {
     await this.nativeStorage.remove(this.usuario);
     this.comprobarSesion();
     console.log('Sesión de usuario eliminada');}
+
+    
+    async verificarUsuarioExiste(correo: string): Promise<boolean> {
+      try {
+        const usuariosRef = collection(this.firestore, 'usuario'); // Cambia 'usuarios' por el nombre de tu colección
+        const q = query(usuariosRef, where('email', '==', correo)); // Consulta por el campo 'correo'
+        const querySnapshot = await getDocs(q);
+    
+        if (!querySnapshot.empty) {
+          console.log('Usuario encontrado:', querySnapshot.docs[0].data());
+          return true; // El usuario existe
+        } else {
+          console.log('Usuario no encontrado');
+          return false; // El usuario no existe
+        }
+      } catch (error) {
+        console.error('Error al verificar si el usuario existe:', error);
+        return false; // Manejo de errores
+      }
+    }
 
 }
