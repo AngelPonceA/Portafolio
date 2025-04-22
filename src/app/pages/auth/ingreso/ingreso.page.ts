@@ -15,36 +15,11 @@ export class IngresoPage implements OnInit {
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit() {
-    console.log('IngresoPage cargado');
   }
 
-  onForgotPassword() {
-    console.log('Recuperar contraseña');
+  iniciarSesion(email:string, password:string) {
+    this.authService.login(email, password);
   }
-
-  // iniciarSesion(email:string, password:string) {
-  //   this.authService.login(email, password);
-  // }
-
-  iniciarSesion(email:string) {
-    this.authService.verificarUsuarioExiste(email);
-  }
-
-  onRegister() {
-    console.log('Redirigir a la página de registro');
-    this.router.navigate(['/registro']);
-  }
-
-  private checkUserExists(email: string): boolean {
-    // aqui se simula la verificacion de usuario
-    const dummyUsers = ['test@example.com', 'user@example.com']; // Usuarios de prueba
-    return dummyUsers.includes(email);
-  }
-
-  redireccionRegistro() {
-    this.router.navigate(['/registro']);
-  }
-  
   
 }
 

@@ -39,10 +39,9 @@
         <ion-input type="password" [(ngModel)]="confirmPassword" placeholder="Confirma tu contraseña"></ion-input>
       </ion-item>
 
-      <ion-button expand="full" class="register-button" (click)="onRegister()">Registrar</ion-button>
+      <ion-button expand="full" class="register-button" (click)="registrar()">Registrar</ion-button>
     </div>
 
-    <!-- Botón para redirigir al ingreso de sesion si el usuario ya tiene cuenta -->
     <div class="register-link">
       <p>¿Ya tienes una cuenta?</p>
       <ion-button fill="clear" routerLink="/ingreso" color="primary">
