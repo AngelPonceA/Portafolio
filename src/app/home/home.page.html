@@ -6,15 +6,11 @@
     <div class="productos-grid-container">
       <h2 class="productos-titulo">Todos los Productos</h2>
       <div class="productos-grid">
-        <ion-card *ngFor="let producto of productosGeneral" (click)="verDetalle(producto)" class="producto-card">
-          <img [src]="producto.imagenes" />
+        <ion-card *ngFor="let item of productosSinOferta  | async" (click)="verDetalle(item)" class="producto-card">
+          <img [src]="item.producto.imagenes[0]"/>
           <ion-card-content>
-            <ion-card-title class="nombre">{{ producto.nombre }}</ion-card-title>
-            <ion-card-subtitle *ngIf="producto.oferta == 0; else ofertado" class="precio-original">{{ producto.precio | number }} CLP</ion-card-subtitle>
-            <ng-template #ofertado>
-              <ion-card-subtitle class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
-            </ng-template>
-            <ion-card-subtitle *ngIf="producto.oferta > 0" class="precio-oferta">{{ producto.precio - (producto.precio * (producto.oferta/100)) | number }} CLP</ion-card-subtitle>
+            <ion-card-title class="nombre">{{ item.producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="precio-original">{{ item.variante.precio | number }} CLP</ion-card-subtitle>
           </ion-card-content>
         </ion-card>
       </div>
@@ -27,15 +23,12 @@
     <div class="productos-grid-container">
       <h2 class="productos-titulo">Productos en Oferta</h2>
       <div class="productos-grid">
-        <ion-card *ngFor="let producto of productosOfertados" (click)="verDetalle(producto)" class="producto-card">
-          <img [src]="producto.imagenes" />
+        <ion-card *ngFor="let item of productosConOferta | async" (click)="verDetalle(item)" class="producto-card">
+          <img [src]="item.producto.imagenes[0]"/>
           <ion-card-content>
-            <ion-card-title class="nombre">{{ producto.nombre }}</ion-card-title>
-            <ion-card-subtitle *ngIf="producto.oferta == 0; else ofertado" class="precio-original">{{ producto.precio | number }} CLP</ion-card-subtitle>
-            <ng-template #ofertado>
-              <ion-card-subtitle class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
-            </ng-template>
-            <ion-card-subtitle *ngIf="producto.oferta > 0" class="precio-oferta">{{ producto.precio - (producto.precio * (producto.oferta/100)) | number }} CLP</ion-card-subtitle>
+            <ion-card-title class="nombre">{{ item.producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="precio-original-tachado">{{ item.variante.precio | number }} CLP</ion-card-subtitle>
+            <ion-card-subtitle class="precio-oferta">{{ item.oferta?.precio_oferta | number }}CLP</ion-card-subtitle>
           </ion-card-content>
         </ion-card>
       </div>

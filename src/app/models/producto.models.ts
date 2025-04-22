@@ -6,6 +6,5 @@ export interface Producto {
     descripcion: string;
     estado: string;
     imagenes: string[];
-    inventario_minimo: number;
-    auto_stock: boolean;
+    etiquetas: string[];
 }

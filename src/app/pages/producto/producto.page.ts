@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CrudService } from 'src/app/services/crud/crud.service';
 
 @Component({
   selector: 'app-producto',
@@ -10,22 +11,25 @@ import { Router } from '@angular/router';
 
 export class ProductoPage implements OnInit {
 
-  producto: any;
-  
-  constructor(private router: Router) {
+  item?: any;
+  contacto?: number;
+
+  constructor(private router: Router, private crudService: CrudService) {
 
     const nav = this.router.getCurrentNavigation();
-    this.producto = nav?.extras.state?.['producto'];
+    this.item = nav?.extras.state?.['item'];
     
   }
     
     ngOnInit() {
     }
 
-    mensajeWhatsApp(numero:number){
-      const url = `https://wa.me/${numero}?text=Hola, tengo interés en su producto`;
+    mensajeWhatsApp(usuario_id: string){
+      this.crudService.obtenerContactoID(this.item.producto.usuario_id).then(telefono => {
+        const url = `https://wa.me/${telefono}?text=Hola, tengo interés en su producto`;
+        window.open(url, '_blank');
+    });
 
-      window.open(url, '_blank');
     }
   
 }

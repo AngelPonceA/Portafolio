@@ -1,39 +1,38 @@
 <app-navegacion>
 
   <div class="etiquetas-container">
-    <span class="etiqueta" *ngFor="let etiqueta of producto.etiquetas">{{ etiqueta | titlecase }}</span>
+    <span class="etiqueta" *ngFor="let etiqueta of item.producto.etiquetas">{{ etiqueta | titlecase }}</span>
   </div>
   <ion-card class="producto-card">
-    <img src="{{ producto.imagenes }}" class="producto-img" />
+    <img src="{{ item.producto.imagenes }}" class="producto-img" />
     
     <ion-card-header class="producto-header">
-      <ion-card-title class="producto-nombre">{{ producto.nombre | titlecase }}</ion-card-title>
-      <ion-card-subtitle class="producto-descripcion">{{ producto.descripcion | titlecase }}</ion-card-subtitle>
+      <ion-card-title class="producto-nombre">{{ item.producto.titulo | titlecase }}</ion-card-title>
+      <ion-card-subtitle class="producto-descripcion">{{ item.producto.descripcion | titlecase }}</ion-card-subtitle>
 
-      <!-- Precio original y tachado si hay oferta -->
-      <ion-card-subtitle *ngIf="producto.oferta == 0" class="producto-precio-original">
-        Precio: {{ producto.precio | number }} CLP
+      <ion-card-subtitle *ngIf="!item.oferta || item.oferta.precio_oferta === undefined" class="producto-precio-original">
+        Precio: {{ item.variante.precio | number }} CLP
       </ion-card-subtitle>
 
-      <ion-card-subtitle *ngIf="producto.oferta > 0" class="producto-precio-original-tachado">
-        Precio original: {{ producto.precio | number }} CLP
+      <ion-card-subtitle *ngIf="item.oferta?.precio_oferta && item.oferta?.precio_oferta < item.variante.precio" class="producto-precio-original-tachado">
+        Precio original: {{ item.variante.precio | number }} CLP
       </ion-card-subtitle>
 
       <!-- Precio con descuento de la oferta -->
-      <ion-card-subtitle *ngIf="producto.oferta > 0" class="producto-precio-oferta">
-        Precio oferta: {{ producto.precio - (producto.precio * (producto.oferta / 100)) | number }} CLP
+      <ion-card-subtitle *ngIf="item.oferta?.precio_oferta && item.oferta?.precio_oferta < item.variante.precio" class="producto-precio-oferta">
+        Precio oferta: {{ item.oferta.precio_oferta | number }} CLP
       </ion-card-subtitle>
 
       <!-- Stock disponible -->
       <ion-card-subtitle class="producto-stock">
-        <ion-icon name="pricetag" slot="start"></ion-icon> Stock disponible: {{ producto.stock | number }}
+        <ion-icon name="pricetag" slot="start"></ion-icon> Stock disponible: {{ item.variante.stock | number }}
       </ion-card-subtitle>
     </ion-card-header>
   </ion-card>
 
   <!-- Botón para enviar mensaje por WhatsApp -->
   <div class="mensaje-wsp-container">
-    <ion-button expand="block" color="success" (click)="mensajeWhatsApp(producto.contacto)">
+    <ion-button expand="block" color="success" (click)="mensajeWhatsApp(item.producto.usuario_id)">
       <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
       Enviar mensaje
     </ion-button>
