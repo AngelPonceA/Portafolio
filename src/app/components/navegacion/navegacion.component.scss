@@ -32,6 +32,8 @@ ion-header, ion-footer {
 ion-header {
   background-color: var(--header-background-light); /* Fondo en modo claro */
   padding: 0 10px; /* Agregar algo de espacio en los laterales */
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
 }
 
 ion-footer {
@@ -40,6 +42,8 @@ ion-footer {
   box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.1); /* Sombra sutil para darle profundidad */
   margin-bottom: 0; /* Eliminar cualquier margen que cause una franja debajo del footer */
   padding-bottom: 0; /* Asegura que no haya espacio extra debajo del footer */
+  border-top-right-radius: 16px;
+  border-top-left-radius: 16px;
 }
 
 ion-header::before, ion-footer::before {
@@ -120,3 +124,8 @@ ion-icon {
   z-index: 10; /* Asegura que la burbuja esté por encima del botón */
   border: 2px solid white; /* Añade un borde blanco alrededor de la burbuja para mayor visibilidad */
 }
+
+ion-searchbar.searchbar {
+  --border-radius: 30px;
+}
+
