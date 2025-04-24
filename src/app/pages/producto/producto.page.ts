@@ -13,6 +13,7 @@ export class ProductoPage implements OnInit {
 
   item?: any;
   contacto?: number;
+  favoritos: any[] = [];
 
   constructor(private router: Router, private crudService: CrudService) {
 
@@ -30,6 +31,21 @@ export class ProductoPage implements OnInit {
         window.open(url, '_blank');
     });
 
+    }
+
+    toggleFavorito(producto: any) {
+      const index = this.favoritos.findIndex(item => item.id === producto.id);
+      if (index === -1) {
+        // Si no está en favoritos, lo agregamos
+        this.favoritos.push(producto);
+      } else {
+        // Si ya está en favoritos, lo eliminamos
+        this.favoritos.splice(index, 1);
+      }
+    }
+
+    isFavorito(producto: any): boolean {
+      return this.favoritos.some(item => item.id === producto.id);
     }
   
 }
