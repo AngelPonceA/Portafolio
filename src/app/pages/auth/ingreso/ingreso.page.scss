@@ -18,32 +18,29 @@
   }
   
   .logo-container {
-    background: linear-gradient(to bottom, #c6a98a 60%, #703c3c 40%);
-    width: 100%;
     display: flex;
     justify-content: center;
-    padding: 10% 0 8%; /* Ajustado con porcentaje para mayor flexibilidad */
+    align-items: center;
+    margin-top: 5vh; // espacio desde la parte superior del contenido
+    margin-bottom: 5vh; // espacio inferior para no pegarlo al formulario
+    padding: 0;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
   }
   
   .logo-img {
-    width: 30%; /* Ajustado al 30% del ancho de la pantalla */
-    height: auto;
-    object-fit: contain;
-    border-radius: 100px;
-    background: #fff;
-    padding: 3%;
+    width: 50%;
+    height: 50%;
+    border-radius: 50%;
   }
   
   .login-box {
     background: white;
     margin-top: -5%; /* Ajustado para el espaciado superior */
     padding: 6% 5%; /* Ajustado para mejor visualización */
-    width: 85%; /* Ajustado al 85% del ancho de la pantalla */
+    width: 85%; /* Ajustado al 85% del ancho deauto la pantalla */
     max-width: 380px; /* Máximo ancho para que no se estire demasiado */
     border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     margin-left: auto;
     margin-right: auto; /* Centrado automático */
   }
@@ -55,8 +52,10 @@
   }
   
   .login-button {
-    --background: #5d3e2c;
-    --color: white;
+    --border-radius: 1rem;
+    --background: #D1A15A;
+    --color: #ffffff;
+    --border-color: #9a73399e;
     margin-top: 5%; /* Ajustado con porcentaje */
     border-radius: 10px;
     transition: background-color 0.3s ease;
@@ -69,6 +68,7 @@
   .forgot-password a, 
   .register-link a {
     transition: color 0.3s ease, text-decoration 0.3s ease;
+    color:#5d3e2c;
   }
   
   .forgot-password a:hover, 
@@ -78,10 +78,11 @@
   }
   
   .forgot-password {
-    text-align: right;
+    text-align: center;
     font-size: 14px; /* Ajustado para mejor visibilidad */
     margin-top: 4%;
     margin-bottom: 8%; /* Ajustado con porcentaje */
+    
   }
   
   .register-link {
@@ -91,11 +92,24 @@
   }
   
   .register-link a {
+    align-items: center;
     margin-left: 5%;
     color: #5d3e2c;
     font-weight: bold;
     text-decoration: none;
   }
+
+  .link-cafe {
+    --color: #8f634a; // Color café principal
+    font-weight: bold;
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+  
+    &:hover {
+      --color: #804444da; // Café más oscuro al pasar el mouse
+      text-decoration: underline;
+    }
+  }
+  
   
   /* Media Queries para pantallas más pequeñas */
   @media (max-width: 768px) {

@@ -96,3 +96,18 @@ ion-button {
   --color: white;
   font-weight: bold;
 }
+
+.favorito-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.favorito{
+  --border-radius: 8px;
+  --background: #f2b0ff;
+  --color: rgb(0, 0, 0);
+  font-weight: bold;
+  align-items: center;
+
+}

@@ -20,15 +20,20 @@
         <div class="descripcion">Descripción corta del producto que es interesante para los usuarios.</div>
 
         <div class="producto-controles">
-          <ion-button fill="outline" color="medium" (click)="restarProducto(producto.id)">➖</ion-button>
+          <ion-button fill="outline" color="medium" (click)="restarProducto(producto.id)">
+          <ion-icon name="remove-outline"></ion-icon>
+          </ion-button>
           <span class="cantidad">{{ producto.cantidad }}</span>
-          <ion-button fill="outline" color="medium" (click)="sumarProducto(producto.id)">➕</ion-button>
-          <ion-button fill="solid" color="success" (click)="comprarProducto(producto.id)">🛒</ion-button>
-          <ion-button fill="solid" color="danger" (click)="quitarProducto(producto.id)">🗑️</ion-button>
+          <ion-button fill="outline" color="medium" (click)="sumarProducto(producto.id)">
+            <ion-icon name="add-outline"></ion-icon>
+          </ion-button>
+          <ion-button class="cancel-button" fill="solid" color="danger" (click)="quitarProducto(producto.id)">
+          <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
         </div>
       </ion-card-content>
     </div>
-    <div class="pagar-todo">
+    <div class="pagar">
       <ion-button expand="block" class="pagar-button" (click)="pagarTodo()">
         Pagar Todo - Total: ${{ obtenerTotalCarrito() }}
       </ion-button>

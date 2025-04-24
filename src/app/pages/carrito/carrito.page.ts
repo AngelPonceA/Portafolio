@@ -34,13 +34,6 @@ export class CarritoPage {
     this.productos = this.productos.filter(p => p.id !== id);
   }
 
-  comprarProducto(id: number) {
-    const producto = this.productos.find(p => p.id === id);
-    if (producto) {
-      console.log(`Comprando ${producto.nombre}, cantidad: ${producto.cantidad}, total: $${(producto.precio * producto.cantidad).toFixed(2)}`);
-    }
-  }
-
   obtenerTotalProducto(producto: any): number {
     return producto.precio * producto.cantidad;
   }

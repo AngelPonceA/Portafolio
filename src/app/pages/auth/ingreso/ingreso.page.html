@@ -1,3 +1,4 @@
+<app-navegacion>
 <ion-content>
   <!-- Logo -->
   <div class="logo-container">
@@ -25,20 +26,21 @@
     </ion-item>
 
     <div class="forgot-password">
-      <ion-button fill="clear" routerLink="/recuperar-clave" color="tertiary">
+      <ion-button fill="clear" routerLink="/recuperar-clave" class="link-cafe">
         ¿Olvidaste tu contraseña?
       </ion-button>
     </div>
-
     <ion-button expand="block" class="login-button" (click)="iniciarSesion(this.email, this.password)">
       Iniciar sesión
     </ion-button>
 
     <div class="register-link">
-      ¿No tienes una cuenta?
-      <ion-button fill="clear" routerLink="/registro" color="primary">
+      <h6>¿No tienes una cuenta?</h6>
+      <ion-button fill="clear" routerLink="/registro" class="link-cafe">
         Regístrate
       </ion-button>
     </div>
   </div>
 </ion-content>
+
+</app-navegacion>

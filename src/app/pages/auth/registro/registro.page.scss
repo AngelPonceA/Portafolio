@@ -1,138 +1,119 @@
-* {
-    box-sizing: border-box;
-}
-
-ion-content {
-    --background: #f5f2ef; /* Fondo suave para toda la página */
-    height: 100%; /* Asegura que ocupe toda la altura disponible */
-}
-
-.login-content {
-    --background: #f5f2ef;
+:host {
+    --ion-background-color: #f5f5f5;
+    --ion-text-color: #000;
+    display: block;
+  }
+  
+  .register-page {
     display: flex;
     flex-direction: column;
+    justify-content: start;
     align-items: center;
-    justify-content: flex-start; /* Empuja el contenido hacia la parte superior */
-    padding-top: 5%; /* Espacio superior ajustado para móviles */
-    padding-bottom: 5%; /* Espacio inferior */
-}
-
-.logo-container {
-    background: linear-gradient(to bottom, #c6a98a 60%, #703c3c 40%);
-    width: 100%;
+    min-height: 100vh;
+    padding-top: 20px;
+    background: var(--ion-background-color);
+  }
+  
+  .title-container {
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .title-container h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #444;
+  }
+  
+  .logo-container {
     display: flex;
     justify-content: center;
-    padding: 10% 0 8%; /* Ajustado con porcentaje para mayor flexibilidad */
+    align-items: center;
+    margin-top: 3vh;
+    margin-bottom: 3vh; // espacio inferior para no pegarlo al formulario
+    padding: 0;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
-}
-
-.logo-img {
-    width: 30%; /* Ajustado al 30% del ancho de la pantalla */
-    height: auto;
-    object-fit: contain;
-    border-radius: 100px;
-    background: #fff;
-    padding: 3%;
-}
-
-.register-box {
-    background: white;
-    margin-top: -5%;
-    padding: 6% 5%;
-    width: 85%;
-    max-width: 380px;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    margin-left: auto;
-    margin-right: auto;
-}
-
-ion-item {
-    margin-bottom: 10px; /* Se aumenta el margen entre los items */
-    --background: #f0f0f0;
-    --border-radius: 10px;
-}
-
-ion-label {
-    font-weight: bold; /* Los títulos tendrán más peso */
-    color: #5d3e2c; /* Color para los títulos */
-}
-
-.register-button {
-    --background: #5d3e2c;
-    --color: white;
-    margin-top: 5%;
+  }
+  
+  .logo-img {
+    width: 40%;
+    height: 40%;
+    border-radius: 50%;
+  }
+  
+  .form-container {
+    padding: 25px;
+    background-color: #fff;
+    border-radius: 30px;
+    margin: auto;
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  ion-item {
+    margin-bottom: 15px;
+    border-radius: 25px;
+    background-color: #f5f5f5;
+    --min-height: 50px;
+    --padding-start: 10px;
+  }
+  
+  ion-input {
+    font-size: 0.95rem;
+    padding: 10px;
+  }
+  
+  ion-icon {
+    color: #888;
+    cursor: pointer;
+  }
+  
+  .toggle-password-icon {
+    font-size: 1.2rem;
+  }
+  
+  ion-text[color="danger"] {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    color: red;
+    text-align: left;
+    padding-left: 10px;
+  }
+  
+  .register-button {
+    --border-radius: 1rem;
+    --background: #D1A15A;
+    --color: #ffffff;
+    --border-color: #9a73399e;
+    margin-top: 5%; /* Ajustado con porcentaje */
     border-radius: 10px;
     transition: background-color 0.3s ease;
-}
-
-.register-button:hover {
-    --background: #703c3c;
-}
-
-.forgot-password a, 
-.register-link a {
+  }
+  
+  .link-cafe {
+    --color: #8f634a; // Color café principal
+    font-weight: bold;
     transition: color 0.3s ease, text-decoration 0.3s ease;
-}
+  
+    &:hover {
+      --color: #804444da; // Café más oscuro al pasar el mouse
+      text-decoration: underline;
+    }
+  }
 
-.forgot-password a:hover, 
-.register-link a:hover {
-    color: #703c3c;
-    text-decoration: underline;
-}
-
-.forgot-password {
-    text-align: right;
-    font-size: 14px;
-    margin-top: 4%;
-    margin-bottom: 8%;
-}
-
-.register-link {
+  .register-link {
     text-align: center;
-    margin-top: 8%;
+    margin-top: 0;
     font-size: 14px;
-}
-
-.register-link a {
-    margin-left: 5%;
+  }
+  
+  .register-link a {
+    margin-top: 0;
+    align-items: center;
     color: #5d3e2c;
     font-weight: bold;
     text-decoration: none;
-}
-
-/* Media Queries */
-@media (max-width: 768px) {
-    .register-box {
-        width: 90%;
-    }
-
-    .forgot-password {
-        font-size: 12px;
-    }
-
-    .register-link {
-        font-size: 12px;
-        margin-top: 10%;
-    }
-
-    .register-button {
-        width: 100%;
-    }
-}
-
-@media (min-width: 1024px) {
-    .register-box {
-        width: 70%;
-    }
-
-    .forgot-password {
-        font-size: 16px;
-    }
-
-    .register-link {
-        font-size: 16px;
-        margin-top: 15%;
-    }
-}
+  }

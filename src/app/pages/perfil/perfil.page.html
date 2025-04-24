@@ -57,17 +57,17 @@
       <div class="invitado-container">
         <h2>¡Bienvenido!</h2>
         <p>¿Aún no tienes cuenta o ya tienes una? Elige una opción:</p>
-        <ion-button expand="block" fill="solid" color="primary" [routerLink]="['/registro']">
+        <ion-button expand="block" fill="solid" [routerLink]="['/registro']">
           <ion-icon name="person-add" slot="start"></ion-icon>
           Registrarse
         </ion-button>
     
-        <ion-button expand="block" fill="solid" color="secondary" [routerLink]="['/ingreso']">
+        <ion-button expand="block" fill="solid" [routerLink]="['/ingreso']">
           <ion-icon name="log-in" slot="start"></ion-icon>
           Ingresar
         </ion-button>
 
-        <ion-button expand="block" fill="solid" color="secondary" (click)="cambiarEstado()">
+        <ion-button expand="block" fill="solid" (click)="cambiarEstado()">
           <ion-icon name="log-in" slot="start"></ion-icon>
           Cambiar Estado = 1
         </ion-button>

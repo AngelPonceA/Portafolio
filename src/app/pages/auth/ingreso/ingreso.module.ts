@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { IngresoPageRoutingModule } from './ingreso-routing.module';
 import { IngresoPage } from './ingreso.page';
+import { NavegacionComponent } from 'src/app/components/navegacion/navegacion.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    IngresoPageRoutingModule
+    IngresoPageRoutingModule,
+    NavegacionComponent
   ],
   declarations: [IngresoPage]
 })

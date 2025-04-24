@@ -8,13 +8,16 @@ import { RecuperarClavePageRoutingModule } from './recuperar-clave-routing.modul
 
 import { RecuperarClavePage } from './recuperar-clave.page';
 
+import { NavegacionComponent } from 'src/app/components/navegacion/navegacion.component';
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     RecuperarClavePageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NavegacionComponent
   ],
   declarations: [RecuperarClavePage]
 })

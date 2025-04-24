@@ -1,52 +1,117 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Registro</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Registro de Usuario</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <!-- Formulario de Registro -->
-  <div class="login-content">
-    <div class="logo-container">
-      <!-- Aquí se debe poner el logo -->
-      <img class="logo-img" src="assets/img/logo.png" alt="Logo">
+<app-navegacion>
+  
+  <ion-content [fullscreen]="true" class="register-page">
+    <div class="title-container">
+      <h1>CREA TU CUENTA</h1>
     </div>
 
-    <div class="register-box">
-      <ion-item>
-        <ion-label position="floating">Nombre de Usuario</ion-label>
-        <ion-input type="text" [(ngModel)]="username" placeholder="Introduce tu nombre de usuario"></ion-input>
-      </ion-item>
+      <div class="logo-container">
+        <!-- Aquí se debe poner el logo -->
+        <img class="logo-img" src="assets/img/logo.png" alt="Logo">
+      </div>
+  
+    <div class="form-container">
+      <form [formGroup]="registerForm">
+        <!-- Nombre -->
+        <ion-item>
+          <ion-icon name="person-outline" slot="start"></ion-icon>
+          <ion-input placeholder="Nombre" type="text" formControlName="name"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['required']">
+          El nombre es obligatorio.
+        </ion-text>
+        <ion-text color="danger" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['pattern']">
+          El nombre solo puede contener letras.
+        </ion-text>
+        <ion-text color="danger" *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.errors?.['maxlength']">
+          El nombre no puede superar los 30 caracteres.
+        </ion-text>
+  
+        <!-- Usuario -->
+        <ion-item>
+          <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+          <ion-input placeholder="Nombre de usuario" type="text" formControlName="username"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['required']">
+          El nombre de usuario es obligatorio.
+        </ion-text>
+        <ion-text color="danger" *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.errors?.['maxlength']">
+          El nombre de usuario no puede superar los 30 caracteres.
+        </ion-text>
+  
+        <!-- Correo -->
+        <ion-item>
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-input placeholder="Correo" type="email" formControlName="email"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['email']">
+          El formato del correo no es válido.
+        </ion-text>
+        <ion-text color="danger" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['maxlength']">
+          El correo no puede superar los 30 caracteres.
+        </ion-text>
+  
+        <!-- Contraseña -->
+        <ion-item>
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input
+            placeholder="Contraseña"
+            [type]="passwordType"
+            formControlName="password"
+          ></ion-input>
+          <ion-icon
+            slot="end"
+            [name]="passwordType === 'password' ? 'eye-off-outline' : 'eye-outline'"
+            (click)="togglePasswordType()"
+            class="toggle-password-icon"
+          ></ion-icon>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Correo Electrónico</ion-label>
-        <ion-input type="email" [(ngModel)]="email" placeholder="Introduce tu correo electrónico"></ion-input>
-      </ion-item>
+        <ion-text color="danger" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['required']">
+          La contraseña es obligatoria.
+        </ion-text>
+        <ion-text color="danger" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['minlength']">
+          La contraseña debe tener al menos 8 caracteres.
+        </ion-text>
+        <ion-text color="danger" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors?.['pattern']">
+          La contraseña debe incluir mayúsculas, minúsculas y números.
+        </ion-text>
 
-      <ion-item>
-        <ion-label position="floating">Contraseña</ion-label>
-        <ion-input type="password" [(ngModel)]="password" placeholder="Introduce tu contraseña"></ion-input>
-      </ion-item>
+        <!-- Confirmar Contraseña -->
+        <ion-item>
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-input
+            placeholder="Repite la contraseña"
+            [type]="confirmPasswordType"
+            formControlName="confirmPassword"
+          ></ion-input>
+          <ion-icon
+            slot="end"
+            [name]="confirmPasswordType === 'password' ? 'eye-off-outline' : 'eye-outline'"
+            (click)="toggleConfirmPasswordType()"
+            class="toggle-password-icon"
+          ></ion-icon>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="floating">Confirmar Contraseña</ion-label>
-        <ion-input type="password" [(ngModel)]="confirmPassword" placeholder="Confirma tu contraseña"></ion-input>
-      </ion-item>
+        <ion-text color="danger" *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.hasError('passwordMismatch')">
+          Las contraseñas no coinciden.
+        </ion-text>
 
-      <ion-button expand="full" class="register-button" (click)="registrar()">Registrar</ion-button>
+  
+        <!-- Botón de registro -->
+        <ion-button expand="block" class="register-button" type="button" [disabled]="registerForm.invalid" click="registrar()">
+          Crea tu cuenta
+        </ion-button>
+      </form>
     </div>
 
     <div class="register-link">
-      <p>¿Ya tienes una cuenta?</p>
-      <ion-button fill="clear" routerLink="/ingreso" color="primary">
-        Iniciar sesión
+      <h6>¿Ya tienes una cuenta?</h6>
+      <ion-button fill="clear" routerLink="/ingreso" class="link-cafe">
+        Inicia sesión
       </ion-button>
     </div>
-  </div>
-</ion-content>
+  
+  </ion-content>
+  
+</app-navegacion>
