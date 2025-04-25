@@ -4,10 +4,10 @@
     <span class="etiqueta" *ngFor="let etiqueta of item.producto.etiquetas">{{ etiqueta | titlecase }}</span>
   </div>
   <ion-card class="producto-card">
-    <img src="{{ item.producto.imagenes }}" class="producto-img" />
+    <img [src]=" item.variante.imagen" class="producto-img" />
     
     <ion-card-header class="producto-header">
-      <ion-card-title class="producto-nombre">{{ item.producto.titulo | titlecase }}</ion-card-title>
+      <ion-card-title class="producto-nombre">{{ item.producto.titulo | titlecase }} {{ item.variante.estado | titlecase }}</ion-card-title>
       <ion-card-subtitle class="producto-descripcion">{{ item.producto.descripcion | titlecase }}</ion-card-subtitle>
 
       <ion-card-subtitle *ngIf="!item.oferta || item.oferta.precio_oferta === undefined" class="producto-precio-original">
