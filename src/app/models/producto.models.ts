@@ -4,7 +4,5 @@ export interface Producto {
     categoria_id: string;
     titulo: string;
     descripcion: string;
-    estado: string;
-    imagenes: string[];
     etiquetas: string[];
 }

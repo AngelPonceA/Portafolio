@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { IonicModule, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-navegacion',
@@ -12,13 +13,17 @@ import { CommonModule } from '@angular/common';
 })
 export class NavegacionComponent  implements OnInit {
 
-  notificaciones: number = 15;
+  notificaciones?: number ;
   productos: number = 3;
 
   
-  constructor( private router: Router, private navCtrl: NavController ) { }
+  constructor( private router: Router, private navCtrl: NavController, private authService: AuthService  ) { }
   
-  ngOnInit() {}
+  ngOnInit() {
+    this.authService.obtenerNotificacionesNoVistas().subscribe((notificacionesEntrantes) => {
+      this.notificaciones = notificacionesEntrantes;
+    });
+  }
   
   navegar(ruta: string) {
     this.router.navigate([ruta]);

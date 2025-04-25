@@ -1,7 +1,9 @@
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { FirebaseError } from '@angular/fire/app';
 
 @Component({
   selector: 'app-recuperar-clave',
@@ -16,7 +18,8 @@ export class RecuperarClavePage implements OnInit {
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private authService: AuthService,
   ) {
     this.forgetPasswordForm = this.fb.group({
       email: [
@@ -39,10 +42,27 @@ export class RecuperarClavePage implements OnInit {
         message: `Funcionalidad de recuperación simulada para: ${email}`,
         buttons: ['OK'],
       });
-      
-      await alert.present();
-      this.forgetPasswordForm.reset();
-      this.router.navigate(['/ingreso']);
+
+      this.authService.recuperarClave(this.forgetPasswordForm.value.email?.trim())
+      .then(() => {
+        console.log('Correo enviado para recuperar la contraseña.');
+        alert.present();
+        this.forgetPasswordForm.reset();
+        this.router.navigate(['/ingreso']);
+      })
+      .catch((error: FirebaseError) => {
+        // Manejar el error y dar una mejor experiencia de usuario
+        if (error.code === 'auth/user-not-found') {
+          console.log('No se encuentra un usuario con ese correo electrónico.');
+        }
+        else if (error.code === 'auth/invalid-email') {
+          console.log('Formato de correo no valido.');
+        } else {
+          console.log('Error al enviar el correo:', error);
+          console.log('Ocurrió un error inesperado. Inténtalo nuevamente.');
+        }
+      });
+
     }
   }
 

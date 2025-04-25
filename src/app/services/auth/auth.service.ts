@@ -6,6 +6,7 @@ import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticate
 import { Usuario } from '../../models/usuario.models'; // Asegúrate de que la ruta sea correcta
 import { FirebaseError } from 'firebase/app';
 import { catchError, from, Observable, of, switchMap } from 'rxjs';
+import { sendPasswordResetEmail } from '@angular/fire/auth';
 
 
 @Injectable({
@@ -43,7 +44,7 @@ export class AuthService {
     }
   }
 
-  obtenerNotificacionesNoVistas(): Observable<number> {
+  obtenerNotificacionesNoVistas() {
     return from(this.nativeStorage.getItem('id')).pipe(
       switchMap(uid => {
         if (!uid || uid === 0) return of(0); // si no hay UID, retorna 0
@@ -111,6 +112,10 @@ export class AuthService {
         console.error('Error en el registro:', err.message);
       }
     }
+  }
+
+  recuperarClave(email: string) {
+    return sendPasswordResetEmail(this.auth, email);
   }
 
   async logout() {
