@@ -57,13 +57,7 @@ export class RegistroPage implements OnInit {
 
     const { username, email, password } = this.registerForm.value;
 
-    this.authService.registrar(username, email, password)
-      .then(() => {
-        console.log('Registro exitoso');
-        this.router.navigate(['/ingreso']);
-      })
-      .catch(error => {
-        console.error('Error en el registro:', error);
-      });
+    this.authService.registrar(username, email, password);
+    this.registerForm.reset();
   }
 }

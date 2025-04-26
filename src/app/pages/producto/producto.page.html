@@ -1,49 +1,48 @@
 <app-navegacion>
 
-  <div class="etiquetas-container">
-    <span class="etiqueta" *ngFor="let etiqueta of item.producto.etiquetas">{{ etiqueta | titlecase }}</span>
-  </div>
-  <ion-card class="producto-card">
-    <img [src]=" item.variante.imagen" class="producto-img" />
+  <div *ngIf="producto">
+    <div class="etiquetas-container">
+      <span class="etiqueta" *ngFor="let etiqueta of producto.etiquetas">{{ etiqueta | titlecase }}</span>
+    </div>
+
+    <ion-card class="producto-card">
+      <img [src]="producto.imagen" class="producto-img" />
     
-    <ion-card-header class="producto-header">
-      <ion-card-title class="producto-nombre">{{ item.producto.titulo | titlecase }} {{ item.variante.estado | titlecase }}</ion-card-title>
-      <ion-card-subtitle class="producto-descripcion">{{ item.producto.descripcion | titlecase }}</ion-card-subtitle>
+      <ion-card-header class="producto-header">
+        <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }}</ion-card-title>
+        <ion-card-subtitle class="producto-descripcion">{{ producto.producto_descripcion | titlecase }}</ion-card-subtitle>
 
-      <ion-card-subtitle *ngIf="!item.oferta || item.oferta.precio_oferta === undefined" class="producto-precio-original">
-        Precio: {{ item.variante.precio | number }} CLP
-      </ion-card-subtitle>
+        <ion-card-subtitle *ngIf="!producto.precio_oferta" class="producto-precio-original">
+          Precio: {{ producto.precio | number }} CLP
+        </ion-card-subtitle>
 
-      <ion-card-subtitle *ngIf="item.oferta?.precio_oferta && item.oferta?.precio_oferta < item.variante.precio" class="producto-precio-original-tachado">
-        Precio original: {{ item.variante.precio | number }} CLP
-      </ion-card-subtitle>
+        <ion-card-subtitle *ngIf="producto.precio_oferta && producto.precio_oferta < producto.precio" class="producto-precio-original-tachado">
+          Precio original: {{ producto.precio | number }} CLP
+        </ion-card-subtitle>
 
-      <!-- Precio con descuento de la oferta -->
-      <ion-card-subtitle *ngIf="item.oferta?.precio_oferta && item.oferta?.precio_oferta < item.variante.precio" class="producto-precio-oferta">
-        Precio oferta: {{ item.oferta.precio_oferta | number }} CLP
-      </ion-card-subtitle>
+        <ion-card-subtitle *ngIf="producto.precio_oferta && producto.precio_oferta < producto.precio" class="producto-precio-oferta">
+          Precio oferta: {{ producto.precio_oferta | number }} CLP
+        </ion-card-subtitle>
 
-      <!-- Stock disponible -->
-      <ion-card-subtitle class="producto-stock">
-        <ion-icon name="pricetag" slot="start"></ion-icon> Stock disponible: {{ item.variante.stock | number }}
-      </ion-card-subtitle>
-    </ion-card-header>
-  </ion-card>
+        <ion-card-subtitle class="producto-stock">
+          <ion-icon name="pricetag" slot="start"></ion-icon> Stock disponible: {{ producto.stock | number }}
+        </ion-card-subtitle>
+      </ion-card-header>
+    </ion-card>
 
-  <!-- Botón para enviar mensaje por WhatsApp -->
-  <div class="mensaje-wsp-container">
-    <ion-button expand="block" color="success" (click)="mensajeWhatsApp(item.producto.usuario_id)">
-      <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
-      Enviar mensaje
-    </ion-button>
+    <div class="mensaje-wsp-container">
+      <ion-button expand="block" color="success" (click)="mensajeWhatsApp()">
+        <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
+        Enviar mensaje
+      </ion-button>
+    </div>
+
+    <div class="favorito-container">
+      <ion-button class="favorito" (click)="toggleFavorito(producto)">
+        <ion-icon [name]="isFavorito(producto) ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
+        {{ isFavorito(producto) ? 'Eliminar de favoritos' : 'Agregar a favoritos' }}
+      </ion-button>
+    </div>
   </div>
-
-  <!-- Botón para agregar a favoritos -->
-  <div class="favorito-container">
-    <ion-button class="favorito" (click)="toggleFavorito(item.producto)">
-      <ion-icon [name]="isFavorito(item.producto) ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
-      {{ isFavorito(item.producto) ? 'Eliminar de favoritos' : 'Agregar a favoritos' }}
-    </ion-button>
-  </div>
-
+  
 </app-navegacion>
