@@ -99,7 +99,7 @@
 
   
         <!-- Botón de registro -->
-        <ion-button expand="block" class="register-button" type="button" [disabled]="registerForm.invalid" click="registrar()">
+        <ion-button expand="block" class="register-button" type="button" [disabled]="registerForm.invalid" (click)="registrar()">
           Crea tu cuenta
         </ion-button>
       </form>

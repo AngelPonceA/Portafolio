@@ -1,4 +1,6 @@
+import { CrudService } from 'src/app/services/crud/crud.service';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-favoritos',
@@ -8,9 +10,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class FavoritosPage implements OnInit {
 
-  constructor() { }
+  favoritos?: any[] = [];
+
+  constructor( private crudService : CrudService, private router: Router ) { }
 
   ngOnInit() {
+    this.crudService.obtenerFavoritosConDetalles().subscribe((favoritos) => {
+      this.favoritos = favoritos;
+      console.log('Favoritos:', this.favoritos);
+    });
   }
 
+  verDetalle(variante_id: string) {
+    this.router.navigate(['/producto'], { state: { variante_id } });
+  }
+
+  eliminarFavorito(id: string) {
+
+  }
+  
 }

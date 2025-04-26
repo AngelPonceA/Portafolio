@@ -1,26 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, doc, getDoc } from '@angular/fire/firestore';
-import { combineLatest, map, Observable } from 'rxjs';
+import { Firestore, collection, collectionData, doc, getDoc, getDocs, query, where } from '@angular/fire/firestore';
+import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 import { Producto } from '../../models/producto.models';
 import { Variante } from '../../models/variante.models';
 import { Oferta } from 'src/app/models/oferta.models';
 import { ProductoExtendido } from 'src/app/models/producto_ext.models';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CrudService {
-  constructor(private firestore: Firestore) {}
-
-  async obtenerContactoID(uid: string): Promise<number | undefined> {
-    const ref = doc(this.firestore, `usuarios/${uid}`);
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      let data = snap.data();
-      return data['telefono'].replace(/[^\d]/g, '');
-    }
-    return undefined;
-  }
+  constructor(private firestore: Firestore, private nativeStorage: NativeStorage) {}
   
   obtenerTodosLosProductos(): Observable<Producto[]> {
     const productosRef = collection(this.firestore, 'productos');
@@ -89,6 +80,92 @@ export class CrudService {
       })
     );
   }
+
+  obtenerDetalleVariante(variante_id: string): Observable<any> {
+    const varianteRef = doc(this.firestore, 'variantes', variante_id);
+    return from(getDoc(varianteRef)).pipe(
+      switchMap(async (varianteSnap) => {
+        if (!varianteSnap.exists()) return null;
+
+        const variante = varianteSnap.data();
+        const productoSnap = await getDoc(doc(this.firestore, 'productos', variante['producto_id']));
+        if (!productoSnap.exists()) return null;
+
+        const producto = productoSnap.data();
+        const ofertaSnap = await getDocs(query(
+          collection(this.firestore, 'ofertas'),
+          where('variante_id', '==', variante_id)
+        ));
+
+        let precio_oferta = null;
+        if (!ofertaSnap.empty) {
+          ofertaSnap.forEach(doc => {
+            const oferta = doc.data();
+            const now = new Date();
+            if (now >= oferta['fecha_inicio'].toDate() && now <= oferta['fecha_fin'].toDate()) {
+              precio_oferta = oferta['precio_oferta'];
+            }
+          });
+        }
+
+        return {
+          variante_id: variante_id,
+          usuario_id: producto['usuario_id'],
+          precio: variante['precio'],
+          precio_oferta,
+          imagen: variante['imagen'],
+          producto_titulo: producto['titulo'],
+          producto_descripcion: producto['descripcion'],
+          etiquetas: producto['etiquetas'] || [],
+        };
+      })
+    );
+  }
   
+
+  obtenerFavoritosConDetalles(): Observable<any[]> {
+    const uid = this.nativeStorage.getItem('id');
+    const favoritosRef = collection(this.firestore, 'favoritos');
+    const q = query(favoritosRef, where('usuario_id', '==', uid));
+  
+    return collectionData(q, { idField: 'id' }).pipe(
+      switchMap(favoritos => {
+        if (favoritos.length === 0) return of([]);
+  
+        const detalles$ = favoritos.map(async favorito => {
+          const varianteSnap = await getDoc(doc(this.firestore, 'variantes', favorito['variante_id']));
+          const productoSnap = await getDoc(doc(this.firestore, 'productos', varianteSnap.data()?.['producto_id']));
+  
+          if (!varianteSnap.exists() || !productoSnap.exists()) return null;
+  
+          const variante = varianteSnap.data();
+          const producto = productoSnap.data();
+  
+          const ofertaSnap = await getDocs(query(collection(this.firestore, 'ofertas'), where('variante_id', '==', favorito['variante_id'])));
+          let precio_oferta = null;
+  
+          if (!ofertaSnap.empty) {
+            ofertaSnap.forEach(doc => {
+              const oferta = doc.data();
+              const currentDate = new Date();
+              if (currentDate >= oferta['fecha_inicio'].toDate() && currentDate <= oferta['fecha_fin'].toDate()) {
+                precio_oferta = oferta['precio_oferta'];
+              }
+            });
+          }
+  
+          return {
+            variante_id: favorito['variante_id'],
+            precio: variante['precio'],
+            precio_oferta,
+            imagen: variante['imagen'],
+            producto_titulo: producto['titulo'],
+          };
+        });
+  
+        return from(Promise.all(detalles$));
+      })
+    );
+  }
   
 }

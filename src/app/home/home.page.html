@@ -6,7 +6,7 @@
     <div class="productos-grid-container">
       <h2 class="productos-titulo">Todos los Productos</h2>
       <div class="productos-grid">
-        <ion-card *ngFor="let item of productosSinOferta  | async" (click)="verDetalle(item)" class="producto-card">
+        <ion-card *ngFor="let item of productosSinOferta  | async" (click)="verDetalle(item.variante.id)" class="producto-card">
           <img [src]="item.variante.imagen[0]"/>
           <ion-card-content>
             <ion-card-title class="nombre">{{ item.producto.titulo }}</ion-card-title>
@@ -23,7 +23,7 @@
     <div class="productos-grid-container">
       <h2 class="productos-titulo">Productos en Oferta</h2>
       <div class="productos-grid">
-        <ion-card *ngFor="let item of productosConOferta | async" (click)="verDetalle(item)" class="producto-card">
+        <ion-card *ngFor="let item of productosConOferta | async" (click)="verDetalle(item.variante.id)" class="producto-card">
           <img [src]="item.variante.imagen[0]"/>
           <ion-card-content>
             <ion-card-title class="nombre">{{ item.producto.titulo }}</ion-card-title>

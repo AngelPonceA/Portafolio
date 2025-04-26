@@ -6,6 +6,6 @@ export interface Direccion {
     calle_numero: string;
     nombre_apellido: string;
     telefono: string;
-    departamento: string;
+    departamento?: string;
     descripcion: string;
 }

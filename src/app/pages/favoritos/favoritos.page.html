@@ -1,7 +1,39 @@
 <app-navegacion>
 
-  <ng-content>
+  <ion-content *ngIf="favoritos && favoritos.length > 0; else vacio" class="ion-padding">
+    <ion-list lines="none">
+      <ion-item *ngFor="let item of favoritos" class="favorito-item" (click)="verDetalle(item.variante_id)">
+        
+        <ion-thumbnail slot="start">
+          <img [src]="item.imagen[0]" />
+        </ion-thumbnail>
 
-  </ng-content>
+        <ion-label class="favorito-info">
+          <h2>{{ item.producto_titulo | titlecase }}</h2>
+
+          <div class="display" *ngIf="item.precio_oferta && item.precio_oferta < item.precio; else precioNormal">
+              <span class="precio-tachado"> {{ item.precio | number }} CLP</span>
+              <span class="precio-oferta"> {{ item.precio_oferta | number }} CLP</span>
+          </div>
+          <ng-template #precioNormal>
+            <span class="precio-normal"> {{ item.precio | number }} CLP</span>
+          </ng-template>
+        </ion-label>
+
+        <ion-button fill="clear" size="small" (click)="eliminarFavorito(item.variante_id)">
+          <ion-icon name="heart" color="danger"></ion-icon>
+        </ion-button>
+
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+  <ng-template #vacio>
+    <div class="vacio-container">
+      <ion-icon name="heart-dislike-outline"></ion-icon>
+      <h2>No tienes favoritos</h2>
+      <p>Agrega productos a favoritos para verlos aquí.</p>
+    </div>
+  </ng-template>
 
 </app-navegacion>

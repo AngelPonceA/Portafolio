@@ -1,5 +1,7 @@
+import { Producto } from './../../models/producto.models';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
 
 @Component({
@@ -11,41 +13,41 @@ import { CrudService } from 'src/app/services/crud/crud.service';
 
 export class ProductoPage implements OnInit {
 
-  item?: any;
-  contacto?: number;
+  producto?: any;
   favoritos: any[] = [];
 
-  constructor(private router: Router, private crudService: CrudService) {
-
-    const nav = this.router.getCurrentNavigation();
-    this.item = nav?.extras.state?.['item'];
+  constructor(private router: Router, private crudService: CrudService, private authService: AuthService) {}
     
+  ngOnInit() {
+    const variante_id = this.router.getCurrentNavigation()?.extras?.state?.['variante_id'];
+    if (variante_id) {
+      this.crudService.obtenerDetalleVariante(variante_id).subscribe(data => {
+        this.producto = data;        
+      });
+    }
   }
-    
-    ngOnInit() {
-    }
 
-    mensajeWhatsApp(usuario_id: string){
-      this.crudService.obtenerContactoID(this.item.producto.usuario_id).then(telefono => {
-        const url = `https://wa.me/${telefono}?text=Hola, tengo interés en su producto`;
-        window.open(url, '_blank');
+  mensajeWhatsApp(){
+    this.authService.obtenerNumeroVendedor(this.producto.usuario_id).then(telefono => {
+      const url = `https://wa.me/${telefono}?text=Hola, tengo interés en su producto`;
+      window.open(url, '_blank');
+      console.log(this.producto);  
     });
+  }
 
+  toggleFavorito(producto: any) {
+    const index = this.favoritos.findIndex(item => item.id === producto.id);
+    if (index === -1) {
+      // Si no está en favoritos, lo agregamos
+      this.favoritos.push(producto);
+    } else {
+      // Si ya está en favoritos, lo eliminamos
+      this.favoritos.splice(index, 1);
     }
+  }
 
-    toggleFavorito(producto: any) {
-      const index = this.favoritos.findIndex(item => item.id === producto.id);
-      if (index === -1) {
-        // Si no está en favoritos, lo agregamos
-        this.favoritos.push(producto);
-      } else {
-        // Si ya está en favoritos, lo eliminamos
-        this.favoritos.splice(index, 1);
-      }
-    }
-
-    isFavorito(producto: any): boolean {
-      return this.favoritos.some(item => item.id === producto.id);
-    }
+  isFavorito(producto: any): boolean {
+    return this.favoritos.some(item => item.id === producto.id);
+  }
   
 }
