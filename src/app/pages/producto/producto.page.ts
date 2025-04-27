@@ -31,7 +31,6 @@ export class ProductoPage implements OnInit {
     this.authService.obtenerNumeroVendedor(this.producto.usuario_id).then(telefono => {
       const url = `https://wa.me/${telefono}?text=Hola, tengo interés en su producto`;
       window.open(url, '_blank');
-      console.log(this.producto);  
     });
   }
 

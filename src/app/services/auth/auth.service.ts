@@ -43,17 +43,17 @@ export class AuthService {
     }
   }
 
-    async obtenerNumeroVendedor(uid: string) {
-      const ref = doc(this.firestore, `usuarios/${uid}`);
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        let data = snap.data();
-        return data['telefono'].replace(/[^\d]/g, '');
-      }
-      return undefined;
+  async obtenerNumeroVendedor(uid: string) {
+    const ref = doc(this.firestore, `usuarios/${uid}`);
+    const snap = await getDoc(ref);
+    if (snap.exists()) {
+      let data = snap.data();
+      return data['telefono'].replace(/[^\d]/g, '');
     }
+    return undefined;
+  }
 
-  obtenerNotificacionesNoVistas() {
+  obtenerNotificacionesNav() {
     return from(this.nativeStorage.getItem('id')).pipe(
       switchMap(uid => {
         if (!uid || uid === 0) return of(0);
@@ -61,7 +61,7 @@ export class AuthService {
         const q = query(
           collection(this.firestore, 'alertas'),
           where('usuario_id', '==', uid),
-          where('leido', '==', false)
+          where('estado', '==', 'no visto')
         );
   
         return new Observable<number>(observer => {
@@ -71,6 +71,25 @@ export class AuthService {
       }),
       catchError(() => of(0))
     );
+  }
+
+  async obtenerNotificaciones() {
+    try {
+      // const uid = this.nativeStorage.getItem('id');
+      const usuario_id = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const alertasRef = collection(this.firestore, 'alertas'); // Referencia a la colección "alertas"
+      const q = query(alertasRef, where('usuario_id', '==', usuario_id)); // Filtra por usuario_id
+      const querySnapshot = await getDocs(q);
+  
+      const notificaciones: any[] = [];
+      querySnapshot.forEach((doc) => {
+        notificaciones.push({ id: doc.id, ...doc.data() }); // Agrega cada notificación al array
+      });
+      return notificaciones;
+    } catch (error) {
+      console.error('Error al obtener notificaciones:', error);
+      return [];
+    }
   }
   
   async login(email: string, clave: string) {

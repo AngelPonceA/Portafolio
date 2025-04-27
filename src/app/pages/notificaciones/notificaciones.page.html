@@ -1,13 +1,31 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>notificaciones</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-navegacion>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">notificaciones</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <ion-content>
+    <div *ngIf="notificaciones && notificaciones.length > 0; else sinNotificaciones">
+      <div class="notificaciones-container">
+        <div *ngFor="let notificacion of notificaciones" class="notificacion-card" [class.no-leido]="notificacion.estado === 'no visto'" [class.leido]="notificacion.estado === 'visto'">
+          <div class="notificacion-icon">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <div class="notificacion-content">
+            <h3 class="notificacion-titulo">{{ notificacion.titulo }}</h3>
+            <p class="notificacion-descripcion">{{ notificacion.descripcion }}</p>
+            <span class="notificacion-fecha">{{ notificacion.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}</span>
+          </div>
+          <ion-button fill="clear" color="danger" class="boton-eliminar" (click)="eliminarNotificacion(notificacion.id)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #sinNotificaciones>
+      <div class="sin-notificaciones">
+        <ion-icon name="notifications-off-outline"></ion-icon>
+        <h2>No tienes notificaciones</h2>
+        <p>Cuando tengas notificaciones, aparecerán aquí.</p>
+      </div>
+    </ng-template>
+  </ion-content>
+  
+</app-navegacion>

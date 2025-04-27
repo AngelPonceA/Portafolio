@@ -81,7 +81,7 @@ export class CrudService {
     );
   }
 
-  obtenerDetalleVariante(variante_id: string): Observable<any> {
+  obtenerDetalleVariante(variante_id: string) {
     const varianteRef = doc(this.firestore, 'variantes', variante_id);
     return from(getDoc(varianteRef)).pipe(
       switchMap(async (varianteSnap) => {
@@ -122,9 +122,9 @@ export class CrudService {
     );
   }
   
-
-  obtenerFavoritosConDetalles(): Observable<any[]> {
-    const uid = this.nativeStorage.getItem('id');
+  obtenerFavoritosConDetalles() {
+    // const uid = this.nativeStorage.getItem('id');
+    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const favoritosRef = collection(this.firestore, 'favoritos');
     const q = query(favoritosRef, where('usuario_id', '==', uid));
   
