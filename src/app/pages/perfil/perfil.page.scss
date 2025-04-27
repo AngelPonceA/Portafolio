@@ -13,28 +13,6 @@ ion-content {
     align-items: center;
 }
 
-.perfil-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-
-.avatar {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 10px;
-}
-
-.cambiar-imagen {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    padding: 5px;
-}
-
 .info-usuario {
     width: 90%;
     max-width: 400px;
@@ -123,11 +101,6 @@ ion-icon {
 @media (min-width: 1024px) {
     .perfil-container {
         padding: 20px;
-    }
-
-    .avatar {
-        width: 120px; /* Aumentar el tamaño del avatar en pantallas grandes */
-        height: 120px;
     }
 
     .info-usuario {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, doc, getDoc, getDocs, query, where } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 import { Producto } from '../../models/producto.models';
 import { Variante } from '../../models/variante.models';
@@ -160,6 +160,7 @@ export class CrudService {
             precio_oferta,
             imagen: variante['imagen'],
             producto_titulo: producto['titulo'],
+            favorito_id: favorito['id'],
           };
         });
   
@@ -167,5 +168,66 @@ export class CrudService {
       })
     );
   }
+
+  async obtenerFavoritoId(variante_id: string) {
+    try {
+      // const uid = this.nativeStorage.getItem('id');
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const favoritosRef = collection(this.firestore, 'favoritos');
+      const q = query(
+        favoritosRef,
+        where('usuario_id', '==', uid),
+        where('variante_id', '==', variante_id)
+      );
+      const querySnapshot = await getDocs(q);
   
+      if (!querySnapshot.empty) {
+        return querySnapshot.docs[0].id;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener el ID del favorito:', error);
+      return null;
+    }
+  }
+
+  async eliminarFavorito(favorito_id: string) {
+    try {
+      const favoritoRef = doc(this.firestore, 'favoritos', favorito_id);
+      await deleteDoc(favoritoRef);
+    } catch (error) {
+      console.error('Error al eliminar el favorito:', error);
+      throw error;
+    }
+  }
+
+  async agregarFavorito(variante_id: string) {
+    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+    // const uid = await this.nativeStorage.getItem('id');
+    const favoritosRef = collection(this.firestore, 'favoritos');
+    const nuevoFavoritoRef = doc(favoritosRef);
+    const nuevoFavorito = {
+      usuario_id: uid,
+      variante_id: variante_id,
+    };
+    await setDoc(nuevoFavoritoRef, nuevoFavorito);
+  }
+
+  async esFavorito(variante_id: string) {
+    try {
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      // const uid = await this.nativeStorage.getItem('id');
+      const favoritosRef = collection(this.firestore, 'favoritos');
+      const q = query(favoritosRef, where('usuario_id', '==', uid), where('variante_id', '==', variante_id));
+      const querySnapshot = await getDocs(q);
+      
+      return !querySnapshot.empty; 
+      
+    } catch (error) {
+      console.error('Error al comprobar si el producto es favorito:', error);
+      return false;
+    }
+  }
+
 }

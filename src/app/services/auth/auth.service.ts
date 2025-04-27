@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { Router } from '@angular/router'; // Importa el Router
-import { Firestore, collection, query, where, getDocs, addDoc, doc, setDoc, getDoc, onSnapshot,  } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, getDocs, addDoc, doc, setDoc, getDoc, onSnapshot, updateDoc, orderBy,  } from '@angular/fire/firestore';
 import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updatePassword, signInWithEmailAndPassword  } from '@angular/fire/auth';
 import { Usuario } from '../../models/usuario.models'; // Asegúrate de que la ruta sea correcta
 import { FirebaseError } from 'firebase/app';
@@ -26,7 +26,7 @@ export class AuthService {
       const sesion = await this.nativeStorage.getItem(this.usuario);
       console.log('Sesión existente:', sesion);
     } catch {
-      const sesion = { id: 0, estado: 1 };
+      const sesion = { id: 0, rol: 'invitado' };
       await this.nativeStorage.setItem(this.usuario, sesion);
       console.log('Sesión invitado creada:', sesion);
     }
@@ -61,7 +61,7 @@ export class AuthService {
         const q = query(
           collection(this.firestore, 'alertas'),
           where('usuario_id', '==', uid),
-          where('estado', '==', 'no visto')
+          where('estado', '==', 'no vista')
         );
   
         return new Observable<number>(observer => {
@@ -75,20 +75,33 @@ export class AuthService {
 
   async obtenerNotificaciones() {
     try {
-      // const uid = this.nativeStorage.getItem('id');
       const usuario_id = 'LtOy7x75rVTK4f56xhErfdDPEs92';
-      const alertasRef = collection(this.firestore, 'alertas'); // Referencia a la colección "alertas"
-      const q = query(alertasRef, where('usuario_id', '==', usuario_id)); // Filtra por usuario_id
+      const alertasRef = collection(this.firestore, 'alertas');
+      const q = query(
+        alertasRef,
+        where('usuario_id', '==', usuario_id),
+        orderBy('fecha_creacion', 'desc')
+      );
       const querySnapshot = await getDocs(q);
-  
+
       const notificaciones: any[] = [];
       querySnapshot.forEach((doc) => {
-        notificaciones.push({ id: doc.id, ...doc.data() }); // Agrega cada notificación al array
-      });
+        notificaciones.push({ id: doc.id, ...doc.data() });
+      });      
       return notificaciones;
     } catch (error) {
       console.error('Error al obtener notificaciones:', error);
       return [];
+    }
+  }
+
+  async actualizarEstadoNotificacion(id: string, nuevoEstado: string) {
+    try {
+      const notificacionRef = doc(this.firestore, `alertas/${id}`);
+      await updateDoc(notificacionRef, { estado: nuevoEstado });
+    } catch (error) {
+      console.error('Error al actualizar el estado de la notificación:', error);
+      throw error;
     }
   }
   
@@ -106,7 +119,7 @@ export class AuthService {
       
       console.log('Credenciales ingresadas:', uid);
       const { rol } = snap.data()!;
-      await this.nativeStorage.setItem(this.usuario, { id: uid, estado: 1, rol });
+      await this.nativeStorage.setItem(this.usuario, { id: uid, rol: rol });
       this.router.navigate(['/home']);
 
     } catch (error) {
@@ -123,11 +136,12 @@ export class AuthService {
         id: uid,
         nombre: nombre,
         email: email,
-        rol: 'usuario'
+        rol: 'usuario',
+        telefono: 'Traiganlo del html',
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
-      await this.nativeStorage.setItem(this.usuario, { id: uid, estado: 1 });
+      await this.nativeStorage.setItem(this.usuario, { id: uid, rol: nuevoUsuario.rol });
       this.router.navigate(['/home']);
       console.log('Usuario registrado y guardado en Firestore:', nuevoUsuario);
       

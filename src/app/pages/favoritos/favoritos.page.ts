@@ -17,7 +17,6 @@ export class FavoritosPage implements OnInit {
   ngOnInit() {
     this.crudService.obtenerFavoritosConDetalles().subscribe((favoritos) => {
       this.favoritos = favoritos;
-      console.log('Favoritos:', this.favoritos);
     });
   }
 
@@ -25,8 +24,9 @@ export class FavoritosPage implements OnInit {
     this.router.navigate(['/producto'], { state: { variante_id } });
   }
 
-  eliminarFavorito(id: string) {
-
+  eliminarFavorito(favorito_id: string, event: Event) {
+    event.stopPropagation();
+    this.crudService.eliminarFavorito(favorito_id);
   }
   
 }

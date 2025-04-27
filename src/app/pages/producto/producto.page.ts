@@ -15,15 +15,18 @@ export class ProductoPage implements OnInit {
 
   producto?: any;
   favoritos: any[] = [];
+  esFavorito?: any;
 
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService) {}
     
-  ngOnInit() {
-    const variante_id = this.router.getCurrentNavigation()?.extras?.state?.['variante_id'];
+  async ngOnInit() {
+    const variante_id = await this.router.getCurrentNavigation()?.extras?.state?.['variante_id'];
     if (variante_id) {
       this.crudService.obtenerDetalleVariante(variante_id).subscribe(data => {
         this.producto = data;        
       });
+
+      this.esFavorito = await this.crudService.esFavorito(variante_id);
     }
   }
 
@@ -34,19 +37,43 @@ export class ProductoPage implements OnInit {
     });
   }
 
-  toggleFavorito(producto: any) {
-    const index = this.favoritos.findIndex(item => item.id === producto.id);
-    if (index === -1) {
-      // Si no está en favoritos, lo agregamos
-      this.favoritos.push(producto);
-    } else {
-      // Si ya está en favoritos, lo eliminamos
-      this.favoritos.splice(index, 1);
+  async ver(producto: string) {
+    let x = await this.crudService.esFavorito(producto);
+    console.log('estado ' + x);
+    
+  }
+
+  async agregarFavorito(producto: string) {
+    try {
+      await this.crudService.agregarFavorito(producto);
+      this.esFavorito = true;
+      this.ver(producto);
+    } catch (error) {
+      console.error('Error al agregar favorito:', error);
+    }
+  }
+  
+  async eliminarFavorito(producto: string) {
+    try {
+      await this.crudService.eliminarFavorito(producto);
+      this.esFavorito = false;
+      this.ver(producto);
+    } catch (error) {
+      console.error('Error al eliminar favorito:', error);
     }
   }
 
-  isFavorito(producto: any): boolean {
-    return this.favoritos.some(item => item.id === producto.id);
-  }
+  async manejarFavorito(producto: any) {
+      if (this.esFavorito) {
+        const favorito_id = await this.crudService.obtenerFavoritoId(producto.variante_id);
+        if (favorito_id) {
+          await this.crudService.eliminarFavorito(favorito_id);
+        }
+        this.esFavorito = false;
+      } else {
+        await this.crudService.agregarFavorito(producto.variante_id);
+        this.esFavorito = true;
+      }
+    }
   
 }
