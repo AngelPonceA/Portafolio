@@ -2,13 +2,7 @@
 
   <ion-content>
 
-    <div class="perfil-container" *ngIf="estado == 1; else invitado">
-      <!-- Sección de la imagen de perfil y nombre de usuario -->
-      <div class="perfil-header">
-        <ion-avatar class="avatar">
-          <img src="https://preview.redd.it/colored-this-kirby-meme-a-friend-sent-me-v0-rpau79c9o31a1.png?width=640&crop=smart&auto=webp&s=fafd4b695974a98b6795b8cc326cf1c45fb2f571" alt="Imagen de perfil">
-        </ion-avatar>
-      </div>
+    <div class="perfil-container" *ngIf="usuario.rol != 'invitado'; else invitado">
 
       <!-- Información de usuario -->
       <div class="info-usuario">

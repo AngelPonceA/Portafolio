@@ -3,7 +3,7 @@
   <ion-content>
     <div *ngIf="notificaciones && notificaciones.length > 0; else sinNotificaciones">
       <div class="notificaciones-container">
-        <div *ngFor="let notificacion of notificaciones" class="notificacion-card" [class.no-leido]="notificacion.estado === 'no visto'" [class.leido]="notificacion.estado === 'visto'">
+        <div *ngFor="let notificacion of notificaciones" (click)="abrirNotificacion(notificacion.id)" class="notificacion-card" [class.no-leido]="notificacion.estado === 'no vista'" [class.leido]="notificacion.estado === 'vista'">
           <div class="notificacion-icon">
             <ion-icon name="notifications-outline"></ion-icon>
           </div>

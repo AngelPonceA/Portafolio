@@ -38,11 +38,12 @@
     </div>
 
     <div class="favorito-container">
-      <ion-button class="favorito" (click)="toggleFavorito(producto)">
-        <ion-icon [name]="isFavorito(producto) ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
-        {{ isFavorito(producto) ? 'Eliminar de favoritos' : 'Agregar a favoritos' }}
+      <ion-button class="favorito" (click)="manejarFavorito(producto)">
+        <ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
+        {{ esFavorito ? 'Eliminar de favoritos' : 'Agregar a favoritos' }}
       </ion-button>
     </div>
+    
   </div>
   
 </app-navegacion>
