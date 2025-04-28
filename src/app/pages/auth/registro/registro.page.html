@@ -6,7 +6,6 @@
     </div>
 
       <div class="logo-container">
-        <!-- Aquí se debe poner el logo -->
         <img class="logo-img" src="assets/img/logo.png" alt="Logo">
       </div>
   
@@ -49,6 +48,15 @@
         </ion-text>
         <ion-text color="danger" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors?.['maxlength']">
           El correo no puede superar los 30 caracteres.
+        </ion-text>
+
+        <!-- Celular -->
+        <ion-item>
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          <ion-input placeholder="Celular" type="tel" formControlName="number"></ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="registerForm.get('number')?.touched && registerForm.get('number')?.errors?.['required']">
+          El número es obligatorio.
         </ion-text>
   
         <!-- Contraseña -->

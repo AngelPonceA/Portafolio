@@ -20,6 +20,7 @@ export class RegistroPage implements OnInit {
       name: ['', [Validators.required, Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'), Validators.maxLength(30)]],
       username: ['', [Validators.required, Validators.maxLength(30)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(30)]],
+      number: ['', [Validators.required]],
       password: [
         '',
         [
@@ -55,9 +56,9 @@ export class RegistroPage implements OnInit {
       return;
     }
 
-    const { username, email, password } = this.registerForm.value;
+    const { username, email, password, number } = this.registerForm.value;
 
-    this.authService.registrar(username, email, password);
+    this.authService.registrar(username, email, password, number);
     this.registerForm.reset();
   }
 }
