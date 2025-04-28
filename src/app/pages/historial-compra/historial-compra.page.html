@@ -1,0 +1,27 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="volverAtras()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Historial de Compras</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="historial-grid">
+    <div class="compra-card" *ngFor="let compra of historialCompra">
+      <ion-card-content>
+        <div class="detalle">
+          <div class="fecha-hora">
+            <span class="fecha">{{ compra.fecha }}</span>
+            <span class="hora">{{ compra.hora }}</span>
+          </div>
+          <div class="producto-nombre">{{ compra.producto }}</div>
+          <div class="id">ID: {{ compra.id }}</div>
+        </div>
+      </ion-card-content>
+    </div>
+  </div>
+</ion-content>

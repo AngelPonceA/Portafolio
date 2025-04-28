@@ -63,6 +63,18 @@ const routes: Routes = [
     path: 'mis-productos',
     loadChildren: () => import('./pages/mis-productos/mis-productos.module').then( m => m.MisProductosPageModule)
   },
+  {
+    path: 'historial-compra',
+    loadChildren: () => import('./pages/historial-compra/historial-compra.module').then( m => m.HistorialCompraPageModule)
+  },
+  {
+    path: 'historial-ventas',
+    loadChildren: () => import('./pages/historial-ventas/historial-ventas.module').then( m => m.HistorialVentasPageModule)
+  },
+  {
+    path: 'historial-compra',
+    loadChildren: () => import('./pages/historial-compra/historial-compra.module').then( m => m.HistorialCompraPageModule)
+  },
 
 ];
 
