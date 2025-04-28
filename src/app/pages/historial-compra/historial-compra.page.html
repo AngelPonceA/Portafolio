@@ -18,8 +18,34 @@
             <span class="fecha">{{ compra.fecha }}</span>
             <span class="hora">{{ compra.hora }}</span>
           </div>
-          <div class="producto-nombre">{{ compra.producto }}</div>
-          <div class="id">ID: {{ compra.id }}</div>
+          <!-- Información del cliente -->
+          <div class="cliente-detalle">
+            <div class="nombre">Nombre: {{ compra.cliente.nombre }}</div>
+            <div class="correo">Correo: {{ compra.cliente.correo }}</div>
+          </div>
+          <!-- Si hay un solo producto -->
+          <div *ngIf="compra.productos.length === 1" class="producto-unico">
+            <div class="producto-nombre">{{ compra.productos[0].nombre }}</div>
+            <div class="id">ID: {{ compra.productos[0].id }}</div>
+            <div class="precio">Precio: ${{ compra.productos[0].precio }}</div>
+          </div>
+          <!-- Si hay varios productos -->
+          <div *ngIf="compra.productos.length > 1">
+            <div *ngFor="let producto of compra.productos" class="producto-detalle">
+              <div class="producto-nombre">{{ producto.nombre }}</div>
+              <div class="id">ID: {{ producto.id }}</div>
+              <div class="precio">Precio: ${{ producto.precio }}</div>
+            </div>
+          </div>
+          <div class="direccion">
+            Dirección: {{ compra.direccion }}
+          </div>
+          <div class="comuna-region">
+            Comuna: {{ compra.comuna }}, Región: {{ compra.region }}
+          </div>
+          <div class="sexo">
+            Comprador: {{ compra.sexo }}
+          </div>
         </div>
       </ion-card-content>
     </div>

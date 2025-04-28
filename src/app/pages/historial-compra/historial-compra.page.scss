@@ -1,80 +1,114 @@
 * {
-    box-sizing: border-box;
-  }
-  
-  ion-content {
-    --background: #f5f2ef;
-    height: 100%;
-  }
-  
-  .header-toolbar {
-    --background: #D2B48C;    
-    --color: white;
-  }
-  
-  .historial-grid {
-    display: grid;
-    grid-template-columns: 1fr; /* Una columna por defecto */
-    gap: 12px;
-    padding: 5%;
-  }
-  
-  .compra-card {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: white;
-    padding: 15px;
-  
-    ion-card-content {
-      padding: 8px;
-  
-      .detalle {
-        font-size: 14px;
-        font-weight: 500;
-        margin-bottom: 5px;
-        line-height: 1.2;
-  
-        .fecha-hora {
-          display: flex;
-          justify-content: space-between;
-          font-size: 12px;
-          color: #555;
-  
-          .fecha, .hora {
-            font-weight: bold;
-          }
+  box-sizing: border-box;
+}
+
+ion-content {
+  --background: #f5f2ef;
+  height: 100%;
+}
+
+.header-toolbar {
+  --background: #D2B48C;
+  --color: white;
+}
+
+.historial-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  padding: 5%;
+}
+
+.compra-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 15px;
+
+  ion-card-content {
+    padding: 8px;
+
+    .detalle {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 5px;
+
+      .fecha-hora {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #555;
+
+        .fecha, .hora {
+          font-weight: bold;
         }
-  
+      }
+
+      .cliente-detalle {
+        margin-top: 10px;
+        .nombre {
+          font-size: 14px;
+          font-weight: bold;
+          color: #333;
+        }
+        .correo {
+          font-size: 14px;
+          color: #888;
+        }
+      }
+
+      .producto-unico {
+        margin-top: 10px;
+
         .producto-nombre {
           font-size: 16px;
           font-weight: bold;
           color: #703c3c;
-          margin: 4px 0;
         }
-  
         .id {
           font-size: 14px;
           color: #888;
-          margin-top: 2px;
         }
+        .precio {
+          font-size: 14px;
+          color: #4caf50;
+        }
+      }
+
+      .producto-detalle {
+        margin-top: 10px;
+
+        .producto-nombre {
+          font-size: 16px;
+          font-weight: bold;
+          color: #703c3c;
+        }
+        .id {
+          font-size: 14px;
+          color: #888;
+        }
+        .precio {
+          font-size: 14px;
+          color: #4caf50;
+        }
+      }
+
+      .direccion, .comuna-region, .sexo {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #333;
       }
     }
   }
-  
-  .historial-compra-page .title-container h1 {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #444;
+}
+
+@media (max-width: 768px) {
+  .historial-grid {
+    grid-template-columns: 1fr;
   }
-  
-  @media (max-width: 768px) {
-    .historial-grid {
-      grid-template-columns: 1fr; /* Una columna para pantallas pequeñas */
-    }
-  
-    .compra-card {
-      padding: 10px;
-      font-size: 14px;
-    }
+  .compra-card {
+    padding: 10px;
+    font-size: 14px;
   }
+}
