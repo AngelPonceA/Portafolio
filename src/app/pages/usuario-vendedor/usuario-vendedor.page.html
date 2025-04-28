@@ -1,0 +1,62 @@
+<app-navegacion>
+
+  <ion-content>
+
+    <div class="perfil-vendedor-container">
+      <!-- Avatar y nombre -->
+      <div class="perfil-header">
+        <ion-avatar class="avatar">
+          <img src="../../../assets/img/profile-placeholder.png" alt="Foto de perfil vendedor">
+        </ion-avatar>
+        <h2>{{ vendedor.nombre }}</h2>
+        <p>{{ vendedor.correo }}</p>
+      </div>
+
+      <!-- Opciones de navegación -->
+      <div class="perfil-opciones">
+
+        <ion-button expand="block" fill="outline" routerLink="/cambio-clave">
+          <ion-icon name="key" slot="start"></ion-icon>
+          Cambiar Contraseña
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" routerLink="/cambio-nombre-usuario">
+          <ion-icon name="create" slot="start"></ion-icon>
+          Cambiar Nombre de Usuario
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" routerLink="/historial-ventas">
+          <ion-icon name="list" slot="start"></ion-icon>
+          Historial de Ventas
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" routerLink="/metricas-vendedor">
+          <ion-icon name="analytics" slot="start"></ion-icon>
+          Métricas
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" routerLink="/mis-productos">
+          <ion-icon name="cube" slot="start"></ion-icon>
+          Mis Productos
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" routerLink="/configuracion-vendedor">
+          <ion-icon name="settings" slot="start"></ion-icon>
+          Configuración
+        </ion-button>
+
+      </div>
+
+      <!-- Botón de cerrar sesión -->
+      <div class="cerrar-sesion">
+        <ion-button expand="block" color="danger" (click)="cerrarSesion()">
+          <ion-icon name="log-out" slot="start"></ion-icon>
+          Cerrar Sesión
+        </ion-button>
+      </div>
+
+    </div>
+
+  </ion-content>
+
+</app-navegacion>
