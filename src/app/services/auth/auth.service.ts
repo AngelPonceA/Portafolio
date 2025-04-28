@@ -136,7 +136,7 @@ export class AuthService {
     }
   }
 
-  async registrar(nombre: string, email: string, clave: string) {
+  async registrar(nombre: string, email: string, clave: string, number: string) {
     try {
       const cred = await createUserWithEmailAndPassword(this.auth, email, clave);
       const uid = cred.user.uid;
@@ -146,7 +146,7 @@ export class AuthService {
         nombre: nombre,
         email: email,
         rol: 'usuario',
-        telefono: 'Traiganlo del html',
+        telefono: number,
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
