@@ -21,8 +21,9 @@ export class NavegacionComponent  implements OnInit {
   
   ngOnInit() {
     this.authService.obtenerNotificacionesNav().subscribe((notificacionesEntrantes) => {
-      this.notificaciones = notificacionesEntrantes;
+      this.notificaciones = notificacionesEntrantes;    
     });
+    
   }
   
   navegar(ruta: string) {

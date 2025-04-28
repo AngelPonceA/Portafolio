@@ -43,8 +43,7 @@ export class RecuperarClavePage implements OnInit {
         buttons: ['OK'],
       });
 
-      this.authService.recuperarClave(this.forgetPasswordForm.value.email?.trim())
-      .then(() => {
+      this.authService.recuperarClave(email).then(() => {
         console.log('Correo enviado para recuperar la contraseña.');
         alert.present();
         this.forgetPasswordForm.reset();
@@ -52,10 +51,7 @@ export class RecuperarClavePage implements OnInit {
       })
       .catch((error: FirebaseError) => {
         // Manejar el error y dar una mejor experiencia de usuario
-        if (error.code === 'auth/user-not-found') {
-          console.log('No se encuentra un usuario con ese correo electrónico.');
-        }
-        else if (error.code === 'auth/invalid-email') {
+        if (error.code === 'auth/invalid-email') {
           console.log('Formato de correo no valido.');
         } else {
           console.log('Error al enviar el correo:', error);
