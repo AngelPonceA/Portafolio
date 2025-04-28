@@ -8,7 +8,7 @@
   
     <!-- Formulario -->
     <div class="form-container">
-      <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="passwordForm" (ngSubmit)="onSubmit( passwordForm.value )">
         <!-- Contraseña actual -->
         <ion-item>
           <ion-input
@@ -22,6 +22,7 @@
             (click)="toggleCurrentPasswordType()"
           ></ion-icon>
         </ion-item>
+
         <ion-text color="danger" *ngIf="passwordForm.get('currentPassword')?.touched && passwordForm.get('currentPassword')?.errors?.['required']">
           La contraseña actual es obligatoria.
         </ion-text>
@@ -39,6 +40,11 @@
             (click)="toggleNewPasswordType()"
           ></ion-icon>
         </ion-item>
+
+        <ion-text color="danger" *ngIf="passwordForm.errors?.['currentAndNewPasswordSame']">
+          La nueva contraseña no puede ser igual a la contraseña actual.
+        </ion-text>
+
         <ion-text color="danger" *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.errors?.['required']">
           La nueva contraseña es obligatoria.
         </ion-text>

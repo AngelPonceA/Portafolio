@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 export class NotificacionesPage implements OnInit {
 
   notificaciones?: any[] = [];
+  notificacionExpandida: string | null = null;
 
   constructor( private authService : AuthService) { }
 
@@ -24,6 +25,7 @@ export class NotificacionesPage implements OnInit {
       if (notificacion) {
         notificacion.estado = 'vista';
       }
+      this.notificacionExpandida = this.notificacionExpandida === id ? null : id;
     } catch (error) {
       console.error('Error al marcar la notificación como vista:', error);
     }

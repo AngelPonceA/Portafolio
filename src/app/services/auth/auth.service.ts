@@ -1,13 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
-import { Router } from '@angular/router'; // Importa el Router
-import { Firestore, collection, query, where, getDocs, addDoc, doc, setDoc, getDoc, onSnapshot, updateDoc, orderBy,  } from '@angular/fire/firestore';
-import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updatePassword, signInWithEmailAndPassword  } from '@angular/fire/auth';
-import { Usuario } from '../../models/usuario.models'; // Asegúrate de que la ruta sea correcta
+import { Router } from '@angular/router';
+import { Firestore, collection, query, where, getDocs, addDoc, doc, setDoc, getDoc, onSnapshot, updateDoc, orderBy } from '@angular/fire/firestore';
+import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updatePassword, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Usuario } from '../../models/usuario.models';
 import { FirebaseError } from 'firebase/app';
 import { catchError, from, Observable, of, switchMap } from 'rxjs';
 import { sendPasswordResetEmail } from '@angular/fire/auth';
-
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +18,7 @@ export class AuthService {
   firestore: Firestore = inject(Firestore);
   auth: Auth = inject(Auth);
 
-  constructor( private nativeStorage: NativeStorage, private router: Router ) { }
+  constructor(private nativeStorage: NativeStorage, private router: Router) { }
 
   async comprobarSesion() {
     try {
@@ -44,42 +43,44 @@ export class AuthService {
   }
 
   async obtenerNumeroVendedor(uid: string) {
-    const ref = doc(this.firestore, `usuarios/${uid}`);
-    const snap = await getDoc(ref);
-    if (snap.exists()) {
-      let data = snap.data();
-      return data['telefono'].replace(/[^\d]/g, '');
+    try {
+      const ref = doc(this.firestore, `usuarios/${uid}`);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        let data = snap.data();
+        return data['telefono'].replace(/[^\d]/g, '');
+      } else {
+        throw new Error('Usuario no encontrado en Firestore.');
+      }
+    } catch (error) {
+      console.error('Error al obtener el número del vendedor:', error);
+      throw error;
     }
-    return undefined;
   }
-
-  obtenerNotificacionesNav() {
-    return from(this.nativeStorage.getItem('id')).pipe(
-      switchMap(uid => {
-        if (!uid || uid === 0) return of(0);
   
+  obtenerNotificacionesNav(): Observable<number> {
+    return new Observable<number>((observer) => {
+      // this.nativeStorage.getItem(this.usuario).then(({ id: uid }) => {
+        const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
         const q = query(
           collection(this.firestore, 'alertas'),
           where('usuario_id', '==', uid),
           where('estado', '==', 'no vista')
         );
-  
-        return new Observable<number>(observer => {
-          const unsubscribe = onSnapshot(q, snap => observer.next(snap.size));
-          return () => unsubscribe();
-        });
-      }),
-      catchError(() => of(0))
-    );
+
+        return onSnapshot(q, (snap) => observer.next(snap.size), (error) => observer.error(error));
+      // }).catch((error) => observer.error(error));
+    });
   }
 
   async obtenerNotificaciones() {
     try {
-      const usuario_id = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuario);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const alertasRef = collection(this.firestore, 'alertas');
       const q = query(
         alertasRef,
-        where('usuario_id', '==', usuario_id),
+        where('usuario_id', '==', uid),
         orderBy('fecha_creacion', 'desc')
       );
       const querySnapshot = await getDocs(q);
@@ -87,7 +88,7 @@ export class AuthService {
       const notificaciones: any[] = [];
       querySnapshot.forEach((doc) => {
         notificaciones.push({ id: doc.id, ...doc.data() });
-      });      
+      });
       return notificaciones;
     } catch (error) {
       console.error('Error al obtener notificaciones:', error);
@@ -104,26 +105,34 @@ export class AuthService {
       throw error;
     }
   }
-  
+
   async login(email: string, clave: string) {
     try {
       const cred = await signInWithEmailAndPassword(this.auth, email, clave);
       const uid = cred.user.uid;
-  
+
       const docRef = doc(this.firestore, 'usuarios', uid);
       const snap = await getDoc(docRef);
-      
+
       if (!snap.exists()) {
-        console.log('No se encontraron las credenciales:', uid);
+        throw new Error('No se encontraron datos del usuario en Firestore.');
       }
-      
+
       console.log('Credenciales ingresadas:', uid);
       const { rol } = snap.data()!;
-      await this.nativeStorage.setItem(this.usuario, { id: uid, rol: rol });
-      this.router.navigate(['/home']);
-
+      // await this.nativeStorage.setItem(this.usuario, { id: uid, rol: rol });
+      // this.router.navigate(['/home']);
     } catch (error) {
-      console.error('Error en login:', error);
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/invalid-credential') {
+          console.error('Credenciales no validas.');
+        } else {
+          console.error('Error en login:', error.message);
+        }
+      } else {
+        console.error('Error inesperado en login:', error);
+      }
+      throw error;
     }
   }
 
@@ -131,7 +140,7 @@ export class AuthService {
     try {
       const cred = await createUserWithEmailAndPassword(this.auth, email, clave);
       const uid = cred.user.uid;
-  
+
       const nuevoUsuario: Usuario = {
         id: uid,
         nombre: nombre,
@@ -141,28 +150,67 @@ export class AuthService {
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
-      await this.nativeStorage.setItem(this.usuario, { id: uid, rol: nuevoUsuario.rol });
+      // await this.nativeStorage.setItem(this.usuario, { id: uid, rol: nuevoUsuario.rol });
       this.router.navigate(['/home']);
       console.log('Usuario registrado y guardado en Firestore:', nuevoUsuario);
-      
     } catch (error) {
-      let err = error as FirebaseError;
-      if (err.code === 'auth/email-already-in-use') {
-        console.error('El correo ya está registrado.');
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/email-already-in-use') {
+          console.error('El correo ya está registrado.');
+        } else {
+          console.error('Error en el registro:', error.message);
+        }
       } else {
-        console.error('Error en el registro:', err.message);
+        console.error('Error inesperado en el registro:', error);
       }
+      throw error;
     }
   }
 
-  recuperarClave(email: string) {
-    return sendPasswordResetEmail(this.auth, email);
+  async recuperarClave(email: string) {
+    return await sendPasswordResetEmail(this.auth, email).catch(error => {
+      console.error('Error al enviar el correo de recuperación:', error.message);
+      throw error;
+    });
+  }
+
+  async cambiarClave(claveActual: string, claveNueva: string) {
+    try {
+      const user = this.auth.currentUser;
+
+      if (!user) {
+        throw new Error('No hay un usuario autenticado.');
+      }
+
+      const credential = EmailAuthProvider.credential(user.email!, claveActual);
+      await reauthenticateWithCredential(user, credential);
+
+      await updatePassword(user, claveNueva);
+
+      return true;
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/wrong-password') {
+          console.error('La contraseña actual es incorrecta.');
+        } else {
+          console.error('Error al cambiar la contraseña:', error.message);
+        }
+      } else {
+        console.error('Error inesperado al cambiar la contraseña:', error);
+      }
+      throw error;
+    }
   }
 
   async logout() {
-    await this.nativeStorage.remove(this.usuario);
-    this.comprobarSesion();
-    console.log('Sesión de usuario eliminada');
+    try {
+      await this.nativeStorage.remove(this.usuario);
+      this.comprobarSesion();
+      console.log('Sesión de usuario eliminada');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+      throw error;
+    }
   }
-
+  
 }

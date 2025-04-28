@@ -1,18 +1,42 @@
 <app-navegacion>
-
   <ion-content>
     <div *ngIf="notificaciones && notificaciones.length > 0; else sinNotificaciones">
       <div class="notificaciones-container">
-        <div *ngFor="let notificacion of notificaciones" (click)="abrirNotificacion(notificacion.id)" class="notificacion-card" [class.no-leido]="notificacion.estado === 'no vista'" [class.leido]="notificacion.estado === 'vista'">
+        <div 
+          *ngFor="let notificacion of notificaciones" 
+          (click)="abrirNotificacion(notificacion.id)" 
+          class="notificacion-card" 
+          [class.no-leido]="notificacion.estado === 'no vista'" 
+          [class.leido]="notificacion.estado === 'vista'"
+        >
           <div class="notificacion-icon">
             <ion-icon name="notifications-outline"></ion-icon>
           </div>
           <div class="notificacion-content">
-            <h3 class="notificacion-titulo">{{ notificacion.titulo }}</h3>
-            <p class="notificacion-descripcion">{{ notificacion.descripcion }}</p>
+            <!-- Título -->
+            <h3 class="notificacion-titulo">
+              <!-- Muestra el título completo si está expandido, de lo contrario, lo trunca -->
+              {{ notificacionExpandida === notificacion.id ? notificacion.titulo : (notificacion.titulo | slice:0:30) + '...' }}
+            </h3>
+            <!-- Descripción -->
+            <p class="notificacion-descripcion">
+              <!-- Muestra la descripción completa si está expandida, de lo contrario, la trunca -->
+              {{ notificacionExpandida === notificacion.id ? notificacion.descripcion : (notificacion.descripcion | slice:0:50) + '...' }}
+            </p>
             <span class="notificacion-fecha">{{ notificacion.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}</span>
           </div>
-          <ion-button fill="clear" color="danger" class="boton-eliminar" (click)="eliminarNotificacion(notificacion.id)">
+
+          <!-- Contenido adicional al expandir -->
+          <div *ngIf="notificacionExpandida === notificacion.id" class="notificacion-detalle">
+            <p>{{ notificacion.detalle }}</p>
+          </div>
+
+          <ion-button 
+            fill="clear" 
+            color="danger" 
+            class="boton-eliminar" 
+            (click)="eliminarNotificacion(notificacion.id); $event.stopPropagation()"
+          >
             <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
         </div>
@@ -27,5 +51,4 @@
       </div>
     </ng-template>
   </ion-content>
-  
 </app-navegacion>

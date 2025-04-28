@@ -4,6 +4,7 @@ import { AlertController, IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-cambioclave',
@@ -20,7 +21,9 @@ export class CambioClavePage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private alertController: AlertController,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
+
   ) {
     this.passwordForm = this.fb.group({
       currentPassword: ['', Validators.required],
@@ -34,7 +37,7 @@ export class CambioClavePage implements OnInit {
       ],
       confirmPassword: ['', Validators.required]
     }, {
-      validators: this.passwordsMatchValidator
+      validators: [this.passwordsMatchValidator, this.currentAndNewPasswordDifferentValidator]
     });
   }
 
@@ -52,15 +55,16 @@ export class CambioClavePage implements OnInit {
     this.confirmPasswordType = this.confirmPasswordType === 'password' ? 'text' : 'password';
   }
 
-  async onSubmit() {
+  async onSubmit(group: any) {
     if (this.passwordForm.valid) {
       const alert = await this.alertController.create({
         header: 'Éxito',
         message: 'Contraseña cambiada correctamente (simulación)',
         buttons: ['OK']
       });
+      await this.authService.cambiarClave(group.currentPassword, group.newPassword);      
       await alert.present();
-      this.router.navigate(['/profile']);
+      this.passwordForm.reset();
     }
   }
 
@@ -69,4 +73,13 @@ export class CambioClavePage implements OnInit {
     const confirmPassword = group.get('confirmPassword')?.value;
     return newPassword === confirmPassword ? null : { passwordsMismatch: true };
   }
+
+  currentAndNewPasswordDifferentValidator(group: FormGroup) {
+    const currentPassword = group.get('currentPassword')?.value;
+    const newPassword = group.get('newPassword')?.value;
+    return currentPassword && newPassword && currentPassword === newPassword
+      ? { currentAndNewPasswordSame: true }
+      : null;
+  }
+
 }
