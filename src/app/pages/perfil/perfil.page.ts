@@ -12,17 +12,15 @@ import { AuthService } from './../../services/auth/auth.service';
 export class PerfilPage implements OnInit {
 
   estado: number = 0;
-
-  usuario: any = {
-    rol: 'invitado',
-    nombre: 'Juan Pérez',
-    correo: 'juanitooficial@gmail.com',
-  }
+  usuario?: any;
 
   constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit( ) {
-  }
+    this.authService.obtenerPerfil().then((usuario) => {
+      this.usuario = usuario;
+    })
+  };
 
   establecerVista() {
     this.authService.obtenerSesion().then(sesion => {
@@ -30,10 +28,6 @@ export class PerfilPage implements OnInit {
         this.estado = sesion.estado;
       }
     });
-  }
-
-  cambiarEstado(){
-    this.usuario.rol = 'usuario';
   }
 
   irARegistro() {
