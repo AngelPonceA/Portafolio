@@ -37,12 +37,17 @@ export class ProductoPage implements OnInit {
     });
   }
 
-
+  async ver(producto: string) {
+    let x = await this.crudService.esFavorito(producto);
+    console.log('estado ' + x);
+    
+  }
 
   async agregarFavorito(producto: string) {
     try {
       await this.crudService.agregarFavorito(producto);
       this.esFavorito = true;
+      this.ver(producto);
     } catch (error) {
       console.error('Error al agregar favorito:', error);
     }
@@ -52,6 +57,7 @@ export class ProductoPage implements OnInit {
     try {
       await this.crudService.eliminarFavorito(producto);
       this.esFavorito = false;
+      this.ver(producto);
     } catch (error) {
       console.error('Error al eliminar favorito:', error);
     }

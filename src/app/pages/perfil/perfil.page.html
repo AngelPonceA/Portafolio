@@ -1,14 +1,14 @@
-<app-navegacion>
+ <app-navegacion>
 
   <ion-content>
 
-    <div class="perfil-container" *ngIf="usuario && usuario.rol != 'invitado'; else invitado">
+    <div class="perfil-container" *ngIf="usuario.rol != 'invitado'; else invitado">
 
       <!-- Información de usuario -->
       <div class="info-usuario">
         <ion-item lines="none">
           <ion-label position="floating">Correo Electrónico</ion-label>
-          <ion-input type="email" value=" {{ usuario.email }} " disabled></ion-input>
+          <ion-input type="email" value=" {{ usuario.correo }} " disabled></ion-input>
         </ion-item>
 
         <ion-item lines="none">
@@ -19,24 +19,19 @@
 
       <!-- Sección de botones (solo visual) -->
       <div class="acciones">
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/cambio-clave']">
+        <ion-button expand="full" class="accion-btn" fill="clear">
           <ion-icon name="key" slot="start"></ion-icon>
           Cambiar Contraseña
         </ion-button>
 
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/cambio-nombre-usuario']">
+        <ion-button expand="full" class="accion-btn" fill="clear">
           <ion-icon name="create" slot="start"></ion-icon>
           Cambiar Nombre de Usuario
         </ion-button>
 
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/historial-compra']">
+        <ion-button expand="full" class="accion-btn" fill="clear">
           <ion-icon name="list" slot="start"></ion-icon>
           Historial de Compras
-        </ion-button>
-
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/historial-ventas']">
-          <ion-icon name="list" slot="start"></ion-icon>
-          Historial de Ventas
         </ion-button>
         
         <ion-button (click)="cerrarSesion()" expand="full" class="accion-btn" fill="solid" color="danger" >
@@ -60,12 +55,14 @@
           <ion-icon name="log-in" slot="start"></ion-icon>
           Ingresar
         </ion-button>
+
+        <ion-button expand="block" fill="solid" (click)="cambiarEstado()">
+          <ion-icon name="log-in" slot="start"></ion-icon>
+          Cambiar Estado = 1
+        </ion-button>
       </div>
     </ng-template>
     
-  
-
-
   </ion-content>
 
 </app-navegacion>
