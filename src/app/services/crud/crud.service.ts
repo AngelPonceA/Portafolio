@@ -117,7 +117,6 @@ export class CrudService {
           producto_titulo: producto['titulo'],
           producto_descripcion: producto['descripcion'],
           etiquetas: producto['etiquetas'] || [],
-          stock: variante['stock'],
         };
       })
     );
