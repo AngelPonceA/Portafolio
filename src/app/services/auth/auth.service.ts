@@ -42,6 +42,26 @@ export class AuthService {
     }
   }
 
+  async obtenerPerfil() {
+    try {
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuario);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      const snap = await getDoc(usuarioRef);
+
+      if (snap.exists()) {
+        const { nombre, email, rol } = snap.data() as { nombre: string; email: string; rol: string };
+        return { nombre, email, rol };
+      } else {
+        console.error('Usuario no encontrado en Firestore.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener el perfil:', error);
+      return null;
+    }
+  }
+
   async obtenerNumeroVendedor(uid: string) {
     try {
       const ref = doc(this.firestore, `usuarios/${uid}`);
@@ -102,6 +122,18 @@ export class AuthService {
       await updateDoc(notificacionRef, { estado: nuevoEstado });
     } catch (error) {
       console.error('Error al actualizar el estado de la notificación:', error);
+      throw error;
+    }
+  }
+
+  async actualizarNombre(nuevoNombre: string) {
+    try {
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuario);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      await updateDoc(usuarioRef, { nombre: nuevoNombre });
+    } catch (error) {
+      console.error('Error al actualizar el nombre de usuario:', error);
       throw error;
     }
   }
