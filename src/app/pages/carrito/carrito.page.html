@@ -9,15 +9,18 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="productos-grid">
+<ion-content>
+  <div *ngIf="productos && productos.length > 0 && productos != undefined; else vacio" class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productos">
-      <img src="{{ producto.imagen }}" />
+      <img src="{{ producto.imagen }}" (click)="verDetalle(producto.variante_id)"/>
       <ion-card-content>
         <div class="nombre">{{ producto.nombre }}</div>
-        <div class="precio-oferta">${{ producto.precio }}</div>
-        <div class="precio-original-tachado">${{ producto.precio }}</div>
-        <div class="descripcion">Descripción corta del producto que es interesante para los usuarios.</div>
+        <div *ngIf="!producto.precio_oferta ; else oferta" class="precio">${{ producto.precio | number }} CLP</div>
+        <ng-template #oferta>
+          <div class="precio-oferta">${{ producto.precio_oferta | number }} CLP</div>
+          <div class="precio-original-tachado">${{ producto.precio | number }} CLP</div>
+        </ng-template>
+          <div class="descripcion">{{ producto.descripcion }}</div>
 
         <div class="producto-controles">
           <ion-button fill="outline" color="medium" (click)="restarProducto(producto.id)">
@@ -43,4 +46,14 @@
     <!-- Contenedor del botón de PayPal -->
     <div id="paypal-button-container"></div>
   </div>
+
+
+  <ng-template #vacio>
+    <div class="vacio-container">
+      <ion-icon name="cart-outline"></ion-icon>
+      <h2>Carrito Vacío</h2>
+      <p>Agrega productos a tu carrito para comprarlos.</p>
+    </div>
+  </ng-template>
+
 </ion-content>

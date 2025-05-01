@@ -6,15 +6,6 @@
   
     <div class="form-container">
       <form [formGroup]="usernameForm" (ngSubmit)="onSubmit()">
-        <!-- Nombre de usuario actual -->
-        <ion-item>
-          <ion-input
-            placeholder="{{ currentUsername }}"
-            [disabled]="true"
-          ></ion-input>
-        </ion-item>
-  
-        <!-- Nuevo nombre de usuario -->
         <ion-item>
           <ion-input
             placeholder="Ingresa tú nuevo nombre de usuario"

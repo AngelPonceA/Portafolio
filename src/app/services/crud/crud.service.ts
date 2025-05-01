@@ -23,6 +23,44 @@ export class CrudService {
     return collectionData(variantesRef, { idField: 'id' }) as Observable<Variante[]>;
   }
 
+  async buscarVarianteId(variante_id: string) {
+    try {
+      // Referencia al documento de la variante en Firestore
+      const varianteRef = doc(this.firestore, 'variantes', variante_id);
+      const varianteSnap = await getDoc(varianteRef);
+  
+      if (!varianteSnap.exists()) {
+        console.error(`La variante con ID ${variante_id} no existe.`);
+        return null;
+      }
+  
+      const variante = varianteSnap.data();
+  
+      const productoRef = doc(this.firestore, 'productos', variante['producto_id']);
+      const productoSnap = await getDoc(productoRef);
+  
+      if (!productoSnap.exists()) {
+        console.error(`El producto con ID ${variante['producto_id']} no existe.`);
+        return null;
+      }
+  
+      const producto = productoSnap.data();
+  
+      return {
+        variante_id: variante_id,
+        producto_id: variante['producto_id'],
+        producto_titulo: producto['titulo'],
+        producto_descripcion: producto['descripcion'],
+        precio: variante['precio'],
+        stock: variante['stock'],
+        imagen: variante['imagen'],
+      };
+    } catch (error) {
+      console.error('Error al buscar la variante por ID:', error);
+      return null;
+    }
+  }
+
   obtenerOfertas(): Observable<Oferta[]> {
     const ofertaRef = collection(this.firestore, 'ofertas');
     return collectionData(ofertaRef, { idField: 'id' }) as Observable<Oferta[]>;
@@ -81,50 +119,67 @@ export class CrudService {
     );
   }
 
-  obtenerDetalleVariante(variante_id: string) {
+async obtenerDetalleVariante(variante_id: string) {
+  try {
     const varianteRef = doc(this.firestore, 'variantes', variante_id);
-    return from(getDoc(varianteRef)).pipe(
-      switchMap(async (varianteSnap) => {
-        if (!varianteSnap.exists()) return null;
+    const varianteSnap = await getDoc(varianteRef);
 
-        const variante = varianteSnap.data();
-        const productoSnap = await getDoc(doc(this.firestore, 'productos', variante['producto_id']));
-        if (!productoSnap.exists()) return null;
+    if (!varianteSnap.exists()) {
+      console.error(`La variante con ID ${variante_id} no existe.`);
+      return null;
+    }
 
-        const producto = productoSnap.data();
-        const ofertaSnap = await getDocs(query(
-          collection(this.firestore, 'ofertas'),
-          where('variante_id', '==', variante_id)
-        ));
+    const variante = varianteSnap.data();
 
-        let precio_oferta = null;
-        if (!ofertaSnap.empty) {
-          ofertaSnap.forEach(doc => {
-            const oferta = doc.data();
-            const now = new Date();
-            if (now >= oferta['fecha_inicio'].toDate() && now <= oferta['fecha_fin'].toDate()) {
-              precio_oferta = oferta['precio_oferta'];
-            }
-          });
-        }
+    const productoRef = doc(this.firestore, 'productos', variante['producto_id']);
+    const productoSnap = await getDoc(productoRef);
 
-        return {
-          variante_id: variante_id,
-          usuario_id: producto['usuario_id'],
-          precio: variante['precio'],
-          precio_oferta,
-          imagen: variante['imagen'],
-          producto_titulo: producto['titulo'],
-          producto_descripcion: producto['descripcion'],
-          etiquetas: producto['etiquetas'] || [],
-        };
-      })
+    if (!productoSnap.exists()) {
+      console.error(`El producto relacionado con la variante ${variante_id} no existe.`);
+      return null;
+    }
+
+    const producto = productoSnap.data();
+
+    const ofertaQuery = query(
+      collection(this.firestore, 'ofertas'),
+      where('variante_id', '==', variante_id)
     );
+    const ofertaSnap = await getDocs(ofertaQuery);
+
+    let precio_oferta = null;
+
+    if (!ofertaSnap.empty) {
+      ofertaSnap.forEach((doc) => {
+        const oferta = doc.data();
+        const now = new Date();
+
+        if (now >= oferta['fecha_inicio'].toDate() && now <= oferta['fecha_fin'].toDate()) {
+          precio_oferta = oferta['precio_oferta'];
+        }
+      });
+    }
+
+    return {
+      variante_id: variante_id,
+      producto_id: variante['producto_id'],
+      producto_titulo: producto['titulo'],
+      producto_descripcion: producto['descripcion'],
+      etiquetas: producto['etiquetas'] || [],
+      precio: variante['precio'],
+      precio_oferta: precio_oferta,
+      stock: variante['stock'],
+      imagen: variante['imagen'],
+    };
+  } catch (error) {
+    console.error('Error al obtener los detalles de la variante:', error);
+    return null;
   }
+}
   
   obtenerFavoritosConDetalles() {
-    // const uid = this.nativeStorage.getItem('id');
-    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const favoritosRef = collection(this.firestore, 'favoritos');
     const q = query(favoritosRef, where('usuario_id', '==', uid));
   
@@ -171,7 +226,7 @@ export class CrudService {
 
   async obtenerFavoritoId(variante_id: string) {
     try {
-      // const uid = this.nativeStorage.getItem('id');
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const favoritosRef = collection(this.firestore, 'favoritos');
       const q = query(
@@ -204,8 +259,8 @@ export class CrudService {
 
   async agregarFavorito(variante_id: string) {
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
-    // const uid = await this.nativeStorage.getItem('id');
-    const favoritosRef = collection(this.firestore, 'favoritos');
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      const favoritosRef = collection(this.firestore, 'favoritos');
     const nuevoFavoritoRef = doc(favoritosRef);
     const nuevoFavorito = {
       usuario_id: uid,
@@ -217,7 +272,7 @@ export class CrudService {
   async esFavorito(variante_id: string) {
     try {
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
-      // const uid = await this.nativeStorage.getItem('id');
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
       const favoritosRef = collection(this.firestore, 'favoritos');
       const q = query(favoritosRef, where('usuario_id', '==', uid), where('variante_id', '==', variante_id));
       const querySnapshot = await getDocs(q);

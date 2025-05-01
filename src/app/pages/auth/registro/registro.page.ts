@@ -20,7 +20,7 @@ export class RegistroPage implements OnInit {
       name: ['', [Validators.required, Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'), Validators.maxLength(30)]],
       username: ['', [Validators.required, Validators.maxLength(30)]],
       email: ['', [Validators.required, Validators.email, Validators.maxLength(30)]],
-      number: ['', [Validators.required]],
+      number: ['', [Validators.required, Validators.pattern('^[0-9]{11}$')]],
       password: [
         '',
         [
@@ -34,7 +34,6 @@ export class RegistroPage implements OnInit {
   }
 
   ngOnInit() {}
-
   togglePasswordType() {
     this.passwordType = this.passwordType === 'password' ? 'text' : 'password';
   }

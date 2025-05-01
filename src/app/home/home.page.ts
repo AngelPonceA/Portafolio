@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CrudService } from '../services/crud/crud.service';
 import { Observable } from 'rxjs';
-import { Producto } from '../models/producto.models';
-import { ProductoExtendido } from '../models/producto_ext.models';
 
 @Component({
   selector: 'app-home',

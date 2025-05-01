@@ -13,7 +13,7 @@ import { sendPasswordResetEmail } from '@angular/fire/auth';
 })
 export class AuthService {
 
-  private usuario = "usuario";
+  private usuarioStorage = "usuario";
 
   firestore: Firestore = inject(Firestore);
   auth: Auth = inject(Auth);
@@ -22,22 +22,42 @@ export class AuthService {
 
   async comprobarSesion() {
     try {
-      const sesion = await this.nativeStorage.getItem(this.usuario);
+      const sesion = await this.nativeStorage.getItem(this.usuarioStorage);
       console.log('Sesión existente:', sesion);
     } catch {
       const sesion = { id: 0, rol: 'invitado' };
-      await this.nativeStorage.setItem(this.usuario, sesion);
+      await this.nativeStorage.setItem(this.usuarioStorage, sesion);
       console.log('Sesión invitado creada:', sesion);
     }
   }
 
   async obtenerSesion() {
     try {
-      const sesion = await this.nativeStorage.getItem(this.usuario);
+      const sesion = await this.nativeStorage.getItem(this.usuarioStorage);
       console.log('Sesión existente:', sesion);
       return sesion;
     } catch (error) {
       console.error('Error al obtener la sesión:', error);
+      return null;
+    }
+  }
+
+  async obtenerPerfil() {
+    try {
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      const snap = await getDoc(usuarioRef);
+
+      if (snap.exists()) {
+        const { nombre, email, rol } = snap.data() as { nombre: string; email: string; rol: string };
+        return { nombre, email, rol };
+      } else {
+        console.error('Usuario no encontrado en Firestore.');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error al obtener el perfil:', error);
       return null;
     }
   }
@@ -60,7 +80,7 @@ export class AuthService {
   
   obtenerNotificacionesNav(): Observable<number> {
     return new Observable<number>((observer) => {
-      // this.nativeStorage.getItem(this.usuario).then(({ id: uid }) => {
+      // this.nativeStorage.getItem(this.usuarioStorage).then(({ id: uid }) => {
         const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
         const q = query(
           collection(this.firestore, 'alertas'),
@@ -75,7 +95,7 @@ export class AuthService {
 
   async obtenerNotificaciones() {
     try {
-      // const { id: uid } = await this.nativeStorage.getItem(this.usuario);
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const alertasRef = collection(this.firestore, 'alertas');
       const q = query(
@@ -106,6 +126,18 @@ export class AuthService {
     }
   }
 
+  async actualizarNombre(nuevoNombre: string) {
+    try {
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      await updateDoc(usuarioRef, { nombre: nuevoNombre });
+    } catch (error) {
+      console.error('Error al actualizar el nombre de usuario:', error);
+      throw error;
+    }
+  }
+
   async login(email: string, clave: string) {
     try {
       const cred = await signInWithEmailAndPassword(this.auth, email, clave);
@@ -120,7 +152,7 @@ export class AuthService {
 
       console.log('Credenciales ingresadas:', uid);
       const { rol } = snap.data()!;
-      // await this.nativeStorage.setItem(this.usuario, { id: uid, rol: rol });
+      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol });
       // this.router.navigate(['/home']);
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -150,7 +182,7 @@ export class AuthService {
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
-      // await this.nativeStorage.setItem(this.usuario, { id: uid, rol: nuevoUsuario.rol });
+      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: nuevoUsuario.rol });
       this.router.navigate(['/home']);
       console.log('Usuario registrado y guardado en Firestore:', nuevoUsuario);
     } catch (error) {
@@ -204,7 +236,7 @@ export class AuthService {
 
   async logout() {
     try {
-      await this.nativeStorage.remove(this.usuario);
+      await this.nativeStorage.remove(this.usuarioStorage);
       this.comprobarSesion();
       console.log('Sesión de usuario eliminada');
     } catch (error) {
