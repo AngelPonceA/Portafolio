@@ -75,6 +75,10 @@ const routes: Routes = [
     path: 'historial-compra',
     loadChildren: () => import('./pages/historial-compra/historial-compra.module').then( m => m.HistorialCompraPageModule)
   },
+  {
+    path: 'boleta',
+    loadChildren: () => import('./pages/boleta/boleta.module').then( m => m.BoletaPageModule)
+  },
 
 ];
 
