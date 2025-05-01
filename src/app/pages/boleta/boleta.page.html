@@ -1,0 +1,51 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="header-toolbar">
+    <ion-title>Boleta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="boleta-content">
+  <div class="boleta-container">
+    <!-- Encabezado de la boleta -->
+    <div class="boleta-header">
+      <h1>Gracias por tu compra</h1>
+      <p>Pedido realizado el <span id="fechaPedido">01/01/2025</span></p>
+      <p>Número de orden: <span id="numeroOrden">MEG123456</span></p>
+    </div>
+
+    <!-- Información del cliente -->
+    <div class="boleta-cliente">
+      <h2>Información del Cliente</h2>
+      <p><strong>Nombre:</strong> Juan Pérez</p>
+      <p><strong>Email:</strong> juan.perez&#64;example.com</p>
+    </div>
+
+    <!-- Detalle de los productos -->
+    <div class="boleta-productos">
+      <h2>Detalle de Productos</h2>
+      <ion-card *ngFor="let producto of productos">
+        <ion-card-content>
+          <div class="producto-item">
+            <div class="producto-info">
+              <h3>{{ producto.nombre }}</h3>
+              <p><strong>ID Variante:</strong> {{ producto.idVariante }}</p>
+              <p><strong>Cantidad:</strong> {{ producto.cantidad }}</p>
+              <p><strong>Precio Unitario:</strong> ${{ producto.precio }}</p>
+              <p><strong>Subtotal:</strong> ${{ producto.cantidad * producto.precio }}</p>
+              <!-- Botón para iniciar un reembolso -->
+              <ion-button color="danger" fill="outline" (click)="solicitarReembolso(producto.idVariante)">
+                Solicitar Reembolso
+              </ion-button>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Total de la compra -->
+    <div class="boleta-total">
+      <h2>Total:</h2>
+      <p><strong>${{ obtenerTotalBoleta() }}</strong></p>
+    </div>
+  </div>
+</ion-content>

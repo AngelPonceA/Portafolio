@@ -1,52 +1,52 @@
 import { Injectable } from '@angular/core';
-import * as paypal from '@paypal/checkout-server-sdk';
+
+declare const paypal: any; // Uso del SDK global de PayPal cargado en index.html
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PaypalService {
+  constructor() {}
 
-  private environment: paypal.core.SandboxEnvironment;
-  private client: paypal.core.PayPalHttpClient;
-
-  constructor() {
-    // Se reemplaza por mis credenciales de paypal developer
-    this.environment = new paypal.core.SandboxEnvironment('AWSo23DumdN9HGOcQAt10HrzQ8acey1LyUpHATJ5uO4ivs-lAMh-Tol2vipHGjgYV6LbxmP3LvgGFIez', 'EAZLFHQl-MSCsWZxqvJthr0T5Cn8FSyG4c9YqFYnMi7XaBlAtm9xH0TbIBWiPdnsAnnh6DNFdlBjvSvf');
-    this.client = new paypal.core.PayPalHttpClient(this.environment);
-  }
-
-  async createOrder(): Promise<any> {
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.prefer("return=representation");
-    request.requestBody({
-      intent: 'CAPTURE',
-      purchase_units: [{
-        amount: {
-          currency_code: 'USD',
-          value: '10.00' 
+  /**
+   * Inicializa el botón de PayPal
+   * @param amount Monto total de la compra en USD
+   * @param onApproveCallback Callback que se ejecuta al aprobar el pago
+   * @param onErrorCallback Callback que se ejecuta si ocurre un error
+   */
+  initializePayPalButton(
+    amount: number,
+    onApproveCallback: (details: any) => void,
+    onErrorCallback?: (error: any) => void
+  ): void {
+    paypal.Buttons({
+      createOrder: (data: any, actions: any) => {
+        // Crear la orden en PayPal
+        return actions.order.create({
+          purchase_units: [
+            {
+              amount: {
+                value: amount.toFixed(2), // Convierte el monto a un formato válido para USD
+                currency_code: 'USD',
+              },
+            },
+          ],
+        });
+      },
+      onApprove: (data: any, actions: any) => {
+        // Capturar el pago cuando sea aprobado
+        return actions.order.capture().then((details: any) => {
+          console.log('Pago exitoso:', details);
+          onApproveCallback(details); // Ejecutar la función de aprobación proporcionada
+        });
+      },
+      onError: (err: any) => {
+        console.error('Error en PayPal:', err);
+        if (onErrorCallback) {
+          onErrorCallback(err); // Ejecutar la función de manejo de error si se proporciona
         }
-      }]
-    });
-
-    try {
-      const response = await this.client.execute(request);
-      return response.result;
-    } catch (error) {
-      console.error('Error al crear la orden:', error);
-      throw error;
-    }
-  }
-
-  async captureOrder(orderId: string): Promise<any> {
-    const request = new paypal.orders.OrdersCaptureRequest(orderId);
-    request.requestBody({});
-
-    try {
-      const response = await this.client.execute(request);
-      return response.result;
-    } catch (error) {
-      console.error('Error al capturar la orden:', error);
-      throw error;
-    }
+      },
+    }).render('#paypal-button-container'); // Renderizar el botón en el contenedor especificado
   }
 }
+
