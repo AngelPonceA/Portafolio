@@ -1,5 +1,8 @@
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CrudService } from 'src/app/services/crud/crud.service';
+import { timeInterval } from 'rxjs';
 
 declare const paypal: any; // Importa el SDK global de PayPal
 
@@ -10,39 +13,54 @@ declare const paypal: any; // Importa el SDK global de PayPal
   standalone: false
 })
 export class CarritoPage implements OnInit {
-  productos = [
-    {
-      id: 1,
-      nombre: 'Botas',
-      precio: 50000,
-      cantidad: 1,
-      stock: 5,
-      imagen: 'https://imgs.search.brave.com/VUlm4eamkknVVPCZ1wIZRKifh8YVPS19JnhzVf8_EiA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jYXRl/cnBpbGxhcnN2LmNv/bS9jZG4vc2hvcC9m/aWxlcy8zMDA3MTA2/Nl80MDY1NmEwMC05/NDFiLTQ1YWMtOTU5/Ny05Mzc1MTAyMmMx/MmFfMTAyNHgxMDI0/LmpwZz92PTE3NDA3/MjcxNzk',
-    },
-    {
-      id: 2,
-      nombre: 'Botas 2',
-      precio: 50000,
-      cantidad: 1,
-      stock: 5,
-      imagen: 'https://imgs.search.brave.com/VUlm4eamkknVVPCZ1wIZRKifh8YVPS19JnhzVf8_EiA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jYXRl/cnBpbGxhcnN2LmNv/bS9jZG4vc2hvcC9m/aWxlcy8zMDA3MTA2/Nl80MDY1NmEwMC05/NDFiLTQ1YWMtOTU5/Ny05Mzc1MTAyMmMx/MmFfMTAyNHgxMDI0/LmpwZz92PTE3NDA3/MjcxNzk',
-    },
-  ];
 
-  totalAmount: number = 0; // Total calculado del carrito
-
-  constructor(private router: Router) {}
-
-  ngOnInit(): void {
+  productos: any[] = [];
+  totalAmount: number = 0;
+  
+  constructor(private router: Router, private crudService: CrudService, private authService: AuthService) {}
+  
+  async ngOnInit() {
+    await this.agregarProductoAlCarrito('QESMssNIMt49iO8e4cgC');
+    await this.agregarProductoAlCarrito('l15FYjMuUnyP4MlTP1IT');
     this.calculateTotalAmount(); // Calcula el total inicial
     this.initializePayPalButton(); // Inicia el botón de PayPal
+  }    
+
+  ngAfterViewInit() {
+    this.initializePayPalButton();
   }
 
-  /**
-   * Resta la cantidad de un producto
-   * @param id El ID del producto
-   */
-  restarProducto(id: number): void {
+  verDetalle(variante_id: string) {
+    this.router.navigate(['/producto'], { state: { variante_id } });
+  }
+
+  async agregarProductoAlCarrito(variante_id: string) {
+    const detalleVariante = await this.crudService.obtenerDetalleVariante(variante_id);
+  
+    if (detalleVariante) {
+      console.log('Detalles de la variante:', detalleVariante);
+  
+      this.productos.push({
+        id: detalleVariante.variante_id,
+        nombre: detalleVariante.producto_titulo,
+        descripcion: detalleVariante.producto_descripcion,
+        precio: detalleVariante.precio,
+        variante_id: detalleVariante.variante_id,
+        precio_oferta: detalleVariante.precio_oferta,
+        stock: detalleVariante.stock,
+        imagen: detalleVariante.imagen,
+        cantidad: 1,
+      });
+  
+      this.calculateTotalAmount();
+
+      
+    } else {
+      console.error('No se pudo obtener la variante.');
+    }
+  }
+
+  restarProducto(id: number) {
     const producto = this.productos.find((p) => p.id === id);
     if (producto && producto.cantidad > 1) {
       producto.cantidad--;
@@ -50,11 +68,7 @@ export class CarritoPage implements OnInit {
     }
   }
 
-  /**
-   * Aumenta la cantidad de un producto
-   * @param id El ID del producto
-   */
-  sumarProducto(id: number): void {
+  sumarProducto(id: number) {
     const producto = this.productos.find((p) => p.id === id);
     if (producto && producto.stock >= producto.cantidad + 1) {
       producto.cantidad++;
@@ -62,63 +76,38 @@ export class CarritoPage implements OnInit {
     }
   }
 
-  /**
-   * Elimina un producto del carrito
-   * @param id El ID del producto
-   */
-  quitarProducto(id: number): void {
+  quitarProducto(id: number) {
     this.productos = this.productos.filter((p) => p.id !== id);
     this.calculateTotalAmount();
   }
 
-  /**
-   * Calcula el total del carrito
-   */
-  calculateTotalAmount(): void {
-    this.totalAmount = this.productos.reduce(
+  async calculateTotalAmount() {
+    this.totalAmount = await this.productos.reduce(
       (total, p) => total + this.obtenerTotalProducto(p),
       0
     );
   }
 
-  /**
-   * Obtiene el subtotal de un producto
-   * @param producto Objeto del producto
-   * @returns Subtotal del producto
-   */
-  obtenerTotalProducto(producto: any): number {
+  obtenerTotalProducto(producto: any) {
     return producto.precio * producto.cantidad;
   }
 
-  /**
-   * Retorna el total calculado del carrito
-   * @returns Total del carrito
-   */
-  obtenerTotalCarrito(): number {
-    return this.totalAmount;
+  obtenerTotalCarrito() {
+     return this.totalAmount;
   }
 
-  /**
-   * Pagar todo (solo muestra el total actual)
-   */
-  pagarTodo(): void {
+  pagarTodo() {
     console.log(`Total del carrito: $${this.totalAmount.toFixed(2)}. Procesando pago...`);
   }
 
-  /**
-   * Inicializa el botón de PayPal
-   */
-  initializePayPalButton(): void {
-    // Validar que el monto sea mayor a cero
+  initializePayPalButton() {
+
     if (this.totalAmount <= 0) {
-      console.error('El monto total debe ser mayor a cero para proceder con el pago.');
-      alert('Tu carrito está vacío. Agrega productos para pagar.');
       return;
     }
 
     paypal.Buttons({
       createOrder: (data: any, actions: any) => {
-        // Crear orden en PayPal usando el monto total del carrito
         return actions.order.create({
           purchase_units: [
             {
@@ -143,23 +132,17 @@ export class CarritoPage implements OnInit {
         console.error('Error durante el pago:', err);
         alert('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
       },
-    }).render('#paypal-button-container'); // Renderiza el botón PayPal en el contenedor
+    }).render('#paypal-button-container');
   }
 
-  /**
-   * Limpia el carrito después de un pago exitoso
-   */
+
   limpiarCarrito(): void {
-    this.productos = []; // Vacía el carrito después del pago
+    this.productos = []; 
     this.calculateTotalAmount();
-    this.router.navigate(['/']); // Redirige a la página principal
   }
 
-  /**
-   * Vuelve a la página anterior
-   */
-  volverAtras(): void {
-    this.router.navigate(['/']); // Navega a la página anterior
+  volverAtras()  {
+    this.router.navigate(['/home']);
   }
 }
 

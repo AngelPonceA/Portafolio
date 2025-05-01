@@ -16,16 +16,18 @@ export class ProductoPage implements OnInit {
   producto?: any;
   favoritos: any[] = [];
   esFavorito?: any;
-
+  cantidadOpciones: number[] = [];
+  opcionStock: number = 1;
+  
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService) {}
     
   async ngOnInit() {
     const variante_id = await this.router.getCurrentNavigation()?.extras?.state?.['variante_id'];
     if (variante_id) {
-      this.crudService.obtenerDetalleVariante(variante_id).subscribe(data => {
-        this.producto = data;        
+      this.crudService.obtenerDetalleVariante(variante_id).then(data => {
+        this.producto = data;    
+        this.cantidadOpciones = Array.from({ length: this.producto.stock }, (_, i) => i + 1);
       });
-
       this.esFavorito = await this.crudService.esFavorito(variante_id);
     }
   }
@@ -37,27 +39,32 @@ export class ProductoPage implements OnInit {
     });
   }
 
-  async ver(producto: string) {
-    let x = await this.crudService.esFavorito(producto);
-    console.log('estado ' + x);
-    
+  mostrar(){
+    console.log(this.opcionStock);
+    setInterval(() => this.mostrar(), 20000);
+  }
+
+  cambiarOpcion(stock: number){
+    this.opcionStock = stock;
   }
 
   async agregarFavorito(producto: string) {
     try {
       await this.crudService.agregarFavorito(producto);
       this.esFavorito = true;
-      this.ver(producto);
     } catch (error) {
       console.error('Error al agregar favorito:', error);
     }
+  }
+
+  agregarAlCarrito(producto: string) {
+
   }
   
   async eliminarFavorito(producto: string) {
     try {
       await this.crudService.eliminarFavorito(producto);
       this.esFavorito = false;
-      this.ver(producto);
     } catch (error) {
       console.error('Error al eliminar favorito:', error);
     }
