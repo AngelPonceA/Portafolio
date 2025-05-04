@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { timeInterval } from 'rxjs';
+import { CarritoService } from 'src/app/services/carrito/carrito.service';
 
 declare const paypal: any; // Importa el SDK global de PayPal
 
@@ -17,17 +18,15 @@ export class CarritoPage implements OnInit {
   productos: any[] = [];
   totalAmount: number = 0;
   
-  constructor(private router: Router, private crudService: CrudService, private authService: AuthService) {}
+  constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
   
   async ngOnInit() {
     await this.agregarProductoAlCarrito('QESMssNIMt49iO8e4cgC');
     await this.agregarProductoAlCarrito('l15FYjMuUnyP4MlTP1IT');
-    this.calculateTotalAmount(); // Calcula el total inicial
-    this.initializePayPalButton(); // Inicia el botón de PayPal
-  }    
+    await this.agregarProductoAlCarrito('4eZNvQb9xrtVmXJlxNla');
 
-  ngAfterViewInit() {
-    this.initializePayPalButton();
+    await this.calculateTotalAmount();
+    this.iniciarBotonPaypal(); 
   }
 
   verDetalle(variante_id: string) {
@@ -38,15 +37,16 @@ export class CarritoPage implements OnInit {
     const detalleVariante = await this.crudService.obtenerDetalleVariante(variante_id);
   
     if (detalleVariante) {
-      console.log('Detalles de la variante:', detalleVariante);
   
       this.productos.push({
-        id: detalleVariante.variante_id,
-        nombre: detalleVariante.producto_titulo,
+        variante_id: detalleVariante.variante_id,
+        vendedor_id: detalleVariante.vendedor_id,
+        producto_titulo: detalleVariante.producto_titulo,
         descripcion: detalleVariante.producto_descripcion,
         precio: detalleVariante.precio,
-        variante_id: detalleVariante.variante_id,
         precio_oferta: detalleVariante.precio_oferta,
+        atributo: detalleVariante.atributo,
+        estado: detalleVariante.estado,
         stock: detalleVariante.stock,
         imagen: detalleVariante.imagen,
         cantidad: 1,
@@ -54,30 +54,29 @@ export class CarritoPage implements OnInit {
   
       this.calculateTotalAmount();
 
-      
     } else {
       console.error('No se pudo obtener la variante.');
     }
   }
 
-  restarProducto(id: number) {
-    const producto = this.productos.find((p) => p.id === id);
+  restarProducto(variante_id: string) {
+    const producto = this.productos.find((p) => p.variante_id === variante_id);
     if (producto && producto.cantidad > 1) {
       producto.cantidad--;
       this.calculateTotalAmount();
     }
   }
 
-  sumarProducto(id: number) {
-    const producto = this.productos.find((p) => p.id === id);
+  sumarProducto(variante_id: string) {
+    const producto = this.productos.find((p) => p.variante_id === variante_id);
     if (producto && producto.stock >= producto.cantidad + 1) {
       producto.cantidad++;
-      this.calculateTotalAmount();
-    }
+      this.calculateTotalAmount();      
+    }    
   }
 
-  quitarProducto(id: number) {
-    this.productos = this.productos.filter((p) => p.id !== id);
+  quitarProducto(variante_id: string) {
+    this.productos = this.productos.filter((p) => p.variante_id != variante_id);
     this.calculateTotalAmount();
   }
 
@@ -89,30 +88,21 @@ export class CarritoPage implements OnInit {
   }
 
   obtenerTotalProducto(producto: any) {
-    return producto.precio * producto.cantidad;
+    return (producto.precio_oferta || producto.precio) * producto.cantidad;
   }
 
   obtenerTotalCarrito() {
-     return this.totalAmount;
+    return this.totalAmount;
   }
 
-  pagarTodo() {
-    console.log(`Total del carrito: $${this.totalAmount.toFixed(2)}. Procesando pago...`);
-  }
-
-  initializePayPalButton() {
-
-    if (this.totalAmount <= 0) {
-      return;
-    }
+  iniciarBotonPaypal() {
 
     paypal.Buttons({
       createOrder: (data: any, actions: any) => {
         return actions.order.create({
           purchase_units: [
-            {
-              amount: {
-                value: (this.totalAmount / 1000).toFixed(2), // Conversión de CLP a USD si aplica
+            { amount: {
+                value: (this.totalAmount / 1000).toFixed(2),
                 currency_code: 'USD',
               },
             },
@@ -120,15 +110,14 @@ export class CarritoPage implements OnInit {
         });
       },
       onApprove: (data: any, actions: any) => {
-        // Capturar pago aprobado por el usuario
         return actions.order.capture().then((details: any) => {
+          this.cartService.registrarCompra(this.productos, details);
           console.log('Pago exitoso:', details);
-          alert(`Pago realizado por ${details.payer.name.given_name}.`);
-          this.limpiarCarrito(); // Limpia el carrito después del pago
+          this.iniciarBotonPaypal();
+          this.limpiarCarrito(); 
         });
       },
       onError: (err: any) => {
-        // Manejo de errores
         console.error('Error durante el pago:', err);
         alert('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
       },
@@ -136,7 +125,7 @@ export class CarritoPage implements OnInit {
   }
 
 
-  limpiarCarrito(): void {
+  limpiarCarrito() {
     this.productos = []; 
     this.calculateTotalAmount();
   }

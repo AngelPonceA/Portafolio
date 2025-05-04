@@ -44,8 +44,23 @@
           <ion-icon name="cart-outline" slot="start"></ion-icon>
           Carrito
         </ion-button>
+        
       </div>
     </ion-card>
+    
+    <div class="pago-container">
+      <div class="total-container">
+        <span class="total-text">Total a pagar:</span>
+        <span class="total-amount">${{ calcularTotal() | number }} CLP</span>
+      </div>
+      <div class="paypal-button-container">
+        <ion-button expand="block" color="tertiary" *ngIf="!mostrarPaypal" (click)="iniciarBotonPaypal()">
+          <ion-icon name="card-outline" slot="start"></ion-icon>
+          Pagar con PayPal
+        </ion-button>
+        <div id="paypal-button-container"></div>
+      </div>
+    </div>
 
     <div class="producto-detalles">
       <h3>Descripción del producto</h3>
@@ -58,6 +73,6 @@
         </div>
       </div>
     </div>
-
+    
   </div>
 </app-navegacion>

@@ -85,26 +85,10 @@ ion-content {
   }
 }
 
-.pagar-todo {
-  padding: 5%;
-}
-
-.pagar-button {
-  --background: #5d3e2c;
-  --color: white;
-  border-radius: 10px;
-  margin-bottom: 15px; /* Añadido para separar el botón de PayPal */
-}
-
-.paypal-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 10px;
-  background-color: #ffffff; /* Fondo blanco para destacar el botón */
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 15px; /* Espaciado desde el botón "Pagar Todo" */
+.pagar {
+  text-align: center;
+  background-color: white;
+  padding: 0 5% 5% 5%;
 }
 
 #paypal-button-container {
@@ -157,4 +141,15 @@ ion-button:hover {
   font-size: 3rem;
   color: #d3d3d3; /* Ícono gris claro */
   margin-bottom: 20px;
+}
+
+.boton-paypal{
+  display: flex; 
+  text-align: center; 
+  justify-content: center; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+  background-color: white; 
+  border-radius: 1.2rem; 
+  padding: 5%; 
+  margin: 0 5% 5% 5%;
 }
