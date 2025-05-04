@@ -23,44 +23,6 @@ export class CrudService {
     return collectionData(variantesRef, { idField: 'id' }) as Observable<Variante[]>;
   }
 
-  async buscarVarianteId(variante_id: string) {
-    try {
-      // Referencia al documento de la variante en Firestore
-      const varianteRef = doc(this.firestore, 'variantes', variante_id);
-      const varianteSnap = await getDoc(varianteRef);
-  
-      if (!varianteSnap.exists()) {
-        console.error(`La variante con ID ${variante_id} no existe.`);
-        return null;
-      }
-  
-      const variante = varianteSnap.data();
-  
-      const productoRef = doc(this.firestore, 'productos', variante['producto_id']);
-      const productoSnap = await getDoc(productoRef);
-  
-      if (!productoSnap.exists()) {
-        console.error(`El producto con ID ${variante['producto_id']} no existe.`);
-        return null;
-      }
-  
-      const producto = productoSnap.data();
-  
-      return {
-        variante_id: variante_id,
-        producto_id: variante['producto_id'],
-        producto_titulo: producto['titulo'],
-        producto_descripcion: producto['descripcion'],
-        precio: variante['precio'],
-        stock: variante['stock'],
-        imagen: variante['imagen'],
-      };
-    } catch (error) {
-      console.error('Error al buscar la variante por ID:', error);
-      return null;
-    }
-  }
-
   obtenerOfertas(): Observable<Oferta[]> {
     const ofertaRef = collection(this.firestore, 'ofertas');
     return collectionData(ofertaRef, { idField: 'id' }) as Observable<Oferta[]>;
@@ -105,7 +67,8 @@ export class CrudService {
     return this.obtenerProductosConVarianteYOferta().pipe(
       map((productosExtendidos) => {
         // Filtrar productos que no tienen oferta activa
-        return productosExtendidos.filter(item => !item.oferta || item.oferta.precio_oferta === 0);
+        const now = new Date();
+        return productosExtendidos.filter(item => !item.oferta || now < item.oferta.fecha_inicio.toDate() || now > item.oferta.fecha_fin.toDate() );
       })
     );
   }
@@ -114,7 +77,8 @@ export class CrudService {
     return this.obtenerProductosConVarianteYOferta().pipe(
       map((productosExtendidos) => {
         // Filtrar productos que tienen una oferta activa
-        return productosExtendidos.filter(item => item.oferta && item.oferta.precio_oferta > 0);
+        const now = new Date();
+        return productosExtendidos.filter(item => item.oferta && now >= item.oferta.fecha_inicio.toDate() && now <= item.oferta.fecha_fin.toDate());
       })
     );
   }
@@ -163,14 +127,18 @@ async obtenerDetalleVariante(variante_id: string) {
     return {
       variante_id: variante_id,
       producto_id: variante['producto_id'],
+      vendedor_id: producto['usuario_id'],
       producto_titulo: producto['titulo'],
       producto_descripcion: producto['descripcion'],
       etiquetas: producto['etiquetas'] || [],
       precio: variante['precio'],
       precio_oferta: precio_oferta,
       stock: variante['stock'],
+      estado: variante['estado'],
+      atributo: variante['atributo'],
       imagen: variante['imagen'],
     };
+
   } catch (error) {
     console.error('Error al obtener los detalles de la variante:', error);
     return null;

@@ -14,7 +14,7 @@
     <div class="producto-card" *ngFor="let producto of productos">
       <img src="{{ producto.imagen }}" (click)="verDetalle(producto.variante_id)"/>
       <ion-card-content>
-        <div class="nombre">{{ producto.nombre }}</div>
+        <div class="nombre">{{ producto.producto_titulo }}</div>
         <div *ngIf="!producto.precio_oferta ; else oferta" class="precio">${{ producto.precio | number }} CLP</div>
         <ng-template #oferta>
           <div class="precio-oferta">${{ producto.precio_oferta | number }} CLP</div>
@@ -23,31 +23,26 @@
           <div class="descripcion">{{ producto.descripcion }}</div>
 
         <div class="producto-controles">
-          <ion-button fill="outline" color="medium" (click)="restarProducto(producto.id)">
+          <ion-button fill="outline" color="medium" (click)="restarProducto(producto.variante_id)">
             <ion-icon name="remove-outline"></ion-icon>
           </ion-button>
           <span class="cantidad">{{ producto.cantidad }}</span>
-          <ion-button fill="outline" color="medium" (click)="sumarProducto(producto.id)">
+          <ion-button fill="outline" color="medium" (click)="sumarProducto(producto.variante_id)">
             <ion-icon name="add-outline"></ion-icon>
           </ion-button>
-          <ion-button class="cancel-button" fill="solid" color="danger" (click)="quitarProducto(producto.id)">
+          <ion-button class="cancel-button" fill="solid" color="danger" (click)="quitarProducto(producto.variante_id)">
             <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
         </div>
       </ion-card-content>
     </div>
-
-    <div class="pagar">
-      <ion-button expand="block" class="pagar-button" (click)="pagarTodo()">
-        Pagar Todo - Total: ${{ obtenerTotalCarrito() }}
-      </ion-button>
-    </div>
-
-    <!-- Contenedor del botón de PayPal -->
+  </div>
+  
+  <div class="boton-paypal" style="display: block;">
+    <div class="pagar"> Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
     <div id="paypal-button-container"></div>
   </div>
-
-
+  
   <ng-template #vacio>
     <div class="vacio-container">
       <ion-icon name="cart-outline"></ion-icon>
