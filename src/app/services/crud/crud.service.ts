@@ -1,3 +1,4 @@
+import { Categoria } from './../../models/categoria.models';
 import { Injectable } from '@angular/core';
 import { Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
@@ -13,7 +14,7 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 export class CrudService {
   constructor(private firestore: Firestore, private nativeStorage: NativeStorage) {}
   
-  obtenerTodosLosProductos(): Observable<Producto[]> {
+  obtenerProductos(): Observable<Producto[]> {
     const productosRef = collection(this.firestore, 'productos');
     return collectionData(productosRef, { idField: 'id' }) as Observable<Producto[]>;
   }
@@ -28,9 +29,31 @@ export class CrudService {
     return collectionData(ofertaRef, { idField: 'id' }) as Observable<Oferta[]>;
   }
 
+  obtenerCategorias() {
+    const categoriaRef = collection(this.firestore, 'categorias');
+    return collectionData(categoriaRef, { idField: 'id' }) as Observable<Categoria[]>;
+  }
+  
+  async obtenerDocumentoPorId(coleccion: string, id: string): Promise<any> {
+    try {
+      const docRef = doc(this.firestore, coleccion, id);
+      const docSnap = await getDoc(docRef);
+  
+      if (!docSnap.exists()) {
+        console.error(`El documento con ID ${id} no existe en la colección ${coleccion}.`);
+        return null;
+      }
+  
+      return docSnap.data();
+    } catch (error) {
+      console.error(`Error al obtener el documento de ${coleccion}:`, error);
+      return null;
+    }
+  }
+
   obtenerProductosConStock(): Observable<Producto[]> {
     return combineLatest([
-      this.obtenerTodosLosProductos(),
+      this.obtenerProductos(),
       this.obtenerVariantes()
     ]).pipe(
       map(([productos, variantes]) => {
@@ -44,7 +67,7 @@ export class CrudService {
 
   obtenerProductosConVarianteYOferta(): Observable<ProductoExtendido[]> {
     return combineLatest([
-      this.obtenerTodosLosProductos(),
+      this.obtenerProductos(),
       this.obtenerVariantes(),
       this.obtenerOfertas()
     ]).pipe(
@@ -63,10 +86,17 @@ export class CrudService {
     );
   }
 
+  obtenerProductosCategoria(categoria: string): Observable<any[]> {
+    return this.obtenerProductosConVarianteYOferta().pipe(
+      map((productosExtendidos) => {
+        return productosExtendidos.filter(item => item.producto.categoria == categoria);
+      })
+    );
+  }
+
   obtenerProductosSinOferta(): Observable<any[]> {
     return this.obtenerProductosConVarianteYOferta().pipe(
       map((productosExtendidos) => {
-        // Filtrar productos que no tienen oferta activa
         const now = new Date();
         return productosExtendidos.filter(item => !item.oferta || now < item.oferta.fecha_inicio.toDate() || now > item.oferta.fecha_fin.toDate() );
       })
@@ -76,74 +106,74 @@ export class CrudService {
   obtenerProductosConOferta(): Observable<any[]> {
     return this.obtenerProductosConVarianteYOferta().pipe(
       map((productosExtendidos) => {
-        // Filtrar productos que tienen una oferta activa
         const now = new Date();
         return productosExtendidos.filter(item => item.oferta && now >= item.oferta.fecha_inicio.toDate() && now <= item.oferta.fecha_fin.toDate());
       })
     );
   }
 
-async obtenerDetalleVariante(variante_id: string) {
-  try {
-    const varianteRef = doc(this.firestore, 'variantes', variante_id);
-    const varianteSnap = await getDoc(varianteRef);
+  async obtenerDetalleVariante(variante_id: string) {
+    try {
+      const varianteRef = doc(this.firestore, 'variantes', variante_id);
+      const varianteSnap = await getDoc(varianteRef);
 
-    if (!varianteSnap.exists()) {
-      console.error(`La variante con ID ${variante_id} no existe.`);
+      if (!varianteSnap.exists()) {
+        console.error(`La variante con ID ${variante_id} no existe.`);
+        return null;
+      }
+
+      const variante = varianteSnap.data();
+
+      const productoRef = doc(this.firestore, 'productos', variante['producto_id']);
+      const productoSnap = await getDoc(productoRef);
+
+      if (!productoSnap.exists()) {
+        console.error(`El producto relacionado con la variante ${variante_id} no existe.`);
+        return null;
+      }
+
+      const producto = productoSnap.data();
+
+      const ofertaQuery = query(
+        collection(this.firestore, 'ofertas'),
+        where('variante_id', '==', variante_id)
+      );
+      const ofertaSnap = await getDocs(ofertaQuery);
+
+      let precio_oferta = null;
+
+      if (!ofertaSnap.empty) {
+        ofertaSnap.forEach((doc) => {
+          const oferta = doc.data();
+          const now = new Date();
+
+          if (now >= oferta['fecha_inicio'].toDate() && now <= oferta['fecha_fin'].toDate()) {
+            precio_oferta = oferta['precio_oferta'];
+          }
+        });
+      }
+
+      return {
+        variante_id: variante_id,
+        producto_id: variante['producto_id'],
+        vendedor_id: producto['usuario_id'],
+        producto_titulo: producto['titulo'],
+        producto_descripcion: producto['descripcion'],
+        etiquetas: producto['etiquetas'] || [],
+        categoria: producto['categoria'],
+        precio: variante['precio'],
+        precio_oferta: precio_oferta,
+        stock: variante['stock'],
+        estado: variante['estado'],
+        atributo: variante['atributo'],
+        imagen: variante['imagen'],
+      };
+
+    } catch (error) {
+      console.error('Error al obtener los detalles de la variante:', error);
       return null;
     }
-
-    const variante = varianteSnap.data();
-
-    const productoRef = doc(this.firestore, 'productos', variante['producto_id']);
-    const productoSnap = await getDoc(productoRef);
-
-    if (!productoSnap.exists()) {
-      console.error(`El producto relacionado con la variante ${variante_id} no existe.`);
-      return null;
-    }
-
-    const producto = productoSnap.data();
-
-    const ofertaQuery = query(
-      collection(this.firestore, 'ofertas'),
-      where('variante_id', '==', variante_id)
-    );
-    const ofertaSnap = await getDocs(ofertaQuery);
-
-    let precio_oferta = null;
-
-    if (!ofertaSnap.empty) {
-      ofertaSnap.forEach((doc) => {
-        const oferta = doc.data();
-        const now = new Date();
-
-        if (now >= oferta['fecha_inicio'].toDate() && now <= oferta['fecha_fin'].toDate()) {
-          precio_oferta = oferta['precio_oferta'];
-        }
-      });
-    }
-
-    return {
-      variante_id: variante_id,
-      producto_id: variante['producto_id'],
-      vendedor_id: producto['usuario_id'],
-      producto_titulo: producto['titulo'],
-      producto_descripcion: producto['descripcion'],
-      etiquetas: producto['etiquetas'] || [],
-      precio: variante['precio'],
-      precio_oferta: precio_oferta,
-      stock: variante['stock'],
-      estado: variante['estado'],
-      atributo: variante['atributo'],
-      imagen: variante['imagen'],
-    };
-
-  } catch (error) {
-    console.error('Error al obtener los detalles de la variante:', error);
-    return null;
   }
-}
   
   obtenerFavoritosConDetalles() {
       // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);

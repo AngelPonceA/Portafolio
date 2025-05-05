@@ -87,3 +87,59 @@ ion-button {
   --border-color: #9a73399e;
   font-weight: bold;
 }
+
+/* Contenedor de Categorías */
+.categorias-container {
+  padding: 0.5rem;
+  background-color: #f9f9f9;
+}
+
+.categorias-titulo {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
+  color: #333;
+  text-align: center;
+}
+
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Tamaño uniforme para las tarjetas */
+  gap: 0.5rem;
+  justify-items: center;
+}
+
+.categoria-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.categoria-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 50%; /* Hace el contenedor circular */
+  width: 60px; /* Tamaño fijo del círculo */
+  height: 60px; /* Tamaño fijo del círculo */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.categoria-icon {
+  font-size: 1.5rem;
+  color: #0070f3;
+}
+
+.categoria-nombre {
+  font-size: 0.7rem; /* Tamaño reducido del texto */
+  font-weight: 500;
+  color: #333;
+  margin-top: 0.5rem; /* Espaciado entre el círculo y el texto */
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el texto que exceda el ancho */
+  text-overflow: ellipsis; /* Agrega "..." al final del texto largo */
+}

@@ -25,7 +25,7 @@ export class PerfilPage implements OnInit {
   establecerVista() {
     this.authService.obtenerSesion().then(sesion => {
       if (sesion) {
-        this.estado = sesion.estado;
+        this.estado = sesion.estado;        
       }
     });
   }

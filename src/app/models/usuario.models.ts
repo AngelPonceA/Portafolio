@@ -3,5 +3,6 @@ export interface Usuario {
     email: string;
     nombre: string;
     rol: string;
-    telefono?: string;
+    telefono: string;
+    recomendacion: any[];
 }

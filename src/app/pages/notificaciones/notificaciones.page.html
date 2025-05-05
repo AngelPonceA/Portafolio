@@ -2,13 +2,9 @@
   <ion-content>
     <div *ngIf="notificaciones && notificaciones.length > 0; else sinNotificaciones">
       <div class="notificaciones-container">
-        <div 
-          *ngFor="let notificacion of notificaciones" 
-          (click)="abrirNotificacion(notificacion.id)" 
-          class="notificacion-card" 
+        <div *ngFor="let notificacion of notificaciones" (click)="abrirNotificacion(notificacion.id)" class="notificacion-card" 
           [class.no-leido]="notificacion.estado === 'no vista'" 
-          [class.leido]="notificacion.estado === 'vista'"
-        >
+          [class.leido]="notificacion.estado === 'vista'">
           <div class="notificacion-icon">
             <ion-icon name="notifications-outline"></ion-icon>
           </div>
@@ -26,17 +22,19 @@
             <span class="notificacion-fecha">{{ notificacion.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}</span>
           </div>
 
-          <!-- Contenido adicional al expandir -->
-          <div *ngIf="notificacionExpandida === notificacion.id" class="notificacion-detalle">
-            <p>{{ notificacion.detalle }}</p>
+          <div *ngIf="notificacionExpandida === notificacion.id && notificacion.imagen" class="notificacion-detalle">
+            <div *ngIf="notificacion.imagen.length === 1" class="imagen-container">
+              <img [src]="notificacion.imagen[0]" alt="Imagen de notificación" />
+            </div>
+          
+            <div *ngIf="notificacion.imagen.length > 1" class="imagenes-grid">
+              <div *ngFor="let imagen of notificacion.imagen" class="imagen-container">
+                <img [src]="imagen" alt="Imagen de notificación" />
+              </div>
+            </div>
           </div>
 
-          <ion-button 
-            fill="clear" 
-            color="danger" 
-            class="boton-eliminar" 
-            (click)="eliminarNotificacion(notificacion.id); $event.stopPropagation()"
-          >
+          <ion-button fill="clear" color="danger" class="boton-eliminar" (click)="eliminarNotificacion(notificacion.id); $event.stopPropagation()">
             <ion-icon name="trash-outline"></ion-icon>
           </ion-button>
         </div>

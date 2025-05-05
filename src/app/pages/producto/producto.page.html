@@ -4,6 +4,7 @@
       <img [src]="producto.imagen[0]" class="producto-img" />
       <ion-card-header class="producto-header">
         <div class="etiquetas-container">
+          <span class="etiqueta"> {{ producto.categoria | titlecase }} </span>
           <span *ngFor="let etiqueta of producto.etiquetas" class="etiqueta">{{ etiqueta | titlecase }}</span>
         </div>
         <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }}</ion-card-title>

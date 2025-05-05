@@ -13,12 +13,14 @@ export class HomePage {
 
   productosSinOferta!: Observable<any[]>;
   productosConOferta!: Observable<any[]>;
+  categorias!: Observable<any[]>;
 
   constructor( private router: Router, private crudService: CrudService ) { }
 
   ngOnInit() {
     this.productosSinOferta = this.crudService.obtenerProductosSinOferta();
     this.productosConOferta = this.crudService.obtenerProductosConOferta();
+    this.categorias = this.crudService.obtenerCategorias();    
 
     // this.productosSinOferta.slice(0, 6);
     // this.productosConOferta = this.productosConOferta.slice(0, 6);

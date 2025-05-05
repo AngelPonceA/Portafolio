@@ -179,6 +179,7 @@ export class AuthService {
         email: email,
         rol: 'usuario',
         telefono: number,
+        recomendacion: [],
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
@@ -188,7 +189,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/email-already-in-use') {
-          console.error('El correo ya está registrado.');
+          console.error('Correo ya en uso.');
         } else {
           console.error('Error en el registro:', error.message);
         }
