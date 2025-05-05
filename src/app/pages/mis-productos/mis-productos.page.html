@@ -8,8 +8,7 @@
   </div>
 
   <ion-content>
-    <!-- Estado vacío -->
-    <div *ngIf="productos.length === 0" class="empty-state">
+    <div *ngIf="productosExtendidosPorProducto.length === 0" class="empty-state">
       <h3>No hay productos registrados</h3>
       <p>Comienza agregando tu primer producto</p>
       <ion-button (click)="abrirModal()" fill="outline">
@@ -17,98 +16,95 @@
         Agregar Producto
       </ion-button>
     </div>
+  </ion-content>
 
-    <div class="productos-grid">
-      <ion-card *ngFor="let producto of productos; let i = index" class="producto-card">
-        <div class="imagen-container">
-          <ion-slides *ngIf="producto.imagenes.length > 0" [options]="{ slidesPerView: 1, loop: true }">
-            <ion-slide *ngFor="let imgId of producto.imagenes; let imgIndex = index">
+  <!-- Sección de productos -->
+  <div class="productos-grid">
+    <ion-card *ngFor="let productoExtendido of productosExtendidosPorProducto" class="producto-card">
+      <!-- Sección de imágenes -->
+      <div class="imagen-container">
+        <ion-slides [options]="{ slidesPerView: 1, loop: true }">
+          <ion-slide *ngFor="let variante of productoExtendido.variantes; let varianteIndex = index">
+            <ion-slide *ngFor="let imagen of variante.imagen ; let imgIndex = index">
               <div class="slide-image">
-                <img [src]="imgId ? imgId : 'assets/img/placeholder.png'" alt="Imagen del producto {{ producto.titulo }}">
-                <div *ngIf="producto.imagenes.length > 1" class="slide-counter">
-                  {{ imgIndex + 1 }}/{{ producto.imagenes.length }}
-                </div>
+                <img [src]="imagen || 'assets/img/placeholder.png'" [alt]="'Imagen de variante ' + variante.atributo" />
               </div>
             </ion-slide>
-          </ion-slides>
+          </ion-slide>
+        </ion-slides>
+      </div>
 
-          <div *ngIf="producto.imagenes.length === 0" class="imagen-placeholder">
-            <ion-icon name="image-outline"></ion-icon>
-            <p>Sin imágenes</p>
-          </div>
+      <!-- Sección datos -->
+      <ion-card-header>
+        <ion-card-title>{{ productoExtendido.producto.titulo }}</ion-card-title>
+        <ion-card-subtitle>
+          <ion-icon name="pricetags-outline"></ion-icon>
+          {{ obtenerNombreCategoriaPorId(productoExtendido.producto.categoria_id) }}
+        </ion-card-subtitle>
+      </ion-card-header>
+
+      <ion-card-content class="detalle-producto">
+        <p class="descripcion">
+          {{ productoExtendido.producto.descripcion || 'Sin descripción' }}
+        </p>
+        <div class="etiquetas" *ngIf="productoExtendido.producto.etiquetas.length > 0">
+          <ion-chip *ngFor="let etiqueta of productoExtendido.producto.etiquetas"
+            [color]="etiqueta === 'Rebaja' ? 'danger' : 'primary'">
+            {{ etiqueta }}
+          </ion-chip>
         </div>
 
 
-        <ion-card-header>
-          <ion-card-title>{{ producto.titulo }}</ion-card-title>
-          <ion-card-subtitle>
-            <ion-icon name="pricetags-outline"></ion-icon>
-            {{ producto.categoria_id }}
-          </ion-card-subtitle>
-        </ion-card-header>
-
-        <ion-card-content>
-          <p class="descripcion">{{ producto.descripcion || 'Sin descripción' }}</p>
-
-
-          <div class="precios">
-            <div *ngIf="producto.precioOferta; else precioNormal">
-              <span class="precio-original tachado">
-                {{ producto.precio | currency:'CLP':'symbol':'1.0-0' }}
-              </span>
-              <span class="precio-oferta destacado">
-                {{ producto.precioOferta | currency:'CLP':'symbol':'1.0-0' }}
-              </span>
-            </div>
-            <ng-template #precioNormal>
-              <div class="precio-normal">
-                {{ producto.precio | currency:'CLP':'symbol':'1.0-0' }}
-              </div>
-            </ng-template>
+        <div class="contenedor-variantes">
+          <div class="detalle-variante" *ngFor="let variante of productoExtendido.variantes; let varianteIndex = index">
+            <p>Atributo: {{ variante.atributo }}</p>
+            <p>Estado: {{ variante.estado }}</p>
+            <p>Precio: {{ variante.precio }}</p>
+            <p>Stock: {{ variante.stock }}</p>
           </div>
+        </div>
+        
 
-          <div class="detalles">
-            <div class="detalle-item">
-              <ion-icon name="cube-outline"></ion-icon>
-              <span>Stock: {{ producto.stock }}</span>
-            </div>
-            <div class="detalle-item">
-              <ion-icon name="time-outline"></ion-icon>
-              <span>Estado: {{ producto.estado | titlecase }}</span>
-            </div>
-          </div>
+        <div class="detalle oferta" *ngFor="let oferta of productoExtendido.ofertas; let ofertaIndex = index">
+          <p>
+            Precio Oferta: {{ oferta.precio_oferta }}
+          </p>
+          <p>
+            Fecha Inicio: {{ oferta.fecha_inicio }}
+          </p>
+          <p>
+            Fecha Termino: {{ oferta.fecha_fin }}
+          </p>
+        </div>
 
-          <div class="etiquetas" *ngIf="producto.etiquetas.length > 0">
-            <ion-chip *ngFor="let etiqueta of producto.etiquetas"
-                      [color]="etiqueta === 'Rebaja' ? 'danger' : 'primary'">
-              {{ etiqueta }}
-            </ion-chip>
-          </div>
+        <div class="acciones">
+          <ion-button fill="clear" color="primary">
+            <ion-icon name="create-outline"></ion-icon>
+            Editar
+          </ion-button>
+          <ion-button fill="clear" color="danger" (click)="eliminarProducto(productoExtendido.producto.id)">
+            <ion-icon name="trash-outline"></ion-icon>
+            Eliminar
+          </ion-button>
+          <ion-button fill="clear" color="warning">
+            <ion-icon name="notifications-outline"></ion-icon>
+            Alerta Stock
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
 
-          <div class="acciones">
-            <ion-button fill="clear" color="primary" (click)="editarProducto(i)">
-              <ion-icon name="create-outline"></ion-icon>
-              Editar
-            </ion-button>
-            <ion-button fill="clear" color="danger" (click)="eliminarProducto(i)">
-              <ion-icon name="trash-outline"></ion-icon>
-              Eliminar
-            </ion-button>
-            <ion-button fill="clear" color="warning" (click)="activarAutostock(i)">
-              <ion-icon name="notifications-outline"></ion-icon>
-              Alerta Stock
-            </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
-    </div>
-  </ion-content>
+  <!--===================MODAL==================== -->
 
   <ion-modal [isOpen]="mostrarModal" (didDismiss)="cerrarModal()" class="producto-modal">
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>{{ editarIndice !== null ? 'Editar Producto' : 'Nuevo Producto' }}</ion-title>
+          <ion-title>
+            {{ 'Nuevo Producto' }}
+          </ion-title>
+
           <ion-buttons slot="end">
             <ion-button (click)="cerrarModal()">
               <ion-icon name="close-outline"></ion-icon>
@@ -116,89 +112,125 @@
           </ion-buttons>
         </ion-toolbar>
       </ion-header>
-
+    
       <ion-content>
-        <form (ngSubmit)="guardarProducto()" class="form-producto">
+        <!-- Sección clase producto -->
+        <form (ngSubmit)="guardarProducto(nuevoProductoForm)" class="form-producto">
           <ion-list-header>
             <ion-label>Información Básica</ion-label>
           </ion-list-header>
 
           <ion-item>
-            <ion-label position="floating">Nombre del Producto *</ion-label>
-            <ion-input [(ngModel)]="nuevoProducto.titulo" name="titulo" required></ion-input>
+            <ion-label position="floating">Nombre del Producto</ion-label>
+            <ion-input [(ngModel)]="nuevoProductoForm.titulo" name="titulo" required></ion-input>
           </ion-item>
 
           <ion-item>
             <ion-label position="floating">Descripción</ion-label>
-            <ion-textarea [(ngModel)]="nuevoProducto.descripcion" name="descripcion" rows="3"></ion-textarea>
+            <ion-textarea [(ngModel)]="nuevoProductoForm.descripcion" name="descripcion" rows="3"></ion-textarea>
           </ion-item>
 
-
-          <ion-list-header>
-            <ion-label>Clasificación</ion-label>
-          </ion-list-header>
-
           <ion-item>
-            <ion-label>Categoría *</ion-label>
-            <ion-select [(ngModel)]="nuevoProducto.categoria_id" name="categoria_id" interface="popover" required>
-              <ion-select-option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</ion-select-option>
+            <ion-label>Categoría</ion-label>
+            <ion-select [(ngModel)]="nuevoProductoForm.categoria_id" name="categoria">
+              <ion-select-option *ngFor="let categoria of categorias" [value]="categoria.nombre">{{ categoria.nombre }}</ion-select-option>
             </ion-select>
           </ion-item>
 
           <ion-item>
             <ion-label>Etiquetas</ion-label>
-            <ion-select [(ngModel)]="nuevoProducto.etiquetas" name="etiquetas" multiple>
-              <ion-select-option *ngFor="let etiqueta of etiquetas" [value]="etiqueta">{{ etiqueta }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-
- 
-          <ion-list-header>
-            <ion-label>Precios</ion-label>
-          </ion-list-header>
-
-          <ion-item>
-            <ion-label position="floating">Precio normal (CLP) *</ion-label>
-            <ion-input type="number" [(ngModel)]="nuevoProducto.precio" name="precio" min="1" required></ion-input>
+            <ion-chip *ngFor="let etiqueta of nuevoProductoForm.etiquetas">
+              <ion-label>{{ etiqueta }}</ion-label>
+              <ion-icon name="close-circle-outline" (click)="eliminarEtiqueta(etiqueta)"></ion-icon>
+            </ion-chip>
           </ion-item>
 
           <ion-item>
-            <ion-label>¿En oferta?</ion-label>
-            <ion-toggle [(ngModel)]="oferta" name="oferta"></ion-toggle>
+            <ion-input label="Nueva Etiqueta" type="text" [(ngModel)]="nuevaEtiqueta" (keyup.enter)="agregarEtiqueta()" name="nuevaEtiqueta"></ion-input>
+            <ion-button slot="end" (click)="agregarEtiqueta()" [disabled]="nuevoProductoForm.etiquetas.length >= 2">Agregar</ion-button>
           </ion-item>
-
-          <ion-item *ngIf="oferta">
-            <ion-label position="floating">Precio oferta (CLP) *</ion-label>
-            <ion-input type="number" [(ngModel)]="nuevoProducto.precioOferta" name="precioOferta" min="1"></ion-input>
-          </ion-item>
-
-
-          <ion-list-header>
-            <ion-label>Inventario</ion-label>
-          </ion-list-header>
-
-          <ion-item>
-            <ion-label position="floating">Stock disponible *</ion-label>
-            <ion-input type="number" [(ngModel)]="nuevoProducto.stock" name="stock" min="0" required></ion-input>
-          </ion-item>
-
-  
-          <div *ngIf="nuevoProducto.imagenes.length > 0" class="imagenes-grid">
-            <ion-grid>
-              <ion-row>
-                <ion-col size="4" *ngFor="let imagen of nuevoProducto.imagenes">
-                  <img src="assets/img/placeholder.png" class="imagen-preview" />
-                </ion-col>
-              </ion-row>
-            </ion-grid>
-          </div>
-
-          <ion-toolbar>
-            <ion-button expand="block" type="submit" [disabled]="!formularioValido()">
-              {{ editarIndice !== null ? 'Actualizar Producto' : 'Guardar Producto' }}
-            </ion-button>
-          </ion-toolbar>
         </form>
+
+      <!-- Sección clase variante -->
+      <form (ngSubmit)="guardarVariantes([nuevaVarianteForm])" class="form-variante">
+       <ion-list-header>
+         <ion-label>Información de variante</ion-label>
+       </ion-list-header>
+
+              <ion-item>
+                <ion-label position="floating">Atributo</ion-label>
+                <ion-input [(ngModel)]="nuevaVarianteForm.atributo" name="atributo" required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label>Estado de producto</ion-label>
+                <ion-select [(ngModel)]="nuevaVarianteForm.estado" name="estado">
+                  <ion-select-option *ngFor="let estado of estados" [value]="estado">{{ estado }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">Precio normal (CLP)</ion-label>
+                <ion-input type="number" [(ngModel)]="nuevaVarianteForm.precio" name="precio" min="1" required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label position="floating">Stock disponible</ion-label>
+                <ion-input type="number" [(ngModel)]="nuevaVarianteForm.stock" name="Stock" min="1" required></ion-input>
+              </ion-item>
+
+              <ion-item>
+                <ion-label>Imágenes</ion-label>
+                <input id="fileInput" class="input-img" type="file" multiple (change)="procesarImagenes($event)" accept="image/*">
+                <label for="fileInput" class="custom-file-button">Elegir Archivos</label>
+              </ion-item>
+              
+              <div *ngIf="esArray(nuevaVarianteForm.imagen) && nuevaVarianteForm.imagen.length > 0" class="imagenes-grid">
+
+                <ion-grid>
+                  <ion-row>
+               <ion-col size="4" *ngFor="let imagen of nuevaVarianteForm.imagen">
+                 <img [src]="imagen || 'assets/img/placeholder.png'" class="imagen-preview"/>
+               </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </div>
+            </form>
+
+            <!-- Sección clase oferta -->
+            <form (ngSubmit)="guardarOfertas([nuevaOfertaForm])" class="form-variante">
+              <ion-list-header>
+                <ion-label>Oferta</ion-label>
+              </ion-list-header>
+            
+              <ion-item>
+                <ion-label>¿Oferta?</ion-label>
+                <ion-toggle [(ngModel)]="mostrarOferta" name="ofertaActiva" (ionChange)="onOfertaToggle()"></ion-toggle>
+              </ion-item>
+            
+              <ng-container *ngIf="mostrarOferta">
+                <ion-item>
+                  <ion-label position="floating">Precio Oferta</ion-label>
+                  <ion-input type="number" [(ngModel)]="nuevaOfertaForm.precio_oferta" name="precio_oferta" min="1"></ion-input>
+                </ion-item>
+            
+                <ion-item>
+                  <ion-label position="floating">Fecha Inicio</ion-label>
+                  <ion-datetime [(ngModel)]="nuevaOfertaForm.fecha_inicio" name="fecha_inicio" presentation="date"></ion-datetime>
+                </ion-item>
+            
+                <ion-item>
+                  <ion-label position="floating">Fecha Fin</ion-label>
+                  <ion-datetime [(ngModel)]="nuevaOfertaForm.fecha_fin" name="fecha_fin" presentation="date"></ion-datetime>
+                </ion-item>
+              </ng-container>
+            </form>
+
+            <ion-button (click)="enviarFormularios()" expand="block">
+              <ion-icon name="send-outline" slot="start"></ion-icon>
+              Enviar
+            </ion-button>
+            
       </ion-content>
     </ng-template>
   </ion-modal>
