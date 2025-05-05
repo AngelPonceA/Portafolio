@@ -30,7 +30,6 @@ export class ProductoPage implements OnInit {
     if (variante_id) {
       this.crudService.obtenerDetalleVariante(variante_id).then(data => {
         this.producto = data;    
-        console.log(data);
         this.cantidadOpciones = Array.from({ length: this.producto.stock }, (_, i) => i + 1);
       });
       this.esFavorito = await this.crudService.esFavorito(variante_id);

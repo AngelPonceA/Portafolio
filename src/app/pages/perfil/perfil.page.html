@@ -1,52 +1,60 @@
 <app-navegacion>
-
   <ion-content>
 
     <div class="perfil-container" *ngIf="usuario && usuario.rol != 'invitado'; else invitado">
 
-      <!-- Información de usuario -->
+      <!-- Información del usuario -->
       <div class="info-usuario">
-        <ion-item lines="none">
-          <ion-label position="floating">Correo Electrónico</ion-label>
-          <ion-input type="email" value=" {{ usuario.email }} " disabled></ion-input>
-        </ion-item>
+        <h2 class="perfil-titulo">Mi Perfil</h2>
 
-        <ion-item lines="none">
-          <ion-label position="floating">Nombre de Usuario</ion-label>
-          <ion-input type="text" value=" {{ usuario.nombre }} " disabled></ion-input>
-        </ion-item>
+        <div class="info-item">
+          <label class="info-label">Correo Electrónico</label>
+          <div class="info-card">
+            <ion-icon name="mail-outline" class="info-icon"></ion-icon>
+            <p class="info-text">{{ usuario.email }}</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <label class="info-label">Nombre de Usuario</label>
+          <div class="info-card">
+            <ion-icon name="person-outline" class="info-icon"></ion-icon>
+            <p class="info-text">{{ usuario.nombre }}</p>
+          </div>
+        </div>
       </div>
 
-      <!-- Sección de botones (solo visual) -->
+      <!-- Sección de botones -->
       <div class="acciones">
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/cambio-clave']">
+        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/cambio-clave']">
           <ion-icon name="key" slot="start"></ion-icon>
           Cambiar Contraseña
         </ion-button>
 
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/cambio-nombre-usuario']">
+        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/cambio-nombre-usuario']">
           <ion-icon name="create" slot="start"></ion-icon>
           Cambiar Nombre de Usuario
         </ion-button>
 
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/historial-compra']">
+        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/historial-compra']">
           <ion-icon name="list" slot="start"></ion-icon>
           Historial de Compras
         </ion-button>
 
-        <ion-button expand="full" class="accion-btn" fill="clear" [routerLink]="['/historial-ventas']">
+        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/historial-ventas']">
           <ion-icon name="list" slot="start"></ion-icon>
           Historial de Ventas
         </ion-button>
-        
-        <ion-button (click)="cerrarSesion()" expand="full" class="accion-btn" fill="solid" color="danger" >
-          <ion-icon name="list" slot="start"></ion-icon>
+
+        <ion-button expand="block" class="accion-btn cerrar-sesion-btn" fill="solid" color="danger" (click)="cerrarSesion()">
+          <ion-icon name="log-out" slot="start"></ion-icon>
           Cerrar Sesión
         </ion-button>
       </div>
 
     </div>
 
+    <!-- Vista para invitados -->
     <ng-template #invitado>
       <div class="invitado-container">
         <h2>¡Bienvenido!</h2>
@@ -62,10 +70,6 @@
         </ion-button>
       </div>
     </ng-template>
-    
-  
-
 
   </ion-content>
-
 </app-navegacion>

@@ -15,7 +15,7 @@ export class NotificacionesPage implements OnInit {
   constructor( private authService : AuthService) { }
 
   async ngOnInit() {
-      this.notificaciones = await this.authService.obtenerNotificaciones();
+      this.notificaciones = await this.authService.obtenerNotificaciones();      
   }
 
   async abrirNotificacion(id: string) {

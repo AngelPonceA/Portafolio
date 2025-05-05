@@ -1,16 +1,26 @@
 <app-navegacion>
-
   <ion-content>
 
-    <!-- Sección de productos -->
+    <div *ngIf="categorias" class="categorias-container">
+      <h2 class="categorias-titulo">Categorías</h2>
+      <div class="categorias-grid">
+        <div *ngFor="let categoria of categorias | async" class="categoria-card">
+          <div class="categoria-icon-container">
+            <ion-icon [name]="categoria.icono" class="categoria-icon"></ion-icon>
+          </div>
+          <p class="categoria-nombre">{{ categoria.nombre | titlecase }}</p>
+        </div>
+      </div>
+    </div>
+
     <div class="productos-grid-container">
       <h2 class="productos-titulo">Todos los Productos</h2>
       <div class="productos-grid">
-        <ion-card *ngFor="let item of productosSinOferta  | async" (click)="verDetalle(item.variante.id)" class="producto-card">
-          <img [src]="item.variante.imagen[0]"/>
+        <ion-card *ngFor="let producto of productosSinOferta | async" (click)="verDetalle(producto.variante.id)" class="producto-card">
+          <img [src]="producto.variante.imagen[0]" />
           <ion-card-content>
-            <ion-card-title class="nombre">{{ item.producto.titulo }}</ion-card-title>
-            <ion-card-subtitle class="precio-original">{{ item.variante.precio | number }} CLP</ion-card-subtitle>
+            <ion-card-title class="nombre">{{ producto.producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="precio-original">{{ producto.variante.precio | number }} CLP</ion-card-subtitle>
           </ion-card-content>
         </ion-card>
       </div>
@@ -19,16 +29,15 @@
       </div>
     </div>
 
-    <!-- Sección de productos ofertados -->
     <div class="productos-grid-container">
       <h2 class="productos-titulo">Productos en Oferta</h2>
       <div class="productos-grid">
-        <ion-card *ngFor="let item of productosConOferta | async" (click)="verDetalle(item.variante.id)" class="producto-card">
-          <img [src]="item.variante.imagen[0]"/>
+        <ion-card *ngFor="let producto of productosConOferta | async" (click)="verDetalle(producto.variante.id)" class="producto-card">
+          <img [src]="producto.variante.imagen[0]" />
           <ion-card-content>
-            <ion-card-title class="nombre">{{ item.producto.titulo }}</ion-card-title>
-            <ion-card-subtitle class="precio-original-tachado">{{ item.variante.precio | number }} CLP</ion-card-subtitle>
-            <ion-card-subtitle class="precio-oferta">{{ item.oferta?.precio_oferta | number }}CLP</ion-card-subtitle>
+            <ion-card-title class="nombre">{{ producto.producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="precio-original-tachado">{{ producto.variante.precio | number }} CLP</ion-card-subtitle>
+            <ion-card-subtitle class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>
           </ion-card-content>
         </ion-card>
       </div>
@@ -38,5 +47,4 @@
     </div>
 
   </ion-content>
-  
 </app-navegacion>
