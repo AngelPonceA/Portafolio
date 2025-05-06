@@ -70,10 +70,10 @@
             Precio Oferta: {{ oferta.precio_oferta }}
           </p>
           <p>
-            Fecha Inicio: {{ oferta.fecha_inicio }}
+            Fecha Inicio: {{ oferta.fecha_inicio.toDate() | date:'dd/MM/yyyy HH:mm' }}
           </p>
           <p>
-            Fecha Termino: {{ oferta.fecha_fin }}
+            Fecha Termino: {{ oferta.fecha_fin.toDate() | date:'dd/MM/yyyy HH:mm' }}
           </p>
         </div>
 
@@ -192,8 +192,8 @@
                 </ion-grid>
               </div>
             </form>
-
-            <!-- Sección clase oferta -->
+ 
+            <!-- Seccion oferta -->
             <form (ngSubmit)="guardarOfertas([nuevaOfertaForm])" class="form-variante">
               <ion-list-header>
                 <ion-label>Oferta</ion-label>
@@ -212,21 +212,36 @@
             
                 <ion-item>
                   <ion-label position="floating">Fecha Inicio</ion-label>
-                  <ion-datetime [(ngModel)]="nuevaOfertaForm.fecha_inicio" name="fecha_inicio" presentation="date"></ion-datetime>
+                  <ion-datetime
+                    [(ngModel)]="nuevaOfertaForm.fecha_inicio"
+                    name="fecha_inicio"
+                    presentation="date"
+                    [value]="nuevaOfertaForm.fecha_inicio"
+                    displayFormat="DD/MM/YYYY"
+                  ></ion-datetime>
                 </ion-item>
             
                 <ion-item>
                   <ion-label position="floating">Fecha Fin</ion-label>
-                  <ion-datetime [(ngModel)]="nuevaOfertaForm.fecha_fin" name="fecha_fin" presentation="date"></ion-datetime>
+                  <ion-datetime
+                    [(ngModel)]="nuevaOfertaForm.fecha_fin"
+                    name="fecha_fin"
+                    presentation="date"
+                    [value]="nuevaOfertaForm.fecha_inicio"
+                    displayFormat="DD/MM/YYYY"
+                  ></ion-datetime>
                 </ion-item>
-              </ng-container>
-            </form>
+
 
             <ion-button (click)="enviarFormularios()" expand="block">
               <ion-icon name="send-outline" slot="start"></ion-icon>
               Enviar
             </ion-button>
             
+
+
+              </ng-container>
+            </form>
       </ion-content>
     </ng-template>
   </ion-modal>

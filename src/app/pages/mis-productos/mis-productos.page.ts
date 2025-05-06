@@ -12,6 +12,7 @@ import { Categoria } from 'src/app/models/categoria.models';
 // importar servicios
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-mis-productos',
@@ -40,6 +41,7 @@ export class MisProductosPage implements OnInit {
   cantidadVariantes = 0;
   mostrarOferta: boolean = false;
 
+
   nuevoProductoForm: Producto = {
     id: '',
     usuario_id: '',
@@ -50,13 +52,13 @@ export class MisProductosPage implements OnInit {
   };
 
   nuevaVarianteForm: Variante = {
-    id: '',
+    id: '', //Este campo no se usa, eliminar??
     oferta_id: '',
     atributo: '',
     estado: '',
     precio: 0,
     producto_id: '',
-    sku: '',
+    sku: '', 
     stock: 0,
     inventario_minimo: 0,
     auto_stock: false,
@@ -68,7 +70,7 @@ export class MisProductosPage implements OnInit {
     variante_id: '',
     precio_oferta: 0,
     fecha_inicio: new Date().toISOString(),
-    fecha_fin: new Date().toISOString(),
+    fecha_fin: new Date().toISOString()
   };
 
   //Constructor de la pagina
@@ -96,17 +98,23 @@ export class MisProductosPage implements OnInit {
           this.validarVariantes([this.nuevaVarianteForm]) &&
           this.validarOfertas([this.nuevaOfertaForm]))
       ) {
-        const producto = await this.guardarProducto(this.nuevoProductoForm);
+        const {id: productoId} = await this.guardarProducto(this.nuevoProductoForm);
         const variantePorCrear = {
           ...this.nuevaVarianteForm,
-          producto_id: producto?.id ?? 'uuid',
+          producto_id: productoId ?? 'uuid',
         };
-        const variante = await this.guardarVariante(variantePorCrear);
+        if (!productoId) {
+          throw new Error('Error: Producto no se pudo guardar correctamente.');
+        }
+        const {id: varianteId } = await this.guardarVariante(variantePorCrear, productoId);
         const ofertaPorCrear = {
           ...this.nuevaOfertaForm,
-          variante_id: variante?.id ?? 'uuid',
+          variante_id: varianteId ?? 'uuid',
         };
-        await this.guardarOferta(ofertaPorCrear);
+        if (!varianteId) {
+          throw new Error('Variante ID is undefined');
+        }
+        await this.guardarOferta(ofertaPorCrear, varianteId ?? 'uuid');
         console.log('Todos los formularios se enviaron con éxito');
         this.mostrarToast('Todos los formularios se enviaron con éxito');
       } else {
@@ -128,7 +136,6 @@ export class MisProductosPage implements OnInit {
       this.crudService.obtenerProductoExtendidoDeUsuario().subscribe({
         next: (pe) => {
           this.productosExtendidosPorProducto = pe;
-          console.log('pe', pe);
         },
         error: (error) => {
           console.error('Error al obtener los productos:', error);
@@ -142,15 +149,15 @@ export class MisProductosPage implements OnInit {
   }
 
   // Guardar producto
-  async guardarProducto(producto: Producto) {
+  async guardarProducto(productoToCreate: Producto) {
     try {
-      if (this.validarProducto(producto)) {
-        const productoGuardado = await this.crudService.guardarProducto(
-          producto
+      if (this.validarProducto(productoToCreate)) {
+        const {id, producto} = await this.crudService.guardarProducto(
+          productoToCreate
         );
-        console.log('Producto guardado:', productoGuardado);
+        console.log('Producto guardado:', producto);
         this.mostrarToast('Producto guardado con éxito');
-        return productoGuardado;
+        return {id, producto};
       } else {
         this.mostrarToast('Error al guardar el producto', 'danger');
       }
@@ -158,7 +165,7 @@ export class MisProductosPage implements OnInit {
       console.error('Error al guardar el producto:', error);
       this.mostrarToast('Error al guardar el producto', 'danger');
     }
-    return null;
+    return {};
   }
 
   // Validar producto
@@ -288,15 +295,15 @@ export class MisProductosPage implements OnInit {
     }
   }
 
-  async guardarVariante(variante: Variante) {
+  async guardarVariante(varianteToCreate: Variante, productoId: string) {
     try {
-      if (true || this.validarVariantes([variante])) {
-        const varianteGuardada = await this.crudService.guardarVariante(
-          variante
+      if (true || this.validarVariantes([varianteToCreate])) {
+        const {id, variante} =  await this.crudService.guardarVariante(
+          varianteToCreate, productoId
         );
-        console.log('Variante guardada:', varianteGuardada);
+        console.log('Variante guardada:', id, variante );
         this.mostrarToast('Variante guardado con éxito');
-        return varianteGuardada;
+        return {id, variante};
       } else {
         this.mostrarToast('Error al guardar el variante', 'danger');
       }
@@ -304,7 +311,7 @@ export class MisProductosPage implements OnInit {
       console.error('Error al guardar el variante:', error);
       this.mostrarToast('Error al guardar el variante', 'danger');
     }
-    return null;
+    return {};
   }
 
   // Validar variantes
@@ -434,18 +441,12 @@ export class MisProductosPage implements OnInit {
   // Obtener ofertas del producto
   async obtenerOfertas(productoId: string) {
     try {
-      try {
-        const ofertas = await Promise.all(
-          this.variantes.map((variante) =>
-            this.crudService.obtenerOfertaPorVariante(variante.id)
-          )
-        );
-        this.ofertas = ofertas.flat();
-        console.log('Ofertas obtenidas:', this.ofertas);
-      } catch (error) {
-        console.error('Error al obtener las ofertas:', error);
-        this.mostrarToast('Error al cargar las ofertas', 'danger');
-      }
+      const ofertasPorVariante = await Promise.all(
+        this.variantes.map((variante) =>
+          this.crudService.obtenerOfertaPorVariante(variante.id)
+        )
+      );
+      this.ofertas = ofertasPorVariante.flat();
       console.log('Ofertas obtenidas:', this.ofertas);
     } catch (error) {
       console.error('Error al obtener las ofertas:', error);
@@ -465,10 +466,17 @@ export class MisProductosPage implements OnInit {
     }
   }
 
-  async guardarOferta(oferta: Oferta) {
+  async guardarOferta(ofertaForm: any, variante_id: string) {
     try {
-      if (true || this.validarOfertas([oferta])) {
-        const ofertaGuardada = await this.crudService.guardarOferta(oferta);
+      // Convertir las fechas string del formulario a objetos Timestamp
+      const ofertaParaGuardar = {
+        ...ofertaForm,
+        fecha_inicio: ofertaForm.fecha_inicio ? (ofertaForm.fecha_inicio instanceof Date ? Timestamp.fromDate(ofertaForm.fecha_inicio) : Timestamp.fromDate(new Date(ofertaForm.fecha_inicio))) : null,
+        fecha_fin: ofertaForm.fecha_fin ? (ofertaForm.fecha_fin instanceof Date ? Timestamp.fromDate(ofertaForm.fecha_fin) : Timestamp.fromDate(new Date(ofertaForm.fecha_fin))) : null,
+      };
+  
+      if (true || this.validarOfertas([ofertaParaGuardar])) {
+        const ofertaGuardada = await this.crudService.guardarOferta(ofertaParaGuardar, variante_id);
         console.log('Oferta guardada:', ofertaGuardada);
         this.mostrarToast('Oferta guardado con éxito');
         return ofertaGuardada;
@@ -526,7 +534,8 @@ export class MisProductosPage implements OnInit {
     });
     alert.then((alert) => alert.present());
   }
-
+ 
+ 
   // ========================= Métodos de categorias =========================
 
   // Obtener categorias
@@ -552,18 +561,6 @@ export class MisProductosPage implements OnInit {
   //Obtener nombre categoria
   obtenerNombreCategoriaPorId(id: string) {
     return this.categorias.find((c) => c.id === id)?.nombre;
-  }
-
-  // Guardar categorias
-  guardarCategorias(categorias: Categoria[]) {
-    try {
-      this.categorias = categorias;
-      console.log('Categorías guardadas:', this.categorias);
-      this.mostrarToast('Categorías guardadas con éxito');
-    } catch (error) {
-      console.error('Error al guardar las categorías:', error);
-      this.mostrarToast('Error al guardar las categorías', 'danger');
-    }
   }
 
   // Validar categorias
@@ -593,8 +590,8 @@ export class MisProductosPage implements OnInit {
   onOfertaToggle() {
     if (!this.mostrarOferta) {
       this.nuevaOfertaForm.precio_oferta = 0;
-      this.nuevaOfertaForm.fecha_inicio = new Date();
-      this.nuevaOfertaForm.fecha_fin = new Date();
+      this.nuevaOfertaForm.fecha_inicio = Timestamp.fromDate(new Date());
+      this.nuevaOfertaForm.fecha_fin = Timestamp.fromDate(new Date());
     }
   }
 

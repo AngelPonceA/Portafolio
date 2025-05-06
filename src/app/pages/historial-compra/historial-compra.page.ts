@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-historial-compra',
@@ -19,7 +20,7 @@ export class HistorialCompraPage implements OnInit {
     cliente: { nombre: string; correo: string };
   }[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private navCtrl: NavController) {}
 
   async ngOnInit() {
     // Simulación de datos con nombre y correo del cliente
@@ -51,6 +52,6 @@ export class HistorialCompraPage implements OnInit {
   }
 
   volverAtras() {
-    this.router.navigate(['/']);
+    this.navCtrl.back();
   }
 }

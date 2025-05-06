@@ -311,11 +311,10 @@ export class CrudService {
     const nuevoProductoRef = doc(productosRef);
     const nuevoProducto = {
       ...producto,
-      usuario_id: uid,
-      id: nuevoProductoRef.id,
+      usuario_id: uid
     };
     await setDoc(nuevoProductoRef, nuevoProducto);
-    return nuevoProducto;
+    return {id: nuevoProductoRef.id, producto: nuevoProducto};
   }
 
   async editarProducto(producto_id: string, producto: Producto) {
@@ -369,18 +368,17 @@ export class CrudService {
     }
   }
 
-  async guardarVariante(variante: Variante) {
+  async guardarVariante(variante: Variante, producto_id: string) {
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     // const uid = await this.nativeStorage.getItem('id');
     const variantesRef = collection(this.firestore, 'variantes');
     const nuevaVarianteRef = doc(variantesRef);
     const nuevaVariante = {
       ...variante,
-      usuario_id: uid,
-      id: nuevaVarianteRef.id,
+      producto_id
     };
     await setDoc(nuevaVarianteRef, nuevaVariante);
-    return nuevaVariante;
+    return {id: nuevaVarianteRef.id, variante: nuevaVariante} ;
   }
 
   async editarVariante(variante_id: string, variante: Variante) {
@@ -444,7 +442,7 @@ export class CrudService {
     }
   }
 
-  async guardarOferta(oferta: Oferta) {
+  async guardarOferta(oferta: Oferta, variante_id: string) {
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     // const uid = await this.nativeStorage.getItem('id');
     const ofertasRef = collection(this.firestore, 'ofertas');
@@ -452,7 +450,7 @@ export class CrudService {
     const nuevaOferta = {
       ...oferta,
       usuario_id: uid,
-      id: nuevaOfertaRef.id,
+      variante_id
     };
     await setDoc(nuevaOfertaRef, nuevaOferta);
     return nuevaOferta;
