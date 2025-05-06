@@ -2,20 +2,20 @@
   display: flex;
   flex-direction: column;
   background-color: #f5f5f5;
-  height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la ventana */
-  --header-background-light: #D2B48C;  /* Beige claro para modo claro */
-  --header-background-dark: transparent; /* Fondo transparente para modo oscuro */
-  --footer-background-light: #D2B48C;  /* Beige claro para modo claro */
-  --footer-background-dark: transparent; /* Fondo transparente para el footer en modo oscuro */
-  --button-background-light: #D1A15A; /* Color claro para botones en modo claro */
-  --button-background-dark: #4E4E4E; /* Color oscuro para botones en modo noche */
-  --button-icon-light: #FFFFFF; /* Blanco para iconos en modo claro */
-  --button-icon-dark: #FFFFFF;  /* Blanco para iconos en modo noche */
+  height: 100vh; 
+  --header-background-light: #D2B48C; 
+  --header-background-dark: transparent; 
+  --footer-background-light: #D2B48C; 
+  --footer-background-dark: transparent;
+  --button-background-light: #D1A15A;
+  --button-background-dark: #4E4E4E;
+  --button-icon-light: #FFFFFF; 
+  --button-icon-dark: #FFFFFF; 
 }
 
 .contenido {
-  height: 93%; /* El contenido ocupa el 93% de la altura */
-  overflow-y: auto; /* Permite scroll si el contenido excede el 80% */
+  height: calc(100% - 16%);
+  overflow-y: auto; 
   background-color: #f5f5f5;
 }
 
@@ -24,10 +24,10 @@ ion-header, ion-footer {
   justify-content: space-between;
   align-items: center;
   position: relative;
-  height: 7%; /* Header y footer ocupan el 7% de la altura */
-  border: 2px solid transparent; /* Asegura que el borde sea transparente en ambos modos */
-  box-shadow: none; /* Eliminar cualquier sombra */
-  transition: background-color 3s ease; /* Transición de 2 segundos */
+  height: 8%;
+  border: 2px solid transparent;
+  box-shadow: none;
+  transition: background-color 3s ease;
 }
 
 ion-header {
@@ -56,13 +56,13 @@ ion-header::before, ion-footer::before {
   bottom: 0;
   z-index: -1; /* Para asegurar que el fondo esté detrás de los botones */
   box-shadow: none; /* Eliminar cualquier sombra */
-  transition: background-color 3s ease; /* Transición de 2 segundos */
+  transition: background-color 3s ease; /* Transición de 3 segundos */
 }
 
 .footer-header-button{
   padding: 0; /* Eliminar padding para que los iconos estén centrados */
   font-size: 0; /* Eliminar el texto */
-  max-width: auto; /* El tamaño de los botones se ajusta al 20% del ancho */
+  max-width: auto; /* El tamaño de los botones se ajusta a su contenido */
   color: var(--button-icon-light); /* Blanco para iconos en modo claro */
   background-color: var(--button-background-light); /* Fondo de los botones en modo claro */
   border-radius: 50%; /* Hacer los botones circulares */
@@ -75,7 +75,7 @@ ion-header::before, ion-footer::before {
   border: none; /* Eliminar borde predeterminado */
   --background: transparent; /* Eliminar cualquier fondo de botón por defecto */
   --box-shadow: none; /* Quitar sombra del botón predeterminado */
-  transition: background-color 3s ease; /* Transición de 2 segundos */
+  transition: background-color 3s ease; /* Transición de 3 segundos */
 }
 
 .header-button {
@@ -87,13 +87,13 @@ ion-header::before, ion-footer::before {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50px; 
-  width: 50px;   
+  height: 50px;
+  width: 50px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border: none;
   --background: transparent;
   --box-shadow: none;
-  transition: background-color 3s ease;
+  transition: background-color 3s ease; /* Transición de 3 segundos */
 }
 
 
@@ -150,4 +150,3 @@ ion-searchbar.searchbar {
   height: auto;
   width: 75%;
 }
-

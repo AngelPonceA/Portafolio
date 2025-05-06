@@ -65,7 +65,7 @@ ion-content {
 
 .info-icon {
   font-size: 1.5rem;
-  color: #0070f3;
+  color: #654321;
   margin-right: 10px;
 }
 
@@ -80,14 +80,12 @@ ion-content {
 }
 
 .accion-btn {
-  --background: #0070f3;
-  --color: white;
-  --border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  height: 40px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+    --border-radius: 1rem;
+    --background: #D1A15A;
+    --color: #ffffff;
+    --border-color: #9a73399e;
+    font-weight: bold;
+  }
 
 .accion-btn:hover {
   transform: scale(1.02);
