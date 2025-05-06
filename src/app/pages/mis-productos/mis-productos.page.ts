@@ -611,4 +611,45 @@ export class MisProductosPage implements OnInit {
   resetearFormulario() {
     this.oferta = false;
   }
+
+  // autoStock
+  async activarAutostock(
+    productoExtendidoPorProducto: ProductoExtendidoPorProducto
+  ) {
+    console.log('activar autostock: ', productoExtendidoPorProducto);
+    const promises = productoExtendidoPorProducto.variantes.map(
+      async (variante) => {
+        const alert = await this.alertController.create({
+          header: 'Configurar Alerta de Stock',
+          subHeader: `Stock actual: ${variante?.stock ?? 'N/A'}`,
+          inputs: [
+            {
+              name: 'minStock',
+              type: 'number',
+              placeholder: 'Stock mínimo deseado',
+              min: '1',
+              value: '5',
+            },
+          ],
+          buttons: [
+            { text: 'Cancelar', role: 'cancel' },
+            {
+              text: 'Guardar',
+              handler: (data) => {
+                const minStock = Number(data.minStock);
+                this.mostrarToast(
+                  variante.stock <= minStock
+                    ? `¡ALERTA! Stock bajo (${variante.stock} unidades)`
+                    : `Stock suficiente (${variante.stock} unidades)`,
+                  variante.stock <= minStock ? 'warning' : 'success'
+                );
+              },
+            },
+          ],
+        });
+        await alert.present();
+      }
+    );
+    await Promise.all(promises);
+  }
 }
