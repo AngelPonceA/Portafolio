@@ -91,7 +91,7 @@ ion-content {
     }
 
     .etiquetas {
-      margin-bottom: 10px;
+      margin-bottom: 10px; /* Aquí se aplica el espacio inferior */
       display: flex;
       flex-wrap: wrap;
       gap: 5px;
@@ -103,7 +103,7 @@ ion-content {
       gap: 16px;
       justify-content: space-between;
     }
-    
+
     .detalle-variante {
       display: flex;
       flex-direction: column;
@@ -113,13 +113,13 @@ ion-content {
       border: 1px solid #ddd;
       border-radius: 8px;
       width: 45%;
-    
+
       p {
         margin: 0;
         font-size: 14px;
       }
     }
-    
+
 
     .detalle.oferta {
       background: #fff3e0;
@@ -264,3 +264,52 @@ ion-button:hover {
   margin-left: 15px; /* Se asegura de que el botón esté alineado a la derecha */
 }
 
+.variant-scroll-wrapper {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding: 8px 0;
+  margin-bottom: 12px;
+  display: block;
+  background: #f4f4f4;
+  border-radius: 8px;
+
+  ion-buttons {
+    display: inline-flex;
+    flex-wrap: nowrap;
+    padding-left: 8px;
+
+    ion-button {
+      flex: 0 0 auto;
+      margin-right: 8px;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.etiquetas-scroll {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 1rem 0.5rem;
+  margin-bottom: 10px; /* Añadido margin-bottom aquí */
+}
+
+.chip-wrapper {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
+ion-chip {
+  flex-shrink: 0;
+}
+
+.close-icon {
+  cursor: pointer;
+}
