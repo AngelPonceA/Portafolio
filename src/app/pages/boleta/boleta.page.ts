@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
   selector: 'app-boleta',
   templateUrl: './boleta.page.html',
   styleUrls: ['./boleta.page.scss'],
-  standalone: false // Asegura que este componente no sea independiente
+  standalone: false 
 })
 export class BoletaPage implements OnInit {
   productos = [
@@ -15,21 +15,21 @@ export class BoletaPage implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    // Inicialización del componente
+    
     console.log('Componente Boleta inicializado');
   }
 
   /**
-   * Calcula el total de la boleta
-   * @returns Total de los productos
+   * 
+   * @returns 
    */
   obtenerTotalBoleta(): number {
     return this.productos.reduce((total, producto) => total + (producto.cantidad * producto.precio), 0);
   }
 
   /**
-   * Solicita un reembolso para un producto específico
-   * @param idVariante ID único de la variante del producto
+   * 
+   * @param idVariante 
    */
   solicitarReembolso(idVariante: string): void {
     console.log(`Iniciando reembolso para el ID de variante: ${idVariante}`);

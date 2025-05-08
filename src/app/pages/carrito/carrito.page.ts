@@ -5,7 +5,7 @@ import { CrudService } from 'src/app/services/crud/crud.service';
 import { timeInterval } from 'rxjs';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 
-declare const paypal: any; // Importa el SDK global de PayPal
+declare const paypal: any; 
 
 @Component({
   selector: 'app-carrito',
