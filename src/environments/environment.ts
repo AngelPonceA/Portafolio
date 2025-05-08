@@ -11,5 +11,7 @@ export const environment = {
     storageBucket: "base-de-datos-ptf.firebasestorage.app",
     messagingSenderId: "861480881852",
     appId: "1:861480881852:web:7a415e3b9a84dd75e28ab9"
-  }
+  },
+  dhlApiUrl: 'https://api.dhl.com/v1/shipments',
+  dhlApiKey: 'PjjDWb42v6190ZY0sQpQW24JQ9mWHnSd'
 }

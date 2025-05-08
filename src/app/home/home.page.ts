@@ -24,6 +24,7 @@ export class HomePage {
 
     // this.productosSinOferta.slice(0, 6);
     // this.productosConOferta = this.productosConOferta.slice(0, 6);
+    //Token DHL al iniciar la aplicacion
   }
 
   verDetalle(variante_id: string) {
