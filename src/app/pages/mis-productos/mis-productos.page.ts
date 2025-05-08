@@ -41,7 +41,7 @@ export class MisProductosPage implements OnInit {
   cantidadVariantes = 0;
   mostrarOferta: boolean = false;
 
-
+  //Para crearlos individualmente
   nuevoProductoForm: Producto = {
     id: '',
     usuario_id: '',
@@ -52,8 +52,7 @@ export class MisProductosPage implements OnInit {
   };
 
   nuevaVarianteForm: Variante = {
-    id: '', //Este campo no se usa, eliminar??
-    oferta_id: '',
+    id: '', 
     atributo: '',
     estado: '',
     precio: 0,
@@ -73,6 +72,30 @@ export class MisProductosPage implements OnInit {
     fecha_fin: new Date().toISOString()
   };
 
+  // Para crearlos si son más de 1 
+  variantesForms : Variante [] = [{
+    atributo: '',
+    estado: '',
+    precio: 0,
+    stock: 0,
+    imagen: [],
+    id: '',
+    producto_id: '',
+    sku: '',
+    inventario_minimo: 0,
+    auto_stock: false
+  }] 
+
+  ofertasForms : Oferta [] = [{
+    id: '',
+    variante_id: '',
+    precio_oferta: 0,
+    fecha_inicio: new Date().toISOString(),
+    fecha_fin: new Date().toISOString()
+  }]
+
+  varianteSeleccionada = 0;
+
   //Constructor de la pagina
   constructor(
     private toastController: ToastController,
@@ -91,42 +114,53 @@ export class MisProductosPage implements OnInit {
 
   async enviarFormularios() {
     try {
-      // Verifica si todos los formularios son válidos antes de enviarlos
-      if (
-        true ||
-        (this.validarProducto(this.nuevoProductoForm) &&
-          this.validarVariantes([this.nuevaVarianteForm]) &&
-          this.validarOfertas([this.nuevaOfertaForm]))
-      ) {
-        const {id: productoId} = await this.guardarProducto(this.nuevoProductoForm);
-        const variantePorCrear = {
-          ...this.nuevaVarianteForm,
-          producto_id: productoId ?? 'uuid',
-        };
-        if (!productoId) {
-          throw new Error('Error: Producto no se pudo guardar correctamente.');
-        }
-        const {id: varianteId } = await this.guardarVariante(variantePorCrear, productoId);
-        const ofertaPorCrear = {
-          ...this.nuevaOfertaForm,
-          variante_id: varianteId ?? 'uuid',
-        };
-        if (!varianteId) {
-          throw new Error('Variante ID is undefined');
-        }
-        await this.guardarOferta(ofertaPorCrear, varianteId ?? 'uuid');
-        console.log('Todos los formularios se enviaron con éxito');
-        this.mostrarToast('Todos los formularios se enviaron con éxito');
-      } else {
-        console.log('Hay errores en los formularios');
-        this.mostrarToast('Hay errores en los formularios', 'danger');
+      if (!this.validarProducto(this.nuevoProductoForm)) {
+        console.log('Errores en el formulario del producto');
+        this.mostrarToast('Hay errores en el formulario del producto', 'danger');
+        return; 
       }
+
+      const variantesInvalidas = this.variantesForms.filter(variante => !this.validarVarianteIndividual(variante));
+
+      if (variantesInvalidas.length > 0) {
+        console.log('Hay variantes inválidas:', variantesInvalidas);
+        this.mostrarToast('Una o más variantes no son válidas', 'danger');
+        return; 
+      }
+
+      const { id: productoId } = await this.guardarProducto(this.nuevoProductoForm);
+
+      if (!productoId) {
+        throw new Error('Error: El producto no se pudo guardar correctamente.');
+      }
+
+      const promisesVariantes = this.variantesForms.map(async (variante) => {
+        const variantePorCrear = {
+          ...variante,
+          producto_id: productoId,
+        };
+        return this.guardarVariante(variantePorCrear, productoId);
+      });
+
+      const resultadosVariantes = await Promise.all(promisesVariantes);
+      const variantesIds = resultadosVariantes.map(resultado => resultado?.id).filter(id => !!id);
+
+      if (resultadosVariantes.length !== this.variantesForms.length || variantesIds.length === 0) {
+        console.error('Error al guardar una o varias variantes.');
+        this.mostrarToast('Error al guardar una o varias variantes', 'danger');
+        return;
+      }
+
+      console.log('Producto y variantes guardados con éxito');
+      this.mostrarToast('Producto y variantes guardados con éxito');
+      window.location.reload();
+
     } catch (error) {
       console.error('Error al enviar los formularios:', error);
       this.mostrarToast('Error al enviar los formularios', 'danger');
     }
   }
-
+  
   // ========================= Métodos de productos =========================
 
   // Obtener los productos del usuario
@@ -297,7 +331,7 @@ export class MisProductosPage implements OnInit {
 
   async guardarVariante(varianteToCreate: Variante, productoId: string) {
     try {
-      if (true || this.validarVariantes([varianteToCreate])) {
+      if (true || this.validarVarianteIndividual(varianteToCreate)) {
         const {id, variante} =  await this.crudService.guardarVariante(
           varianteToCreate, productoId
         );
@@ -314,127 +348,134 @@ export class MisProductosPage implements OnInit {
     return {};
   }
 
-  // Validar variantes
-  validarVariantes(variantes: Variante[]): boolean {
-    for (const variante of variantes) {
-      if (!variante.atributo.trim() || variante.atributo.length < 3) {
-        this.mostrarToast(
-          'El atributo de la variante debe tener al menos 3 caracteres',
-          'warning'
-        );
-        console.warn('El atributo de la variante no es válido');
-        return false;
-      }
-      if (variante.precio <= 0) {
-        this.mostrarToast(
-          'El precio de la variante debe ser mayor a 0',
-          'warning'
-        );
-        console.warn('El precio de la variante no es válido');
-        return false;
-      }
-      if (variante.stock < 0) {
-        this.mostrarToast(
-          'El stock de la variante no puede ser negativo',
-          'warning'
-        );
-        return false;
-      }
-      if (variante.auto_stock === true && variante.inventario_minimo <= 0) {
-        this.mostrarToast('El inventario mínimo debe ser mayor a 0', 'warning');
-        return false;
-      }
-      if (false || variante.imagen === null) {
-        this.mostrarToast(
-          'La imagen de la variante no puede ser nula',
-          'warning'
-        );
-        return false;
-      }
-      if (false || variante.imagen.length < 1) {
-        this.mostrarToast(
-          'La imagen de la variante no puede estar vacía',
-          'warning'
-        );
-        return false;
-      }
+  // Validar variante individual
+  validarVarianteIndividual(variante: Variante): boolean {
+    if (!variante.atributo.trim() || variante.atributo.length < 3) {
+      this.mostrarToast(
+        'El atributo de la variante debe tener al menos 3 caracteres',
+        'warning'
+      );
+      console.warn('El atributo de la variante no es válido');
+      return false;
+    }
+    if (variante.precio <= 0) {
+      this.mostrarToast(
+        'El precio de la variante debe ser mayor a 0',
+        'warning'
+      );
+      console.warn('El precio de la variante no es válido');
+      return false;
+    }
+    if (variante.stock < 0) {
+      this.mostrarToast(
+        'El stock de la variante no puede ser negativo',
+        'warning'
+      );
+      return false;
+    }
+    if (variante.auto_stock === true && variante.inventario_minimo <= 0) {
+      this.mostrarToast('El inventario mínimo debe ser mayor a 0', 'warning');
+      return false;
+    }
+    if (false || variante.imagen === null) {
+      this.mostrarToast(
+        'La imagen de la variante no puede ser nula',
+        'warning'
+      );
+      return false;
+    }
+    if (false || variante.imagen.length < 1) {
+      this.mostrarToast(
+        'La imagen de la variante no puede estar vacía',
+        'warning'
+      );
+      return false;
     }
     return true;
   }
 
-  // Eliminar variante
-  async eliminarVariante(varianteId: string) {
-    const alert = await this.alertController.create({
-      header: 'Confirmar eliminación',
-      message: '¿Estás seguro de que deseas eliminar esta variante?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          handler: async () => {
-            try {
-              await this.crudService.eliminarVariante(varianteId);
-              console.log('Variante eliminada:', varianteId);
-              this.mostrarToast('Variante eliminada con éxito');
-            } catch (error) {
-              console.error('Error al eliminar la variante:', error);
-              this.mostrarToast('Error al eliminar la variante', 'danger');
-            }
-          },
-        },
-      ],
+
+  // ==================== Métodos variables multiples ======================
+  seleccionarVariante(index: number) {
+    this.varianteSeleccionada = index;
+  }
+
+  addVariante() {
+    this.variantesForms.push({
+      id: '',
+      atributo: '',
+      estado: '',
+      precio: 0,
+      producto_id: '',
+      sku: '',
+      stock: 0,
+      inventario_minimo: 0,
+      auto_stock: false,
+      imagen: []
     });
-    await alert.present();
   }
 
-  // ========================= Métodos de imagenes =========================
-  async compressImage(file: File): Promise<File | null> {
-    const options = {
-      maxSizeMB: 0.3, // Tamaño máximo en MB (ajusta según necesites)
-      maxWidthOrHeight: 1024, // Ancho o alto máximo (opcional)
-      useWebWorker: true, // Recomendado para no bloquear el hilo principal
-    };
-    try {
-      const compressedFile = await imageCompression(file, options);
-      console.log('Tamaño original:', file.size / 1024 / 1024, 'MB');
-      console.log(
-        'Tamaño comprimido:',
-        compressedFile.size / 1024 / 1024,
-        'MB'
-      );
-      return compressedFile;
-    } catch (error) {
-      console.error('Error al comprimir la imagen:', error);
-      this.mostrarToast('Error al comprimir una imagen', 'danger');
-      return null;
-    }
-  }
-
-  async procesarImagenes(event: any): Promise<void> {
-    const archivos = event.target.files;
-    if (!archivos || archivos.length === 0) {
-      return;
-    }
-
-    this.nuevaVarianteForm.imagen = [];
-
-    for (let i = 0; i < archivos.length; i++) {
-      const archivo = archivos[i];
-      const compressedFile = await this.compressImage(archivo);
-      if (compressedFile) {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64String = reader.result as string;
-          this.nuevaVarianteForm.imagen.push(base64String); // Convertimos el archivo a base64 y lo guardamos
-        };
-        reader.readAsDataURL(compressedFile);
+  eliminarVariante(index: number) {
+    if (this.variantesForms.length > 1) {
+      this.variantesForms.splice(index, 1);
+      // Ajustar el índice seleccionado
+      if (this.varianteSeleccionada >= this.variantesForms.length) {
+        this.varianteSeleccionada = this.variantesForms.length - 1;
       }
     }
   }
 
-  esArray(val: any): boolean {
-    return Array.isArray(val);
+  actualizarNombreVariante(index: number, valor: string) {
+    this.variantesForms[index].atributo = valor;
   }
+
+// ========================= Métodos de imagenes =========================
+async compressImage(file: File): Promise<File | null> {
+  const options = {
+    maxSizeMB: 0.1,
+    maxWidthOrHeight: 1024,
+    useWebWorker: true,
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    console.log('Tamaño original:', file.size / 1024 / 1024, 'MB');
+    console.log(
+      'Tamaño comprimido:',
+      compressedFile.size / 1024 / 1024,
+      'MB'
+    );
+    return compressedFile;
+  } catch (error) {
+    console.error('Error al comprimir la imagen:', error);
+    this.mostrarToast('Error al comprimir una imagen', 'danger');
+    return null;
+  }
+}
+
+procesarImagenes(event: any, index: number) {
+  const archivos = event.target.files;
+  if (archivos && archivos.length > 0) {
+    this.variantesForms[index].imagen = []; // Limpiar imágenes anteriores si se seleccionan nuevas
+    for (const file of archivos) {
+      this.compressAndReadImage(file, index);
+    }
+  }
+}
+
+async compressAndReadImage(file: File, index: number): Promise<void> {
+  const compressedFile = await this.compressImage(file);
+  if (compressedFile) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.variantesForms[index].imagen.push(reader.result as string);
+    };
+    reader.readAsDataURL(compressedFile);
+  }
+}
+
+esArray(val: any): boolean {
+  return Array.isArray(val);
+}
 
   // ========================= Métodos de ofertas =========================
 
