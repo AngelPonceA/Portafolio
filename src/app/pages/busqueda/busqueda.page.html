@@ -1,13 +1,27 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>busqueda</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-navegacion>
+  <ion-content *ngIf="hayProductos | async; else sinProductos">
+      <div class="productos-grid-container">
+        <h2 class="categoria-titulo">{{ categoria | titlecase }}</h2>
+      <div class="productos-grid">
+        <ion-card *ngFor="let producto of productos | async" (click)="verDetalle(producto.variante.id)" class="producto-card">
+          <img [src]="producto.variante.imagen[0]" />
+          <ion-card-content>
+            <ion-card-title class="nombre">{{ producto.producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="descripcion">{{ producto.variante.atributo | titlecase }}</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="!producto.oferta" class="precio-original">{{ producto.variante.precio | number }} CLP</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="producto.oferta" class="precio-original-tachado">{{ producto.variante.precio | number }} CLP</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="producto.oferta" class="precio-oferta">{{ producto.oferta.precio_oferta | number }} CLP</ion-card-subtitle>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </ion-content>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">busqueda</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+  <ng-template #sinProductos>
+    <div class="vacio-container">
+      <ion-icon name="sad-outline"></ion-icon>
+      <h2>Categoría vacía</h2>
+      <p>Agrega productos a la categoría o espera que se publiquen algunos.</p>
+    </div>
+  </ng-template>
+</app-navegacion>

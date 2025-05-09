@@ -23,19 +23,20 @@
     .nombre {
       font-size: 14px;
       font-weight: 500;
-      margin: 4px 0;
+      margin: 4px 0 4px 4px;
       line-height: 1.2;
     }
 
     .precio {
+      margin: 0 0 4px 4px;
       font-size: 16px;
       color: #D32F2F;
       font-weight: bold;
-      margin-bottom: 4px;
     }
 
     .descripcion {
-      font-size: 12px;
+      margin: 0 0 4px 4px;
+      font-size: 13px;
       color: #666;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -47,18 +48,21 @@
 .precio-original {
   color: #000000; // gris para que se vea rebajado
   font-size: 14px;
+  margin: 0 0 4px 4px;
 }
 
 .precio-original-tachado {
   text-decoration: line-through;
   color: #888; // gris para que se vea rebajado
   font-size: 14px;
+  margin: 0 0 2px 4px;
 }
 
 .precio-oferta {
   color: #d32f2f; // rojo para resaltar
   font-weight: bold;
   font-size: 16px;
+  margin: 0 0 4px 4px;
 }
 
 .productos-grid-container {
@@ -69,10 +73,11 @@
 }
 
 .productos-titulo {
+  text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
-  margin-bottom: 16px;
-  color: #333; /* Color del texto */
+  margin: 2% 0 6% 0;
+  color: #000000; /* Color del texto */
 }
 
 .ver-mas-container {

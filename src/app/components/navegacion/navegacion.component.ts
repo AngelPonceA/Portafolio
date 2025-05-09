@@ -14,7 +14,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 export class NavegacionComponent  implements OnInit {
 
   notificaciones?: number ;
-  productos: number = 3;
+  carrito: number = 3;
 
   
   constructor( private router: Router, private navCtrl: NavController, private authService: AuthService  ) { }

@@ -1,3 +1,4 @@
+import { Categoria } from 'src/app/models/categoria.models';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CrudService } from '../services/crud/crud.service';
@@ -25,6 +26,10 @@ export class HomePage {
     // this.productosSinOferta.slice(0, 6);
     // this.productosConOferta = this.productosConOferta.slice(0, 6);
     //Token DHL al iniciar la aplicacion
+  }
+
+  verCategoria(categoria: string){
+    this.router.navigate(['/busqueda'], { state: { categoria } });    
   }
 
   verDetalle(variante_id: string) {
