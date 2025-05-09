@@ -51,20 +51,6 @@ export class CrudService {
     }
   }
 
-  obtenerProductosConStock(): Observable<Producto[]> {
-    return combineLatest([
-      this.obtenerProductos(),
-      this.obtenerVariantes()
-    ]).pipe(
-      map(([productos, variantes]) => {
-        const productosConStock = productos.filter(producto => {
-          return variantes.some(v => v.producto_id === producto.id && v.stock > 0);
-        });
-        return productosConStock;
-      })
-    );
-  }
-
   obtenerProductosConVarianteYOferta(): Observable<ProductoExtendido[]> {
     return combineLatest([
       this.obtenerProductos(),

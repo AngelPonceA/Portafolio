@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { BusquedaPageRoutingModule } from './busqueda-routing.module';
 
 import { BusquedaPage } from './busqueda.page';
+import { NavegacionComponent } from "../../components/navegacion/navegacion.component";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    BusquedaPageRoutingModule
+    BusquedaPageRoutingModule,
+    NavegacionComponent,
   ],
   declarations: [BusquedaPage]
 })

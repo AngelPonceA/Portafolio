@@ -21,9 +21,8 @@ export class CarritoPage implements OnInit {
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
   
   async ngOnInit() {
-    await this.agregarProductoAlCarrito('QESMssNIMt49iO8e4cgC');
-    await this.agregarProductoAlCarrito('l15FYjMuUnyP4MlTP1IT');
-    await this.agregarProductoAlCarrito('4eZNvQb9xrtVmXJlxNla');
+    await this.agregarProductoAlCarrito('5ZqbDFCyPoWqrQZMlCIs');
+    await this.agregarProductoAlCarrito('M5d8fG0KsJ4cMqIosRLM');
 
     await this.calculateTotalAmount();
     this.iniciarBotonPaypal(); 

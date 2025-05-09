@@ -23,7 +23,7 @@
   </ion-button>
   <ion-button (click)="navegar('/carrito')" class="footer-header-button">
     <ion-icon name="basket"></ion-icon>
-    <div *ngIf="productos > 0" class="notification-badge">{{ productos }}</div>
+    <div *ngIf="carrito > 0" class="notification-badge">{{ carrito }}</div>
   </ion-button>
   <ion-button (click)="navegar('/perfil')" class="footer-header-button">
     <ion-icon name="person"></ion-icon>

@@ -6,7 +6,7 @@
       <div class="categorias-grid">
         <div *ngFor="let categoria of categorias | async" class="categoria-card">
           <div class="categoria-icon-container">
-            <ion-icon [name]="categoria.icono" class="categoria-icon"></ion-icon>
+            <ion-icon [name]="categoria.icono" class="categoria-icon" (click)="verCategoria(categoria.nombre)"></ion-icon>
           </div>
           <p class="categoria-nombre">{{ categoria.nombre | titlecase }}</p>
         </div>
@@ -20,6 +20,7 @@
           <img [src]="producto.variante.imagen[0]" />
           <ion-card-content>
             <ion-card-title class="nombre">{{ producto.producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="descripcion">{{ producto.variante.atributo | titlecase }}</ion-card-subtitle>
             <ion-card-subtitle class="precio-original">{{ producto.variante.precio | number }} CLP</ion-card-subtitle>
           </ion-card-content>
         </ion-card>
@@ -36,6 +37,7 @@
           <img [src]="producto.variante.imagen[0]" />
           <ion-card-content>
             <ion-card-title class="nombre">{{ producto.producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="descripcion">{{ producto.variante.atributo | titlecase }}</ion-card-subtitle>
             <ion-card-subtitle class="precio-original-tachado">{{ producto.variante.precio | number }} CLP</ion-card-subtitle>
             <ion-card-subtitle class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>
           </ion-card-content>
