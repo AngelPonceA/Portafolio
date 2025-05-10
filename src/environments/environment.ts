@@ -13,5 +13,6 @@ export const environment = {
     appId: "1:861480881852:web:7a415e3b9a84dd75e28ab9"
   },
   dhlApiUrl: 'https://api.dhl.com/v1/shipments',
-  dhlApiKey: 'PjjDWb42v6190ZY0sQpQW24JQ9mWHnSd'
+  dhlApiKey: 'PjjDWb42v6190ZY0sQpQW24JQ9mWHnSd',
+  dhlApiSecret: '	pnnEQv09UfxvIRR0'
 }
