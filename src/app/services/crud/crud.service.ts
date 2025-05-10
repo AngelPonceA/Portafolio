@@ -270,7 +270,6 @@ export class CrudService {
   }
 
   // ========================== Página mis-productos ==========================
-
   // Métodos de clase producto
   obtenerMisProductos(): Observable<Producto[]> {
     // const uid = this.nativeStorage.getItem('id');
@@ -408,7 +407,7 @@ export class CrudService {
 
       if (ofertas && ofertas.length > 0) {
         const eliminarPromises = ofertas.map((oferta) =>
-          this.eliminarOferta(oferta.id)
+          this.eliminarOferta(oferta.id?? 'uid')
         );
         await Promise.all(eliminarPromises);
         console.log(
