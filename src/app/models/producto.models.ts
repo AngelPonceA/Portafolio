@@ -1,8 +1,17 @@
+import { Oferta } from './oferta.models';
+
 export interface Producto {
-    id: string;
+    producto_id?: string;
     usuario_id: string;
     categoria: string;
     titulo: string;
     descripcion: string;
     etiquetas: string[];
+    estado: string;
+    precio: number;
+    stock: number;
+    inventario_minimo: number;
+    auto_stock: boolean;
+    imagen: string[];
+    oferta?: Oferta;
 }

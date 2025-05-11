@@ -12,9 +12,9 @@ export class CarritoService {
 
   constructor( private nativeStorage: NativeStorage, private crudService: CrudService, private firestore: Firestore) { }
 
-  async agregarProductoAlCarrito(variante_id: string, cantidad: number) {
+  async agregarProductoAlCarrito(producto_id: string, cantidad: number) {
     try {
-      const producto = await this.crudService.obtenerDetalleVariante(variante_id);
+      const producto = await this.crudService.obtenerDetalleProducto(producto_id);
 
       if (!producto) {
         console.error('Producto no encontrado.');
@@ -22,7 +22,7 @@ export class CarritoService {
       }
 
       const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
-      const productoExistente = carrito.find((item: any) => item.variante_id === variante_id);
+      const productoExistente = carrito.find((item: any) => item.producto_id === producto_id);
 
       const cantidadTotal = productoExistente ? productoExistente.cantidad + cantidad : cantidad;
 
@@ -35,7 +35,7 @@ export class CarritoService {
       if (productoExistente) {
         productoExistente.cantidad = cantidadTotal;
       } else {
-        carrito.push({ variante_id, cantidad });
+        carrito.push({ producto_id, cantidad });
       }
 
       await this.nativeStorage.setItem(this.carritoStorage, carrito);
