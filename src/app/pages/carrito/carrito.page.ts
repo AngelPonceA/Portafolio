@@ -21,24 +21,22 @@ export class CarritoPage implements OnInit {
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
   
   async ngOnInit() {
-    await this.agregarProductoAlCarrito('5ZqbDFCyPoWqrQZMlCIs');
-    await this.agregarProductoAlCarrito('M5d8fG0KsJ4cMqIosRLM');
+    await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
 
     await this.calculateTotalAmount();
     this.iniciarBotonPaypal(); 
   }
 
-  verDetalle(variante_id: string) {
-    this.router.navigate(['/producto'], { state: { variante_id } });
+  verDetalle(producto_id: string) {
+    this.router.navigate(['/producto'], { state: { producto_id } });
   }
 
   async agregarProductoAlCarrito(variante_id: string) {
-    const detalleVariante = await this.crudService.obtenerDetalleVariante(variante_id);
+    const detalleVariante = await this.crudService.obtenerDetalleProducto(variante_id);
   
     if (detalleVariante) {
   
       this.productos.push({
-        variante_id: detalleVariante.variante_id,
         vendedor_id: detalleVariante.vendedor_id,
         producto_titulo: detalleVariante.producto_titulo,
         descripcion: detalleVariante.producto_descripcion,
@@ -58,24 +56,24 @@ export class CarritoPage implements OnInit {
     }
   }
 
-  restarProducto(variante_id: string) {
-    const producto = this.productos.find((p) => p.variante_id === variante_id);
+  restarProducto(producto_id: string) {
+    const producto = this.productos.find((p) => p.producto_id === producto_id);
     if (producto && producto.cantidad > 1) {
       producto.cantidad--;
       this.calculateTotalAmount();
     }
   }
 
-  sumarProducto(variante_id: string) {
-    const producto = this.productos.find((p) => p.variante_id === variante_id);
+  sumarProducto(producto_id: string) {
+    const producto = this.productos.find((p) => p.producto_id === producto_id);
     if (producto && producto.stock >= producto.cantidad + 1) {
       producto.cantidad++;
       this.calculateTotalAmount();      
     }    
   }
 
-  quitarProducto(variante_id: string) {
-    this.productos = this.productos.filter((p) => p.variante_id != variante_id);
+  quitarProducto(producto_id: string) {
+    this.productos = this.productos.filter((p) => p.producto_id != producto_id);
     this.calculateTotalAmount();
   }
 

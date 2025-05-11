@@ -26,13 +26,13 @@ export class ProductoPage implements OnInit {
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
     
   async ngOnInit() {
-    const variante_id = await this.router.getCurrentNavigation()?.extras?.state?.['variante_id'];
-    if (variante_id) {
-      this.crudService.obtenerDetalleVariante(variante_id).then(data => {
+    const producto_id = await this.router.getCurrentNavigation()?.extras?.state?.['producto_id'];
+    if (producto_id) {
+      this.crudService.obtenerDetalleProducto(producto_id).then(data => {
         this.producto = data;    
         this.cantidadOpciones = Array.from({ length: this.producto.stock }, (_, i) => i + 1);
       });
-      this.esFavorito = await this.crudService.esFavorito(variante_id);
+      this.esFavorito = await this.crudService.esFavorito(producto_id);
     }
   }
 
@@ -53,9 +53,9 @@ export class ProductoPage implements OnInit {
     this.calcularTotal();
   }
 
-  async agregarFavorito(producto: string) {
+  async agregarFavorito(producto_id: string) {
     try {
-      await this.crudService.agregarFavorito(producto);
+      await this.crudService.agregarFavorito(producto_id);
       this.esFavorito = true;
     } catch (error) {
       console.error('Error al agregar favorito:', error);
@@ -97,13 +97,12 @@ export class ProductoPage implements OnInit {
     }).render('#paypal-button-container');
   }
 
-  agregarAlCarrito(producto: string) {
+  agregarAlCarrito(producto_id: string) {
   }
 
-
-  async eliminarFavorito(producto: string) {
+  async eliminarFavorito(producto_id: string) {
     try {
-      await this.crudService.eliminarFavorito(producto);
+      await this.crudService.eliminarFavorito(producto_id);
       this.esFavorito = false;
     } catch (error) {
       console.error('Error al eliminar favorito:', error);
@@ -112,13 +111,13 @@ export class ProductoPage implements OnInit {
 
   async manejarFavorito(producto: any) {
       if (this.esFavorito) {
-        const favorito_id = await this.crudService.obtenerFavoritoId(producto.variante_id);
+        const favorito_id = await this.crudService.obtenerFavoritoId(producto.producto_id);
         if (favorito_id) {
           await this.crudService.eliminarFavorito(favorito_id);
         }
         this.esFavorito = false;
       } else {
-        await this.crudService.agregarFavorito(producto.variante_id);
+        await this.crudService.agregarFavorito(producto.producto_id);
         this.esFavorito = true;
       }
     }

@@ -27,8 +27,8 @@ export class BusquedaPage implements OnInit {
     this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
   }
 
-  verDetalle(variante_id: string){
-    this.router.navigate(['/producto'], { state: { variante_id } });
+  verDetalle(producto_id: string){
+    this.router.navigate(['/producto'], { state: { producto_id } });
   }
 
 }

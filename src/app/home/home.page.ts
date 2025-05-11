@@ -32,8 +32,8 @@ export class HomePage {
     this.router.navigate(['/busqueda'], { state: { categoria } });    
   }
 
-  verDetalle(variante_id: string) {
-    this.router.navigate(['/producto'], { state: { variante_id } });
+  verDetalle(producto_id: string) {
+    this.router.navigate(['/producto'], { state: { producto_id } });
   }
 
 }
