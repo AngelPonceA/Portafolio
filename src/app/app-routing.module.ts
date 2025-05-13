@@ -59,10 +59,10 @@ const routes: Routes = [
     path: 'usuario-vendedor',
     loadChildren: () => import('./pages/usuario-vendedor/usuario-vendedor.module').then( m => m.UsuarioVendedorPageModule)
   },
-  // {
-  //   path: 'mis-productos',
-  //   loadChildren: () => import('./pages/mis-productos/mis-productos.module').then( m => m.MisProductosPageModule)
-  // },
+   {
+     path: 'mis-productos',
+     loadChildren: () => import('./pages/mis-productos/mis-productos.module').then( m => m.MisProductosPageModule)
+  },
   {
     path: 'historial-compra',
     loadChildren: () => import('./pages/historial-compra/historial-compra.module').then( m => m.HistorialCompraPageModule)

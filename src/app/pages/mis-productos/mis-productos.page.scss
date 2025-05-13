@@ -313,3 +313,17 @@ ion-chip {
 .close-icon {
   cursor: pointer;
 }
+
+.oferta-display-card {
+  --background: #fff7e6;
+  --border-radius: 8px;
+  margin: 1rem 0;
+  ion-card-header {
+    background: #ffd54f;
+    color: #333;
+  }
+  ion-card-content p {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+  }
+}
