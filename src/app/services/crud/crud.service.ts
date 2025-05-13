@@ -256,12 +256,14 @@ export class CrudService {
   // Esto fue arreglado con copilot luego de la orden de cambio del profesor, debe ser revisado
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Métodos de clase producto
-  obtenerMisProductos(): Observable<Producto[]> {
-    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
-    const productosRef = collection(this.firestore, 'productos');
-    const q = query(productosRef, where('usuario_id', '==', uid));
-    return collectionData(q, { idField: 'id' }) as Observable<Producto[]>;
-  }
+obtenerMisProductos(): Observable<Producto[]> {
+  const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+  const productosRef = collection(this.firestore, 'productos');
+  const q = query(productosRef, where('usuario_id', '==', uid));
+
+  return collectionData(q, { idField: 'producto_id' }) as Observable<Producto[]>;
+}
+
 
   async eliminarProducto(producto_id: string) {
     try {
@@ -346,14 +348,14 @@ export class CrudService {
     }
   }
 
-  async guardarOferta(oferta: Oferta, producto_id: string) {
+  async guardarOferta(oferta: Oferta, producto: Producto) {
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const ofertasRef = collection(this.firestore, 'ofertas');
     const nuevaOfertaRef = doc(ofertasRef);
     const nuevaOferta = {
       ...oferta,
       usuario_id: uid,
-      producto_id
+      producto_id: producto.producto_id
     };
     await setDoc(nuevaOfertaRef, nuevaOferta);
     return nuevaOferta;

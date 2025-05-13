@@ -8,10 +8,7 @@
   </div>
 
   <ion-content>
-    <div
-      *ngIf="productosExtendidosPorProducto.length === 0"
-      class="empty-state"
-    >
+    <div *ngIf="productos.length === 0" class="empty-state">
       <h3>No hay productos registrados</h3>
       <p>Comienza agregando tu primer producto</p>
       <ion-button (click)="abrirModal()" fill="outline">
@@ -23,107 +20,110 @@
 
   <!-- Sección de productos -->
   <div class="productos-grid">
-    <ion-card
-      *ngFor="let productoExtendido of productosExtendidosPorProducto"
-      class="producto-card"
-    >
+    <ion-card *ngFor="let producto of productos" class="producto-card">
       <!-- Sección de imágenes -->
       <div class="imagen-container">
         <ion-slides [options]="{ slidesPerView: 1, loop: true }">
-          <ion-slide
-            *ngFor="let variante of productoExtendido.variantes; let varianteIndex = index"
-          >
-            <ion-slide
-              *ngFor="let imagen of variante.imagen ; let imgIndex = index"
-            >
-              <div class="slide-image">
-                <img
-                  [src]="imagen || 'assets/img/placeholder.png'"
-                  [alt]="'Imagen de variante ' + variante.atributo"
-                />
-              </div>
-            </ion-slide>
+          <ion-slide *ngFor="let img of producto.imagen">
+            <div class="slide-image">
+              <img
+                [src]="img || 'assets/img/placeholder.png'"
+                alt="Imagen del producto"
+              />
+            </div>
           </ion-slide>
         </ion-slides>
       </div>
 
       <!-- Sección datos -->
       <ion-card-header>
-        <ion-card-title>{{ productoExtendido.producto.titulo }}</ion-card-title>
+        <ion-card-title>{{ producto.titulo }}</ion-card-title>
         <ion-card-subtitle>
           <ion-icon name="pricetags-outline"></ion-icon>
-          {{ obtenerNombreCategoriaPorId(productoExtendido.producto.categoria)
-          }}
+          {{ obtenerNombreCategoriaPorId(producto.categoria) }}
         </ion-card-subtitle>
       </ion-card-header>
 
       <ion-card-content class="detalle-producto">
         <p class="descripcion">
-          {{ productoExtendido.producto.descripcion || 'Sin descripción' }}
+          {{ producto.descripcion || 'Sin descripción' }}
         </p>
-        <div
-          class="etiquetas"
-          *ngIf="productoExtendido.producto.etiquetas.length > 0"
-        >
+        <div class="etiquetas" *ngIf="producto.etiquetas?.length">
           <ion-chip
-            *ngFor="let etiqueta of productoExtendido.producto.etiquetas"
+            *ngFor="let etiqueta of producto.etiquetas"
             [color]="etiqueta === 'Rebaja' ? 'danger' : 'primary'"
           >
             {{ etiqueta }}
           </ion-chip>
         </div>
 
-        <div class="contenedor-variantes">
-          <div
-            class="detalle-variante"
-            *ngFor="let variante of productoExtendido.variantes; let varianteIndex = index"
-          >
-            <p>Atributo: {{ variante.atributo }}</p>
-            <p>Estado: {{ variante.estado }}</p>
-            <p>Precio: {{ variante.precio }}</p>
-            <p>Stock: {{ variante.stock }}</p>
-          </div>
+        <!-- Datos principales -->
+        <div class="datos-principales">
+          <p>Precio: {{ producto.precio }}</p>
+          <p>Stock: {{ producto.stock }}</p>
+          <p *ngIf="producto.inventario_minimo">
+            Stock Mínimo: {{ producto.inventario_minimo }}
+          </p>
+          <p>Estado: {{ producto.estado }}</p>
         </div>
 
-        <div
-          class="detalle oferta"
-          *ngFor="let oferta of productoExtendido.ofertas; let ofertaIndex = index"
+        <!-- Oferta Display -->
+        <ion-card
+          *ngIf="productoSeleccionado?.oferta as oferta"
+          class="oferta-display-card"
         >
-          <p>Precio Oferta: {{ oferta.precio_oferta }}</p>
-          <p>
-            Fecha Inicio: {{ oferta.fecha_inicio.toDate() | date:'dd/MM/yyyy
-            HH:mm' }}
-          </p>
-          <p>
-            Fecha Termino: {{ oferta.fecha_fin.toDate() | date:'dd/MM/yyyy
-            HH:mm' }}
-          </p>
-        </div>
+          <ion-card-header>
+            <ion-card-title> Oferta Especial</ion-card-title>
+          </ion-card-header>
 
+          <ion-card-content>
+            <p>
+              <strong>Precio de oferta:</strong>
+              {{ oferta.precio_oferta | currency:'CLP':'symbol':'1.0-0' }}
+            </p>
+            <p>
+              <strong>Fecha de inicio:</strong>
+              {{ oferta.fecha_inicio.toDate() | date:'dd/MM/yyyy
+              HH:mm':'':'es-CL' }}
+            </p>
+            <p>
+              <strong>Fecha de término:</strong>
+              {{ oferta.fecha_fin.toDate() | date:'dd/MM/yyyy HH:mm':'':'es-CL'
+              }}
+            </p>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Acciones sobre el producto -->
         <div class="acciones">
           <ion-button
             fill="clear"
             color="danger"
-            (click)="eliminarProducto(productoExtendido.producto.producto_id)"
+            (click)="eliminarProducto(producto.producto_id!)"
           >
             <ion-icon name="trash-outline"></ion-icon>
-            Eliminar
           </ion-button>
           <ion-button
             fill="clear"
             color="warning"
-            (click)="activarAutostock(productoExtendido)"
+            (click)="abrirModalAutostock(producto)"
           >
             <ion-icon name="notifications-outline"></ion-icon>
-            Alerta Stock
+          </ion-button>
+
+          <ion-button
+            fill="clear"
+            color="success"
+            (click)="abrirModalOferta(producto)"
+          >
+            <ion-icon name="pricetags-outline"></ion-icon>
           </ion-button>
         </div>
       </ion-card-content>
     </ion-card>
   </div>
 
-  <!--===================MODAL==================== -->
-
+  <!-- Modal agregar producto -->
   <ion-modal
     [isOpen]="mostrarModal"
     (didDismiss)="cerrarModal()"
@@ -132,8 +132,7 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title> {{ 'Nuevo Producto' }} </ion-title>
-
+          <ion-title>Nuevo Producto</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarModal()">
               <ion-icon name="close-outline"></ion-icon>
@@ -143,7 +142,6 @@
       </ion-header>
 
       <ion-content>
-        <!-- Sección clase producto -->
         <form
           (ngSubmit)="guardarProducto(nuevoProductoForm)"
           class="form-producto"
@@ -171,6 +169,22 @@
           </ion-item>
 
           <ion-item>
+            <ion-label>Estado</ion-label>
+            <ion-select
+              [(ngModel)]="nuevoProductoForm.estado"
+              name="estado"
+              required
+            >
+              <ion-select-option
+                *ngFor="let estado of estados"
+                [value]="estado"
+              >
+                {{ estado }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
             <ion-label>Categoría</ion-label>
             <ion-select
               [(ngModel)]="nuevoProductoForm.categoria"
@@ -178,7 +192,7 @@
             >
               <ion-select-option
                 *ngFor="let categoria of categorias"
-                [value]="categoria.nombre"
+                [value]="categoria.id"
                 >{{ categoria.nombre }}</ion-select-option
               >
             </ion-select>
@@ -200,13 +214,11 @@
 
           <ion-item>
             <ion-input
-              label="Nueva Etiqueta"
-              type="text"
+              placeholder="Nueva Etiqueta"
               [(ngModel)]="nuevaEtiqueta"
-              (keyup.enter)="agregarEtiqueta()"
               name="nuevaEtiqueta"
-            >
-            </ion-input>
+              (keyup.enter)="agregarEtiqueta()"
+            ></ion-input>
             <ion-button
               slot="end"
               (click)="agregarEtiqueta()"
@@ -215,74 +227,13 @@
               Agregar
             </ion-button>
           </ion-item>
-        </form>
-
-        <!-- Navegación de variantes -->
-        <div class="variant-scroll-wrapper">
-          <ion-buttons>
-            <ion-button
-              *ngFor="let form of variantesForms; let i = index"
-              [color]="varianteSeleccionada === i ? 'primary' : 'medium'"
-              (click)="seleccionarVariante(i)"
-            >
-              {{ form.atributo.trim() || ('Variante ' + (i + 1)) }}
-            </ion-button>
-
-            <ion-button (click)="addVariante()" color="success">
-              <ion-icon name="add-outline"></ion-icon>
-            </ion-button>
-
-            <ion-button
-              *ngIf="variantesForms.length > 1"
-              (click)="eliminarVariante(varianteSeleccionada)"
-              color="danger"
-            >
-              <ion-icon name="trash-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </div>
-
-        <!-- Sección clase variante -->
-        <form
-          (ngSubmit)="guardarVariantes([nuevaVarianteForm])"
-          *ngIf="variantesForms[varianteSeleccionada]"
-          class="form-variante"
-        >
-          <ion-list-header>
-            <ion-label
-              >Información de variante {{ varianteSeleccionada + 1 }}</ion-label
-            >
-          </ion-list-header>
 
           <ion-item>
-            <ion-label position="floating">Atributo</ion-label>
-            <ion-input
-              [(ngModel)]="variantesForms[varianteSeleccionada].atributo"
-              [name]="'atributo_' + varianteSeleccionada"
-              required
-              (ngModelChange)="actualizarNombreVariante(varianteSeleccionada, $event)"
-            >
-            </ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-label>Estado de producto</ion-label>
-            <ion-select
-              [(ngModel)]="variantesForms[varianteSeleccionada].estado"
-              [name]="'estado_' + varianteSeleccionada"
-            >
-              <ion-select-option *ngFor="let estado of estados" [value]="estado"
-                >{{ estado }}</ion-select-option
-              >
-            </ion-select>
-          </ion-item>
-
-          <ion-item>
-            <ion-label position="floating">Precio normal (CLP)</ion-label>
+            <ion-label position="floating">Precio (CLP)</ion-label>
             <ion-input
               type="number"
-              [(ngModel)]="variantesForms[varianteSeleccionada].precio"
-              [name]="'precio_' + varianteSeleccionada"
+              [(ngModel)]="nuevoProductoForm.precio"
+              name="precio"
               min="1"
               required
             ></ion-input>
@@ -292,8 +243,8 @@
             <ion-label position="floating">Stock disponible</ion-label>
             <ion-input
               type="number"
-              [(ngModel)]="variantesForms[varianteSeleccionada].stock"
-              [name]="'stock_' + varianteSeleccionada"
+              [(ngModel)]="nuevoProductoForm.stock"
+              name="stock"
               min="1"
               required
             ></ion-input>
@@ -306,7 +257,7 @@
               class="input-img"
               type="file"
               multiple
-              (change)="procesarImagenes($event, varianteSeleccionada)"
+              (change)="procesarImagenes($event)"
               accept="image/*"
             />
             <label for="fileInput" class="custom-file-button"
@@ -315,82 +266,157 @@
           </ion-item>
 
           <div
-            *ngIf="esArray(variantesForms[varianteSeleccionada].imagen) && variantesForms[varianteSeleccionada].imagen.length > 0"
+            *ngIf="nuevoProductoForm.imagen.length > 0"
             class="imagenes-grid"
           >
             <ion-grid>
               <ion-row>
-                <ion-col
-                  size="4"
-                  *ngFor="let imagen of variantesForms[varianteSeleccionada].imagen"
-                >
+                <ion-col size="4" *ngFor="let img of nuevoProductoForm.imagen">
                   <img
-                    [src]="imagen || 'assets/img/placeholder.png'"
+                    [src]="img || 'assets/img/placeholder.png'"
                     class="imagen-preview"
                   />
                 </ion-col>
               </ion-row>
             </ion-grid>
           </div>
+
+          <ion-button expand="block" type="submit">
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            Guardar Producto
+          </ion-button>
         </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 
-        <!-- Seccion oferta -->
-        <!-- <form
-          (ngSubmit)="guardarOfertas([nuevaOfertaForm])"
-          class="form-variante"
+  <!-- Modal Agregar Oferta -->
+  <ion-modal
+    [isOpen]="mostrarOferta"
+    (didDismiss)="cerrarModalOferta()"
+    class="oferta-modal"
+  >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Nueva Oferta</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModalOferta()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <form
+          #ofertaForm="ngForm"
+          (ngSubmit)="guardarOferta(ofertaForm)"
+          class="form-oferta"
         >
-          <ion-list-header>
-            <ion-label>Oferta</ion-label>
-          </ion-list-header>
-
-          <ion-item>
-            <ion-label>¿Oferta?</ion-label>
-            <ion-toggle
-              [(ngModel)]="mostrarOferta"
-              name="ofertaActiva"
-              (ionChange)="onOfertaToggle()"
-            ></ion-toggle>
-          </ion-item>
-
-          <ng-container *ngIf="mostrarOferta">
+          <ng-container *ngIf="nuevaOfertaForm">
             <ion-item>
-              <ion-label position="floating">Precio Oferta</ion-label>
+              <ion-label position="floating">Precio oferta</ion-label>
               <ion-input
                 type="number"
                 [(ngModel)]="nuevaOfertaForm.precio_oferta"
                 name="precio_oferta"
                 min="1"
+                required
               ></ion-input>
             </ion-item>
 
             <ion-item>
-              <ion-label position="floating">Fecha Inicio</ion-label>
+              <ion-label position="floating">Fecha de inicio</ion-label>
               <ion-datetime
                 [(ngModel)]="nuevaOfertaForm.fecha_inicio"
                 name="fecha_inicio"
-                presentation="date"
-                [value]="nuevaOfertaForm.fecha_inicio"
-                displayFormat="DD/MM/YYYY"
-              ></ion-datetime>
+                locale="es-CL"
+                display-format="DD [de] MMMM [de] YYYY, HH:mm"
+                picker-format="DD MM YYYY HH mm"
+                presentation="date-time"
+                required
+              >
+              </ion-datetime>
             </ion-item>
 
             <ion-item>
-              <ion-label position="floating">Fecha Fin</ion-label>
+              <ion-label position="floating">Fecha de fin</ion-label>
               <ion-datetime
                 [(ngModel)]="nuevaOfertaForm.fecha_fin"
                 name="fecha_fin"
-                presentation="date"
-                [value]="nuevaOfertaForm.fecha_inicio"
-                displayFormat="DD/MM/YYYY"
-              ></ion-datetime>
+                locale="es-CL"
+                display-format="DD [de] MMMM [de] YYYY, HH:mm"
+                picker-format="DD MM YYYY HH mm"
+                presentation="date-time"
+                required
+              >
+              </ion-datetime>
             </ion-item>
           </ng-container>
-        </form> -->
-        
-        <ion-button (click)="enviarFormularios()" expand="block">
-          <ion-icon name="send-outline" slot="start"></ion-icon>
-          Enviar
-        </ion-button>
+
+          <ion-button
+            expand="block"
+            type="submit"
+            [disabled]="ofertaForm.invalid"
+          >
+            <ion-icon name="save-outline" slot="start"></ion-icon>
+            Guardar Oferta
+          </ion-button>
+        </form>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal Configurar AutoStock -->
+  <ion-modal
+    [isOpen]="mostrarModalAutostock"
+    (didDismiss)="cerrarModalAutostock()"
+    class="auto-stock-modal"
+  >
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Configurar AutoStock</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModalAutostock()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <form
+          #autoStockForm="ngForm"
+          (ngSubmit)="guardarAutostock(autoStockForm)"
+          class="form-autostock"
+        >
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Stock mínimo</ion-label>
+              <ion-input
+                type="number"
+                [(ngModel)]="stockMinimo"
+                name="stockMinimo"
+                required
+                min="1"
+              ></ion-input>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-label>Activar AutoStock</ion-label>
+              <ion-toggle
+                [(ngModel)]="activarAutoStock"
+                name="activarAutoStock"
+              ></ion-toggle>
+            </ion-item>
+          </ion-list>
+
+          <ion-footer>
+            <ion-button expand="block" type="submit">Guardar</ion-button>
+          </ion-footer>
+        </form>
       </ion-content>
     </ng-template>
   </ion-modal>
