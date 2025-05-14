@@ -68,29 +68,36 @@
         </div>
 
         <!-- Oferta Display -->
-        <ion-card
-          *ngIf="productoSeleccionado?.oferta as oferta"
-          class="oferta-display-card"
-        >
+        <ion-card *ngIf="producto.oferta" class="oferta-display-card">
           <ion-card-header>
-            <ion-card-title> Oferta Especial</ion-card-title>
+            <ion-card-title>Oferta Especial</ion-card-title>
           </ion-card-header>
 
           <ion-card-content>
             <p>
               <strong>Precio de oferta:</strong>
-              {{ oferta.precio_oferta | currency:'CLP':'symbol':'1.0-0' }}
-            </p>
-            <p>
-              <strong>Fecha de inicio:</strong>
-              {{ oferta.fecha_inicio.toDate() | date:'dd/MM/yyyy
-              HH:mm':'':'es-CL' }}
-            </p>
-            <p>
-              <strong>Fecha de término:</strong>
-              {{ oferta.fecha_fin.toDate() | date:'dd/MM/yyyy HH:mm':'':'es-CL'
+              {{ producto.oferta.precio_oferta | currency:'CLP':'symbol':'1.0-0'
               }}
             </p>
+            <p *ngIf="producto.oferta.fecha_inicio">
+              <strong>Fecha de inicio:</strong>
+              {{ producto.oferta.fecha_inicio.toDate() | date:'dd/MM/yyyy HH:mm'
+              }}
+            </p>
+            <p *ngIf="producto.oferta.fecha_fin">
+              <strong>Fecha de término:</strong>
+              {{ producto.oferta.fecha_fin.toDate() | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+
+            <div class="acciones">
+              <ion-button
+                fill="clear"
+                color="danger"
+                (click)="eliminarOferta(producto.oferta.id!)"
+              >
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
           </ion-card-content>
         </ion-card>
 
@@ -377,7 +384,7 @@
     <ng-template>
       <ion-header>
         <ion-toolbar>
-          <ion-title>Configurar AutoStock</ion-title>
+          <ion-title>Configurar alerta de stock</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarModalAutostock()">
               <ion-icon name="close-outline"></ion-icon>
@@ -405,7 +412,7 @@
             </ion-item>
 
             <ion-item lines="none">
-              <ion-label>Activar AutoStock</ion-label>
+              <ion-label>Activar alerta de stock</ion-label>
               <ion-toggle
                 [(ngModel)]="activarAutoStock"
                 name="activarAutoStock"

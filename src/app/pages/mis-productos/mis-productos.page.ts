@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
 import imageCompression from 'browser-image-compression';
 import { NgForm } from '@angular/forms';
+import { ChangeDetectorRef } from '@angular/core';
 
 // importar modelos
 import { ProductoExtendidoPorProducto } from 'src/app/models/producto_ext.models';
@@ -75,7 +76,8 @@ export class MisProductosPage implements OnInit {
     private toastController: ToastController,
     private alertController: AlertController,
     private authService: AuthService,
-    private crudService: CrudService
+    private crudService: CrudService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   // Obtener el id de la sesion
@@ -108,15 +110,18 @@ export class MisProductosPage implements OnInit {
     try {
       this.obtenerCategorias();
       this.crudService.obtenerMisProductos().subscribe({
-        next: (productos) => {
+        next: async (productos) => {
           this.productos = productos;
           console.log('Productos obtenidos:', this.productos);
+
+          await this.obtenerOfertas(); // Esperar después de cargar productos
         },
         error: (error) => {
           console.error('Error al obtener los productos:', error);
           this.mostrarToast('Error al cargar los productos', 'danger');
         },
       });
+
       await this.obtenerOfertas();
     } catch (error) {
       console.error('Error al obtener los productos:', error);
@@ -312,7 +317,7 @@ export class MisProductosPage implements OnInit {
             producto.producto_id
           );
           if (ofertas.length > 0) {
-            producto.oferta = ofertas[0]; // Asignar la única oferta existente
+            producto.oferta = ofertas[0];
           }
         })
       );
@@ -331,40 +336,114 @@ export class MisProductosPage implements OnInit {
       this.mostrarToast('Complete todos los campos', 'warning');
       return;
     }
-    // Convertir ISO strings a Timestamps
-    const inicioTs = Timestamp.fromDate(
-      new Date(this.nuevaOfertaForm.fecha_inicio)
-    );
-    const finTs = Timestamp.fromDate(new Date(this.nuevaOfertaForm.fecha_fin));
 
-    const ofertaParaGuardar: Oferta = {
-      precio_oferta: this.nuevaOfertaForm.precio_oferta,
-      fecha_inicio: inicioTs,
-      fecha_fin: finTs,
-      producto_id: this.productoSeleccionado.producto_id!,
-    };
-
-    if (!this.validarOferta(ofertaParaGuardar)) {
+    const productoId = this.productoSeleccionado.producto_id;
+    if (!productoId) {
+      console.error('Error: ID del producto no definido.');
+      this.mostrarToast(
+        'Error al crear la oferta: ID del producto no válido',
+        'danger'
+      );
       return;
     }
+
+    const nuevaOferta: Oferta = {
+      producto_id: productoId,
+      precio_oferta: this.nuevaOfertaForm.precio_oferta,
+      fecha_inicio: new Date(this.nuevaOfertaForm.fecha_inicio),
+      fecha_fin: new Date(this.nuevaOfertaForm.fecha_fin),
+    };
+
+    const esValida = this.validarOferta(nuevaOferta, this.productoSeleccionado);
+    if (!esValida) return;
+
+    const ofertasExistentes = await this.crudService.obtenerOfertaPorProducto(
+      productoId
+    );
+
+    if (ofertasExistentes.length > 0) {
+      const alerta = await this.alertController.create({
+        header: 'Oferta existente',
+        message:
+          'Este producto ya tiene una oferta activa. ¿Deseas reemplazarla?',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              console.log('Reemplazo cancelado');
+            },
+          },
+          {
+            text: 'Reemplazar',
+            handler: async () => {
+              const ofertaAnterior = ofertasExistentes[0];
+
+              if (ofertaAnterior?.id) {
+                await this.crudService.eliminarOferta(ofertaAnterior.id);
+                console.log('Oferta anterior eliminada');
+                await this.crearNuevaOferta(this.productoSeleccionado);
+                this.mostrarToast(
+                  'Oferta reemplazada correctamente',
+                  'success'
+                );
+                this.obtenerOfertas();
+              } else {
+                console.error('Error: ID de la oferta anterior no definido.');
+                this.mostrarToast('Error al reemplazar la oferta', 'danger');
+              }
+            },
+          },
+        ],
+      });
+      await alerta.present();
+    } else {
+      await this.crearNuevaOferta(this.productoSeleccionado);
+      this.mostrarToast('Oferta creada correctamente', 'success');
+      this.obtenerOfertas();
+    }
+  }
+
+  async crearNuevaOferta(productoSeleccionado: Producto) {
     try {
-      await this.crudService.guardarOferta(
-        ofertaParaGuardar,
-        this.productoSeleccionado
+      const nuevaOferta: Oferta = {
+        producto_id: productoSeleccionado.producto_id,
+        precio_oferta: this.nuevaOfertaForm.precio_oferta,
+        fecha_inicio: Timestamp.fromDate(
+          new Date(this.nuevaOfertaForm.fecha_inicio)
+        ),
+        fecha_fin: Timestamp.fromDate(new Date(this.nuevaOfertaForm.fecha_fin)),
+      };
+
+      const oferta = await this.crudService.guardarOferta(
+        nuevaOferta,
+        productoSeleccionado
       );
+      console.log('Oferta guardada:', oferta);
+
       this.mostrarToast('Oferta guardada con éxito');
-      this.cerrarModalOferta();
-      form.resetForm();
-    } catch (err) {
-      console.error(err);
+
+      await this.obtenerOfertas();
+      this.cdr.detectChanges();
+
+      this.mostrarOferta = false;
+    } catch (error) {
+      console.error('Error al guardar la oferta:', error);
       this.mostrarToast('Error al guardar la oferta', 'danger');
     }
   }
 
   // Validar ofertas
-  validarOferta(oferta: Oferta): boolean {
+  validarOferta(oferta: Oferta, producto: Producto): boolean {
     if (oferta.precio_oferta <= 0) {
       this.mostrarToast('El precio de la oferta debe ser mayor a 0', 'warning');
+      return false;
+    }
+    if (oferta.precio_oferta > producto.precio) {
+      this.mostrarToast(
+        'El precio de la oferta no puede ser mayor al precio normal',
+        'warning'
+      );
       return false;
     }
     if (oferta.fecha_fin < oferta.fecha_inicio) {
@@ -391,8 +470,8 @@ export class MisProductosPage implements OnInit {
     return true;
   }
 
-  eliminarOferta(ofertaId: string) {
-    const alert = this.alertController.create({
+  async eliminarOferta(ofertaId: string) {
+    const alert = await this.alertController.create({
       header: 'Confirmar eliminación',
       message: '¿Estás seguro de que deseas eliminar esta oferta?',
       buttons: [
@@ -400,19 +479,22 @@ export class MisProductosPage implements OnInit {
         {
           text: 'Eliminar',
           handler: async () => {
-            try {
-              await this.crudService.eliminarOferta(ofertaId);
-              console.log('Oferta eliminada:', ofertaId);
-              this.mostrarToast('Oferta eliminada con éxito');
-            } catch (error) {
-              console.error('Error al eliminar la oferta:', error);
-              this.mostrarToast('Error al eliminar la oferta', 'danger');
-            }
-          },
+        try {
+          await this.crudService.eliminarOferta(ofertaId);
+          if (this.productoSeleccionado) {
+            this.productoSeleccionado.oferta = undefined; 
+          }
+          console.log('Oferta eliminada:', ofertaId);
+          this.mostrarToast('Oferta eliminada con éxito');
+        } catch (error) {
+          console.error('Error al eliminar la oferta:', error);
+          this.mostrarToast('Error al eliminar la oferta', 'danger');
+        }
+      }
         },
       ],
     });
-    alert.then((alert) => alert.present());
+    await alert.present();
   }
 
   // ========================= Métodos de categorias =========================
