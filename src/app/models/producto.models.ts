@@ -14,4 +14,5 @@ export interface Producto {
     auto_stock: boolean;
     imagen: string[];
     oferta?: Oferta;
+    esta_eliminado?: boolean;
 }

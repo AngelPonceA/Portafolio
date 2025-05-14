@@ -259,21 +259,22 @@ export class CrudService {
 obtenerMisProductos(): Observable<Producto[]> {
   const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
   const productosRef = collection(this.firestore, 'productos');
-  const q = query(productosRef, where('usuario_id', '==', uid));
+  const q = query(productosRef, where('usuario_id', '==', uid), where('esta_eliminado', '==', false));
 
   return collectionData(q, { idField: 'producto_id' }) as Observable<Producto[]>;
 }
 
-
-  async eliminarProducto(producto_id: string) {
-    try {
-      const productoRef = doc(this.firestore, 'productos', producto_id);
-      await deleteDoc(productoRef);
-    } catch (error) {
-      console.error('Error al eliminar el producto:', error);
-      throw error;
-    }
+async eliminarProducto(producto_id: string) {
+  try {
+    const productoRef = doc(this.firestore, 'productos', producto_id);
+    await setDoc(productoRef, { esta_eliminado: true }, { merge: true });
+    console.log(`Producto con ID ${producto_id} marcado como eliminado.`);
+  } catch (error) {
+    console.error('Error al eliminar el producto:', error);
+    throw error;
   }
+}
+
 
   async guardarProducto(producto: Producto) {
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
@@ -281,7 +282,8 @@ obtenerMisProductos(): Observable<Producto[]> {
     const nuevoProductoRef = doc(productosRef);
     const nuevoProducto = {
       ...producto,
-      usuario_id: uid
+      usuario_id: uid,
+      esta_eliminado: false,
     };
     await setDoc(nuevoProductoRef, nuevoProducto);
     return {id: nuevoProductoRef.id, producto: nuevoProducto};
@@ -297,12 +299,13 @@ obtenerMisProductos(): Observable<Producto[]> {
     const ofertasRef = collection(this.firestore, 'ofertas');
     const q = query(ofertasRef, where('producto_id', '==', producto_id));
     const querySnapshot = await getDocs(q);
-    const ofertas: Oferta[] = [];
-    querySnapshot.forEach((doc) => {
-      ofertas.push({ id: doc.id, ...doc.data() } as Oferta);
-    });
-    return ofertas;
+
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data()
+    } as Oferta));
   }
+
 
   async eliminarOferta(oferta_id: string) {
     try {
@@ -370,16 +373,6 @@ obtenerMisProductos(): Observable<Producto[]> {
   obtenerCategoriasDB(): Observable<any[]> {
     const categoriasRef = collection(this.firestore, 'categorias');
     return collectionData(categoriasRef, { idField: 'id' }) as Observable<any[]>;
-  }
-
-  async eliminarCategoria(categoria_id: string) {
-    try {
-      const categoriaRef = doc(this.firestore, 'categorias', categoria_id);
-      await deleteDoc(categoriaRef);
-    } catch (error) {
-      console.error('Error al eliminar la categoria:', error);
-      throw error;
-    }
   }
 
   async guardarCategoria(categoria: Categoria) {
