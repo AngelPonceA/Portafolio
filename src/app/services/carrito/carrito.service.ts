@@ -58,6 +58,46 @@ export class CarritoService {
     }
   }
 
+  async eliminarProductoDelCarrito(producto_id: string) {
+    try {
+      const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
+      const nuevoCarrito = carrito.filter((item: any) => item.producto_id !== producto_id);
+      await this.nativeStorage.setItem(this.carritoStorage, nuevoCarrito);
+      console.log('Producto eliminado del carrito:', nuevoCarrito);
+    } catch (error) {
+      console.error('Error al eliminar producto del carrito:', error);
+    }
+  }
+
+  async carritoSumarRestar(accion: string, cantidad: number, producto_id: string) {
+    try {
+      const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
+      const producto = carrito.find((item: any) => item.producto_id === producto_id);
+
+      if (producto) {
+        if (accion === 'sumar') {
+          if (producto.cantidad < producto.stock) {
+            producto.cantidad += cantidad;
+          } else {
+            console.error('No se puede sumar más cantidad. Stock insuficiente.');
+          }
+        } else if (accion === 'restar') {
+          if (producto.cantidad > 1) {
+            producto.cantidad -= cantidad;
+          } else {
+            console.error('No se puede restar más cantidad. Cantidad mínima alcanzada.');
+          }
+        }
+
+        await this.nativeStorage.setItem(this.carritoStorage, carrito);
+        console.log('Carrito actualizado:', carrito);
+      }
+    }
+    catch (error) {
+      console.error('Error al sumar/restar producto en el carrito:', error);
+    }
+  }
+
   async guardarCarrito(productos: any) {
     try {
       await this.nativeStorage.setItem('carritoStorage', productos);
@@ -66,6 +106,7 @@ export class CarritoService {
       console.error('Error al guardar el carrito en NativeStorage:', error);
     }
   }
+  
   async limpiarCarrito() {
     try {
       await this.nativeStorage.remove(this.carritoStorage);
@@ -102,73 +143,117 @@ export class CarritoService {
   async registrarCompra(productos: any | any[], detallesPago: any) {
     try {
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
-      const lista = Array.isArray(productos) ? productos : [productos];
-  
-      const pedido = await addDoc(collection(this.firestore, 'pedidos'), {
-        usuario_id: uid,
-        fecha_creacion: new Date(),
-        total_pagado: this.calcularTotal(lista),
-        total_comision: this.calcularComision(lista),
-        estado_pago: detallesPago.status,
-        medio_pago: detallesPago.purchase_units[0].soft_descriptor,
-      });
-  
-      console.log('Pedido creado:', pedido.id);
-  
-      for (const producto of lista) {
-        const precio = producto.precio_oferta || producto.precio;
-        const total = precio * producto.cantidad;
-        const comision = total * 0.1;
-  
-        await addDoc(collection(this.firestore, `pedidos/${pedido.id}/detalle`), {
-          pedido_id: pedido.id,
-          vendedor_id: producto.vendedor_id,
-          producto_titulo: producto.producto_titulo,
-          cantidad: producto.cantidad,
-          valor_unitario: precio,
-          valor_total: total,
-          valor_comision: comision,
-          estado_envio: 'pendiente',
-          numero_seguimiento: ''
-        });
+      const lista = (Array.isArray(productos) ? productos : [productos]).filter((p: any) => p.cantidad > 0);
+
+      if (lista.length === 0) {
+        console.error('No hay productos con cantidad mayor a 0 para registrar la compra.');
+        return;
       }
-  
-      const porVendedor: Record<string, any[]> = {};
-      for (const producto of lista) {
-        const vendedorId = producto.vendedor_id;
-        const precio = producto.precio_oferta || producto.precio;
-        const total = precio * producto.cantidad;
-        const comision = total * 0.1;
-  
-        if (!porVendedor[vendedorId]) {
-          porVendedor[vendedorId] = [];
-        }
-  
-        porVendedor[vendedorId].push({
-          producto_titulo: producto.producto_titulo,
-          cantidad: producto.cantidad,
-          valor_unitario: precio,
-          valor_total: total,
-          valor_comision: comision
-        });
-      }
-  
-      for (const vendedorId in porVendedor) {
-        await addDoc(collection(this.firestore, `ventas/${vendedorId}/detalle`), {
-          pedido_id: pedido.id,
-          comprador_id: uid,
-          productos: porVendedor[vendedorId],
-          fecha_creacion: new Date(),
-          estado_envio: 'pendiente',
-          numero_seguimiento: ''
-        });
-      }
-  
-      console.log('Órdenes de venta agrupadas creadas');
+
+      const pedidoRef = await this.crearPedido(uid, lista, detallesPago);
+
+      await this.insertarDetallesYActualizarStock(pedidoRef.id, lista);
+
+      const porVendedor = this.agruparPorVendedor(lista);
+
+      await this.insertarVentasPorVendedor(porVendedor, pedidoRef.id, uid);
+
+      console.log('Compra registrada, ventas insertadas y stock actualizado');
     } catch (error) {
       console.error('Error al registrar la compra:', error);
     }
   }
-  
 
+  async crearPedido(uid: string, lista: any[], detallesPago: any) {
+    const pedidoRef = await addDoc(collection(this.firestore, 'pedidos'), {
+      usuario_id: uid,
+      fecha_creacion: new Date(),
+      total_pagado: this.calcularTotal(lista),
+      total_comision: this.calcularComision(lista),
+      estado_pago: detallesPago.status,
+      medio_pago: detallesPago.purchase_units[0].soft_descriptor,
+    });
+    console.log('Pedido creado:', pedidoRef.id);
+    return pedidoRef;
+  }
+
+  async insertarDetallesYActualizarStock(pedidoId: string, lista: any[]) {
+    for (const producto of lista) {
+      const precio = producto.precio_oferta || producto.precio;
+      const total = precio * producto.cantidad;
+      // Tengo que calcular la comision si tiene prediccion de venta con funcion
+      const comision = total * 0.1;
+
+      await addDoc(collection(this.firestore, `pedidos/${pedidoId}/detalle`), {
+        pedido_id: pedidoId,
+        vendedor_id: producto.vendedor_id,
+        producto_id: producto.producto_id,
+        producto_titulo: producto.producto_titulo,
+        cantidad: producto.cantidad,
+        valor_unitario: precio,
+        valor_total: total,
+        // Nuevo
+        subtotal: total - comision,
+        valor_comision: comision,
+        // Nuevo
+        estado_envio: 'pendiente',
+        costo_envio: 0,
+        fecha_recepcion: null,
+        numero_seguimiento: null,
+      });
+
+      const productoRef = doc(this.firestore, `productos/${producto.producto_id}`);
+      const productoSnap = await this.crudService.obtenerDetalleProducto(producto.producto_id);
+      const stockActual = productoSnap?.stock ?? 0;
+      const nuevoStock = stockActual - producto.cantidad;
+      if (nuevoStock < 0) {
+        throw new Error(`Stock insuficiente para el producto ${producto.producto_id}`);
+      }
+      await setDoc(productoRef, { stock: nuevoStock }, { merge: true });
+    }
+  }
+
+  agruparPorVendedor(lista: any[]): Record<string, any[]> {
+    const porVendedor: Record<string, any[]> = {};
+    for (const producto of lista) {
+      const vendedorId = producto.vendedor_id;
+      const precio = producto.precio_oferta || producto.precio;
+      const total = precio * producto.cantidad;
+      const comision = total * 0.1;
+
+      if (!porVendedor[vendedorId]) {
+        porVendedor[vendedorId] = [];
+      }
+
+      porVendedor[vendedorId].push({
+        producto_id: producto.producto_id,
+        producto_titulo: producto.producto_titulo,
+        cantidad: producto.cantidad,
+        valor_unitario: precio,
+        valor_total: total,
+        valor_comision: comision
+      });
+    }
+    return porVendedor;
+  }
+
+  async insertarVentasPorVendedor(porVendedor: Record<string, any[]>, pedidoId: string, compradorId: string) {
+    for (const vendedorId in porVendedor) {
+      for (const producto of porVendedor[vendedorId]) {
+        const fecha = new Date();
+        await addDoc(collection(this.firestore, `ventas/${vendedorId}/detalle`), {
+          pedido_id: pedidoId,
+          producto_id: producto.producto_id,
+          comprador_id: compradorId,
+          cantidad: producto.cantidad,
+          fecha: {
+            dia: fecha.getDate(),
+            mes: fecha.getMonth() + 1,
+            anio: fecha.getFullYear()
+          }
+        });
+      }
+    }
+  }
+  
 }

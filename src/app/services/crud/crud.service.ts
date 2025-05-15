@@ -50,9 +50,7 @@ export class CrudService {
       this.obtenerOfertas()
     ]).pipe(
       map(([productos, ofertas]) => {
-        return productos
-          .filter(producto => producto.stock > 0)
-          .map(producto => {
+        return productos.filter(producto => producto.stock > 0 && !producto.esta_eliminado).map(producto => {
             const oferta = ofertas.find(o => o.producto_id === producto.producto_id);
             return oferta ? { ...producto, oferta } : { ...producto };
           });
@@ -130,6 +128,7 @@ export class CrudService {
         producto_descripcion: producto['descripcion'],
         etiquetas: producto['etiquetas'] || [],
         categoria: producto['categoria'],
+        esta_eliminado: producto['esta_eliminado'],
         precio: producto['precio'],
         precio_oferta: precio_oferta,
         stock: producto['stock'],
@@ -282,6 +281,7 @@ async eliminarProducto(producto_id: string) {
     const nuevoProductoRef = doc(productosRef);
     const nuevoProducto = {
       ...producto,
+      producto_id: nuevoProductoRef.id,
       usuario_id: uid,
       esta_eliminado: false,
     };
@@ -369,7 +369,6 @@ async eliminarProducto(producto_id: string) {
     await setDoc(ofertaRef, oferta, { merge: true });
   }
 
-  // Métodos de clase categoria
   obtenerCategoriasDB(): Observable<any[]> {
     const categoriasRef = collection(this.firestore, 'categorias');
     return collectionData(categoriasRef, { idField: 'id' }) as Observable<any[]>;
