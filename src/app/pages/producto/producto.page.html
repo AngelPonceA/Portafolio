@@ -1,5 +1,5 @@
 <app-navegacion>
-  <div *ngIf="producto">
+  <div *ngIf="producto && producto.esta_eliminado === false && producto.stock > 0; else eliminado">
     <ion-card class="producto-card">
       <img [src]="producto.imagen[0]" class="producto-img" />
       <ion-card-header class="producto-header">
@@ -8,7 +8,6 @@
           <span *ngFor="let etiqueta of producto.etiquetas" class="etiqueta">{{ etiqueta | titlecase }}</span>
         </div>
         <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }}</ion-card-title>
-        <ion-card-subtitle class="producto-descripcion">{{ producto.atributo | titlecase }}</ion-card-subtitle>
 
         <ion-card-subtitle *ngIf="!producto.precio_oferta" class="producto-precio-original">
           Precio: {{ producto.precio | number }} CLP
@@ -75,6 +74,32 @@
         </div>
       </div>
     </div>
-    
   </div>
+
+  <ng-template #eliminado>
+      <ion-card class="producto-card">
+        <img [src]="producto?.imagen[0]" class="producto-img" />
+        <ion-card-header class="producto-header">
+          <div class="etiquetas-container">
+            <span class="etiqueta"> {{ producto?.categoria | titlecase }} </span>
+            <span *ngFor="let etiqueta of producto?.etiquetas" class="etiqueta">{{ etiqueta | titlecase }}</span>
+          </div>
+          <ion-card-title class="producto-nombre">{{ producto?.producto_titulo | titlecase }}</ion-card-title>
+          <div class="producto-eliminado-aviso">
+            <h3>Este producto ya no está disponible para la venta.</h3>
+          </div>
+        </ion-card-header>
+      </ion-card>
+      
+      <div class="producto-detalles">
+        <h3>Descripción del producto</h3>
+        <p class="producto-descripcion">{{ producto?.producto_descripcion }}</p>
+        <h3>Imágenes del producto</h3>
+        <div class="imagenes-relacionadas">
+          <div *ngFor="let img of producto?.imagen" class="imagen-relacionada">
+            <img [src]="img"/>
+          </div>
+        </div>
+      </div>
+  </ng-template>
 </app-navegacion>

@@ -22,6 +22,7 @@ export class CarritoPage implements OnInit {
   
   async ngOnInit() {
     await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
+    await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
 
     await this.calculateTotalAmount();
     this.iniciarBotonPaypal(); 
@@ -31,22 +32,26 @@ export class CarritoPage implements OnInit {
     this.router.navigate(['/producto'], { state: { producto_id } });
   }
 
-  async agregarProductoAlCarrito(variante_id: string) {
-    const detalleVariante = await this.crudService.obtenerDetalleProducto(variante_id);
-  
-    if (detalleVariante) {
+  async agregarProductoAlCarrito(producto_id: string) {
+    const detalleProducto = await this.crudService.obtenerDetalleProducto(producto_id);
+    
+    let cantidad = 1;
+    if (detalleProducto) {
+      if (detalleProducto.stock <= 0) {
+        cantidad = 0;  
+      }
   
       this.productos.push({
-        vendedor_id: detalleVariante.vendedor_id,
-        producto_titulo: detalleVariante.producto_titulo,
-        descripcion: detalleVariante.producto_descripcion,
-        precio: detalleVariante.precio,
-        precio_oferta: detalleVariante.precio_oferta,
-        atributo: detalleVariante.atributo,
-        estado: detalleVariante.estado,
-        stock: detalleVariante.stock,
-        imagen: detalleVariante.imagen,
-        cantidad: 1,
+        vendedor_id: detalleProducto.vendedor_id,
+        producto_id: detalleProducto.producto_id,
+        producto_titulo: detalleProducto.producto_titulo,
+        descripcion: detalleProducto.producto_descripcion,
+        precio: detalleProducto.precio,
+        precio_oferta: detalleProducto.precio_oferta,
+        estado: detalleProducto.estado,
+        stock: detalleProducto.stock,
+        imagen: detalleProducto.imagen,
+        cantidad,
       });
   
       this.calculateTotalAmount();
@@ -56,24 +61,27 @@ export class CarritoPage implements OnInit {
     }
   }
 
-  restarProducto(producto_id: string) {
+  async restarProducto(producto_id: string) {
     const producto = this.productos.find((p) => p.producto_id === producto_id);
     if (producto && producto.cantidad > 1) {
       producto.cantidad--;
+      // await this.cartService.carritoSumarRestar('restar', producto.cantidad, producto_id);
       this.calculateTotalAmount();
     }
   }
 
-  sumarProducto(producto_id: string) {
+  async sumarProducto(producto_id: string) {
     const producto = this.productos.find((p) => p.producto_id === producto_id);
     if (producto && producto.stock >= producto.cantidad + 1) {
       producto.cantidad++;
+      // await this.cartService.carritoSumarRestar('sumar', producto.cantidad, producto_id);
       this.calculateTotalAmount();      
     }    
   }
 
   quitarProducto(producto_id: string) {
     this.productos = this.productos.filter((p) => p.producto_id != producto_id);
+    // this.cartService.eliminarProductoDelCarrito(producto_id);
     this.calculateTotalAmount();
   }
 
