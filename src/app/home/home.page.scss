@@ -108,10 +108,18 @@ ion-button {
 }
 
 .categorias-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); /* Tamaño uniforme para las tarjetas */
+  display: flex;
+  flex-direction: row;
   gap: 0.5rem;
-  justify-items: center;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  /* Opcional: oculta la barra de scroll en navegadores modernos */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE 10+ */
+}
+
+.categorias-grid::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Webkit */
 }
 
 .categoria-card {
@@ -120,6 +128,8 @@ ion-button {
   align-items: center;
   justify-content: center;
   text-align: center;
+  min-width: 80px; /* Ajusta el ancho mínimo de cada categoría */
+  flex: 0 0 auto;
 }
 
 .categoria-icon-container {

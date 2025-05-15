@@ -5,12 +5,13 @@ import { combineLatest, firstValueFrom, from, map, Observable, of, switchMap } f
 import { Producto } from '../../models/producto.models';
 import { Oferta } from 'src/app/models/oferta.models';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { IonicService } from "src/app/services/ionic/ionic.service";
 
 @Injectable({
   providedIn: 'root',
 })
 export class CrudService {
-  constructor(private firestore: Firestore, private nativeStorage: NativeStorage) {}
+  constructor(private firestore: Firestore, private nativeStorage: NativeStorage, private ionicService: IonicService) {}
 
   obtenerProductos(): Observable<Producto[]> {
     const productosRef = collection(this.firestore, 'productos');

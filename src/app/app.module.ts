@@ -18,12 +18,13 @@ import { LOCALE_ID } from '@angular/core';
 import localeEsCl from '@angular/common/locales/es-CL';
 import { registerLocaleData } from '@angular/common';
 import { register } from 'swiper/element/bundle';
+import { HttpClientModule } from '@angular/common/http';
 
 register();
 registerLocaleData(localeEsCl);
 @NgModule({
   declarations: [AppComponent,],
-  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, CommonModule,],
+  imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, CommonModule, HttpClientModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, NativeStorage, 
     provideFirebaseApp(() => initializeApp(environment.firebase)), 
     provideAuth(() => getAuth()), provideFirestore(() => getFirestore()), provideDatabase(() => getDatabase()), 

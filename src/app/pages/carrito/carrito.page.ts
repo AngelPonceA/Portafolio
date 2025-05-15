@@ -48,6 +48,7 @@ export class CarritoPage implements OnInit {
         descripcion: detalleProducto.producto_descripcion,
         precio: detalleProducto.precio,
         precio_oferta: detalleProducto.precio_oferta,
+        etiquetas: detalleProducto.etiquetas,
         estado: detalleProducto.estado,
         stock: detalleProducto.stock,
         imagen: detalleProducto.imagen,
@@ -57,7 +58,7 @@ export class CarritoPage implements OnInit {
       this.calculateTotalAmount();
 
     } else {
-      console.error('No se pudo obtener la variante.');
+      console.error('No se pudo obtener el producto.');
     }
   }
 
@@ -101,7 +102,6 @@ export class CarritoPage implements OnInit {
   }
 
   iniciarBotonPaypal() {
-
     paypal.Buttons({
       createOrder: (data: any, actions: any) => {
         return actions.order.create({
@@ -118,13 +118,16 @@ export class CarritoPage implements OnInit {
         return actions.order.capture().then((details: any) => {
           this.cartService.registrarCompra(this.productos, details);
           console.log('Pago exitoso:', details);
-          this.iniciarBotonPaypal();
           this.limpiarCarrito(); 
+          const paypalBtn = document.getElementById('paypal-button-container');
+          if (paypalBtn) {
+            paypalBtn.innerHTML = '';
+          }
         });
       },
       onError: (err: any) => {
-        console.error('Error durante el pago:', err);
-        alert('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
+        console.log('Error durante el pago:', err);
+        console.log('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
       },
     }).render('#paypal-button-container');
   }
