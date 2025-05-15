@@ -1,6 +1,6 @@
 import { Categoria } from './../../models/categoria.models';
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from '@angular/fire/firestore';
+import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, from, map, Observable, of, switchMap } from 'rxjs';
 import { Producto } from '../../models/producto.models';
 import { Oferta } from 'src/app/models/oferta.models';
@@ -252,8 +252,7 @@ export class CrudService {
   }
 
 
-  // Esto fue arreglado con copilot luego de la orden de cambio del profesor, debe ser revisado
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // ======================== MIS PRODUCTOS PAGE =========================
   // Métodos de clase producto
 obtenerMisProductos(): Observable<Producto[]> {
   const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
@@ -289,9 +288,13 @@ async eliminarProducto(producto_id: string) {
     return {id: nuevoProductoRef.id, producto: nuevoProducto};
   }
 
-  async editarProducto(producto_id: string, producto: Producto) {
-    const productoRef = doc(this.firestore, 'productos', producto_id);
-    await setDoc(productoRef, producto, { merge: true });
+  async editarProducto(producto_id: string, producto: Partial<Producto>) {
+    try {
+      const productoRef = doc(this.firestore, 'productos', producto_id);
+      await updateDoc(productoRef, producto);
+    } catch (error) {
+      console.error('Error al actualizar el producto:', error);
+    }
   }
 
   // Métodos de clase oferta
@@ -391,3 +394,4 @@ async eliminarProducto(producto_id: string) {
     await setDoc(categoriaRef, categoria, { merge: true });
   }
 }
+
