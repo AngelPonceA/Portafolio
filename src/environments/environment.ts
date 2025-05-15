@@ -12,7 +12,12 @@ export const environment = {
     messagingSenderId: "861480881852",
     appId: "1:861480881852:web:7a415e3b9a84dd75e28ab9"
   },
-  dhlApiUrl: 'https://api.dhl.com/v1/shipments',
-  dhlApiKey: 'PjjDWb42v6190ZY0sQpQW24JQ9mWHnSd',
-  dhlApiSecret: '	pnnEQv09UfxvIRR0'
+  
+  chilexpress: {
+    urls: {
+      cotizador: 'http://testservices.wschilexpress.com/rating',
+      coberturas: 'http://testservices.wschilexpress.com/georeference',
+      envios: 'http://testservices.wschilexpress.com/transport-orders'
+    }
+  }
 }
