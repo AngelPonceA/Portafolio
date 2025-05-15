@@ -29,7 +29,7 @@ export class HomePage {
   }
 
   verCategoria(categoria: string){
-    this.router.navigate(['/busqueda'], { state: { categoria } });    
+    this.router.navigate(['/busqueda'], { state: { categoria : categoria } });    
   }
 
   verDetalle(producto_id: string) {

@@ -1,7 +1,7 @@
 <app-navegacion>
   <ion-content *ngIf="hayProductos | async; else sinProductos">
       <div class="productos-grid-container">
-        <h2 class="categoria-titulo">{{ categoria | titlecase }}</h2>
+        <h2 class="categoria-titulo">{{ busqueda | titlecase }}</h2>
       <div class="productos-grid">
         <ion-card *ngFor="let producto of productos | async" (click)="verDetalle(producto.producto_id)" class="producto-card">
           <img [src]="producto.imagen[0]" />

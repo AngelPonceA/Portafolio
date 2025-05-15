@@ -13,18 +13,21 @@ export class BusquedaPage implements OnInit {
 
   productos!: Observable<any[]>;
   hayProductos!: Observable<boolean>;
-  categoria!: string;
+  busqueda!: string;
 
   constructor(private router: Router, private crudService: CrudService) { }
 
   ngOnInit() {
-    const categoria = this.router.getCurrentNavigation()?.extras?.state?.['categoria'];
-    if (categoria) {
-      this.productos = this.crudService.obtenerProductosCategoria(categoria);
-      this.categoria = categoria;
+    const state = this.router.getCurrentNavigation()?.extras?.state;
+    if (state?.['categoria']) {
+      this.productos = this.crudService.obtenerProductosCategoria(state['categoria']);
+      this.busqueda = state['categoria'];
+      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+    } else if (state?.['busqueda']) {
+      console.log('Por implementar');
+      
     }
 
-    this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
   }
 
   verDetalle(producto_id: string){

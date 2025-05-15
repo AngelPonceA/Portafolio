@@ -7,6 +7,8 @@ import { Usuario } from '../../models/usuario.models';
 import { FirebaseError } from 'firebase/app';
 import { catchError, from, Observable, of, switchMap } from 'rxjs';
 import { sendPasswordResetEmail } from '@angular/fire/auth';
+import { IonicService } from "src/app/services/ionic/ionic.service";
+import { CrudService } from '../crud/crud.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,8 @@ export class AuthService {
   firestore: Firestore = inject(Firestore);
   auth: Auth = inject(Auth);
 
-  constructor(private nativeStorage: NativeStorage, private router: Router) { }
+  constructor(private nativeStorage: NativeStorage, private router: Router, private ionicService: IonicService,
+    private crudService: CrudService, ) { }
 
   async comprobarSesion() {
     try {
@@ -232,6 +235,26 @@ export class AuthService {
         console.error('Error inesperado al cambiar la contraseña:', error);
       }
       throw error;
+    }
+  }
+
+  async actualizarRecomendadosUsuario(productos: any[]) {
+    try {
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const userRef = doc(this.firestore, `usuarios/${uid}`);
+      const userSnap = await this.crudService.obtenerDocumentoPorId('usuarios', uid);
+      let etiquetasGuardadas: string[] = userSnap?.recomendacion || [];
+
+      const nuevasEtiquetas: string[] = (Array.isArray(productos) ? productos : [productos])
+        .flatMap(producto => Array.isArray(producto.etiquetas) ? producto.etiquetas : []);
+
+      const todasLasEtiquetas = Array.from(new Set([...etiquetasGuardadas, ...nuevasEtiquetas]));
+
+      await setDoc(userRef, { recomendacion: todasLasEtiquetas }, { merge: true });
+      console.log('Etiquetas recomendadas actualizadas:', todasLasEtiquetas);
+    } catch (error) {
+      console.log('Error al actualizar etiquetas recomendadas:', error);
     }
   }
 

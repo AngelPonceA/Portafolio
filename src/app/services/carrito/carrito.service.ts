@@ -2,6 +2,8 @@ import { CrudService } from './../crud/crud.service';
 import { Injectable } from '@angular/core';
 import { addDoc, collection, doc, Firestore, setDoc } from '@angular/fire/firestore';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { IonicService } from "src/app/services/ionic/ionic.service";
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +12,8 @@ export class CarritoService {
 
   private carritoStorage = 'carrito';
 
-  constructor( private nativeStorage: NativeStorage, private crudService: CrudService, private firestore: Firestore) { }
+  constructor( private nativeStorage: NativeStorage, private crudService: CrudService, private firestore: Firestore,
+    private ionicService: IonicService, private authService: AuthService) { }
 
   async agregarProductoAlCarrito(producto_id: string, cantidad: number) {
     try {
@@ -158,9 +161,10 @@ export class CarritoService {
 
       await this.insertarVentasPorVendedor(porVendedor, pedidoRef.id, uid);
 
-      console.log('Compra registrada, ventas insertadas y stock actualizado');
-    } catch (error) {
-      console.error('Error al registrar la compra:', error);
+      await this.authService.actualizarRecomendadosUsuario(lista);
+      this.ionicService.mostrarAlerta('Compra exitosa', 'Compra registrada con éxito.');
+    } catch (error: any) {
+      this.ionicService.mostrarAlerta('Error al registrar la compra:', error);
     }
   }
 
@@ -173,7 +177,7 @@ export class CarritoService {
       estado_pago: detallesPago.status,
       medio_pago: detallesPago.purchase_units[0].soft_descriptor,
     });
-    console.log('Pedido creado:', pedidoRef.id);
+    console.log('Funcion crearPedido Exito');
     return pedidoRef;
   }
 
@@ -209,6 +213,7 @@ export class CarritoService {
       if (nuevoStock < 0) {
         throw new Error(`Stock insuficiente para el producto ${producto.producto_id}`);
       }
+      console.log('Funcion insertarDetallesYActualizarStock Exito');
       await setDoc(productoRef, { stock: nuevoStock }, { merge: true });
     }
   }
@@ -234,6 +239,7 @@ export class CarritoService {
         valor_comision: comision
       });
     }
+    console.log('Funcion agruparPorVendedor Exito');
     return porVendedor;
   }
 
@@ -254,6 +260,7 @@ export class CarritoService {
         });
       }
     }
+    console.log('Funcion insertarVentasPorVendedor Exito');
   }
   
 }
