@@ -327,3 +327,24 @@ ion-chip {
     font-size: 0.95rem;
   }
 }
+
+swiper-container {
+  width: 100%;
+  height: auto;
+  display: block;
+  --swiper-navigation-color: #D1A15A;
+}
+
+swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slide-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover;
+}
+

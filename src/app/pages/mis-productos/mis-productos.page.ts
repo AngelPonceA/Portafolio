@@ -5,7 +5,6 @@ import { NgForm } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 
 // importar modelos
-import { ProductoExtendidoPorProducto } from 'src/app/models/producto_ext.models';
 import { Producto } from 'src/app/models/producto.models';
 import { Oferta } from 'src/app/models/oferta.models';
 import { Categoria } from 'src/app/models/categoria.models';
@@ -45,6 +44,11 @@ export class MisProductosPage implements OnInit {
   productoParaAutostock: Producto | null = null;
   stockMinimo = 1;
   activarAutoStock = false;
+
+  mostrarModalEdicion = false;
+  productoEnEdicion: Producto | null = null;
+  productoEditandoForm: any = {};
+  nuevaEtiquetaEdit: string = '';
 
   //Para crearlos individualmente
   nuevoProductoForm: Producto = {
@@ -90,12 +94,13 @@ export class MisProductosPage implements OnInit {
 
   async enviarFormularios() {
     try {
-      const { id: productoId } = await this.guardarProducto(
-        this.nuevoProductoForm
-      );
-
-      if (!productoId) {
-        throw new Error('Error: El producto no se pudo guardar correctamente.');
+      if (this.productoEnEdicion) {
+        await this.editarProducto(this.nuevoProductoForm);
+      } else {
+        const { id: productoId } = await this.guardarProducto(
+          this.nuevoProductoForm
+        );
+        if (!productoId) throw new Error('No se pudo guardar el producto');
       }
     } catch (error) {
       console.error('Error al enviar los formularios:', error);
@@ -193,20 +198,31 @@ export class MisProductosPage implements OnInit {
     return true;
   }
 
-  // Editar producto
-  // async editarProducto(producto: Producto) {
-  //   try {
-  //     const productoEditado = await this.crudService.editarProducto(
-  //       producto.id,
-  //       producto
-  //     );
-  //     console.log('Producto editado:', productoEditado);
-  //     this.mostrarToast('Producto editado con éxito');
-  //   } catch (error) {
-  //     console.error('Error al editar el producto:', error);
-  //     this.mostrarToast('Error al editar el producto', 'danger');
-  //   }
-  // }
+  async editarProducto(productoEditado: Producto) {
+    try {
+      if (!productoEditado.producto_id) {
+        this.mostrarToast('Producto sin ID válido', 'danger');
+        return;
+      }
+
+      const esValido = await this.validarProducto(productoEditado);
+      if (!esValido) {
+        return;
+      }
+
+      await this.crudService.editarProducto(
+        productoEditado.producto_id,
+        productoEditado
+      );
+      this.mostrarToast('Producto editado con éxito');
+      this.cerrarModal();
+      this.resetearFormularioProducto();
+      await this.ionViewWillEnter();
+    } catch (error) {
+      console.error('Error al editar el producto:', error);
+      this.mostrarToast('Error al editar el producto', 'danger');
+    }
+  }
 
   // Eliminar producto
   async eliminarProducto(productoId: string) {
@@ -218,6 +234,8 @@ export class MisProductosPage implements OnInit {
         {
           text: 'Eliminar',
           handler: async () => {
+            (document.activeElement as HTMLElement)?.blur();
+
             try {
               await this.crudService.eliminarProducto(productoId);
               this.productos = this.productos.filter(
@@ -479,18 +497,20 @@ export class MisProductosPage implements OnInit {
         {
           text: 'Eliminar',
           handler: async () => {
-        try {
-          await this.crudService.eliminarOferta(ofertaId);
-          if (this.productoSeleccionado) {
-            this.productoSeleccionado.oferta = undefined; 
-          }
-          console.log('Oferta eliminada:', ofertaId);
-          this.mostrarToast('Oferta eliminada con éxito');
-        } catch (error) {
-          console.error('Error al eliminar la oferta:', error);
-          this.mostrarToast('Error al eliminar la oferta', 'danger');
-        }
-      }
+            (document.activeElement as HTMLElement)?.blur();
+
+            try {
+              await this.crudService.eliminarOferta(ofertaId);
+              if (this.productoSeleccionado) {
+                this.productoSeleccionado.oferta = undefined;
+              }
+              console.log('Oferta eliminada:', ofertaId);
+              this.mostrarToast('Oferta eliminada con éxito');
+            } catch (error) {
+              console.error('Error al eliminar la oferta:', error);
+              this.mostrarToast('Error al eliminar la oferta', 'danger');
+            }
+          },
         },
       ],
     });
@@ -534,6 +554,114 @@ export class MisProductosPage implements OnInit {
     }
     return true;
   }
+  // ========================= Métodos de editarProducto =========================
+  guardarCambiosProducto(form: any) {
+    const error = this.validarEdicion(form);
+
+    if (error) {
+      return;
+    }
+
+    const id = form.producto_id;
+    this.crudService.editarProducto(id, form).then(() => {
+      this.cerrarModalEdicion();
+      this.ionViewWillEnter(); // Refresca lista
+    });
+  }
+
+  eliminarEtiquetaEdicion(etiqueta: string) {
+    this.productoEditandoForm.etiquetas =
+      this.productoEditandoForm.etiquetas.filter((e: string) => e !== etiqueta);
+  }
+
+  agregarEtiquetaEdicion() {
+    const nueva = this.nuevaEtiquetaEdit?.trim();
+    if (
+      nueva &&
+      !this.productoEditandoForm.etiquetas.includes(nueva) &&
+      this.productoEditandoForm.etiquetas.length < 10
+    ) {
+      this.productoEditandoForm.etiquetas.push(nueva);
+    }
+    this.nuevaEtiquetaEdit = '';
+  }
+
+  procesarImagenesEdicion(event: any) {
+    const archivos: FileList = event.target.files;
+    for (let i = 0; i < archivos.length; i++) {
+      const lector = new FileReader();
+      lector.onload = (e: any) => {
+        this.productoEditandoForm.imagen.push(e.target.result);
+      };
+      lector.readAsDataURL(archivos[i]);
+    }
+  }
+
+  validarEdicion(productoEditandoForm: Partial<Producto>): string | null {
+    if (
+      !productoEditandoForm.titulo ||
+      productoEditandoForm.titulo.trim() === ''
+    ) {
+      this.mostrarToast('El título no puede estar vacío', 'warning');
+      return 'El título no puede estar vacío';
+    }
+    if (
+      !productoEditandoForm.descripcion ||
+      productoEditandoForm.descripcion.trim() === ''
+    ) {
+      this.mostrarToast('La descripción no puede estar vacía', 'warning');
+      return 'La descripción no puede estar vacía';
+    }
+    if (
+      !productoEditandoForm.categoria ||
+      productoEditandoForm.categoria.trim() === ''
+    ) {
+      this.mostrarToast('La categoría no puede estar vacía', 'warning');
+      return 'La categoría no puede estar vacía';
+    }
+    if (
+      productoEditandoForm.precio === undefined ||
+      productoEditandoForm.precio <= 0
+    ) {
+      this.mostrarToast('El precio debe ser mayor a 0', 'warning');
+      return 'El precio debe ser mayor a 0';
+    }
+    if (
+      productoEditandoForm.stock === undefined ||
+      productoEditandoForm.stock < 0
+    ) {
+      this.mostrarToast('El stock no puede ser negativo', 'warning');
+      return 'El stock no puede ser negativo';
+    }
+    if (
+      !productoEditandoForm.etiquetas ||
+      productoEditandoForm.etiquetas.length === 0
+    ) {
+      this.mostrarToast(
+        'El producto debe tener al menos una etiqueta',
+        'warning'
+      );
+      return 'El producto debe tener al menos una etiqueta';
+    }
+    if (
+      !productoEditandoForm.imagen ||
+      productoEditandoForm.imagen.length === 0
+    ) {
+      this.mostrarToast(
+        'El producto debe tener al menos una imagen',
+        'warning'
+      );
+      return 'El producto debe tener al menos una imagen';
+    }
+    if (
+      !productoEditandoForm.estado ||
+      productoEditandoForm.estado.trim() === ''
+    ) {
+      this.mostrarToast('El estado no puede estar vacío', 'warning');
+      return 'El estado no puede estar vacío';
+    }
+    return null;
+  }
 
   // ========================= Métodos de comportamiento =========================
   // Mostrar toast
@@ -565,6 +693,17 @@ export class MisProductosPage implements OnInit {
     this.mostrarModal = true;
   }
 
+  abrirModalEditar(producto: any) {
+    this.productoEditandoForm = { ...producto }; // Copia profunda si es necesario
+    this.mostrarModalEdicion = true;
+  }
+
+  cerrarModalEdicion() {
+    this.mostrarModalEdicion = false;
+    this.productoEditandoForm = {};
+  }
+
+  // Modal para crear oferta
   abrirModalOferta(producto: Producto) {
     this.productoSeleccionado = producto;
 
@@ -584,13 +723,13 @@ export class MisProductosPage implements OnInit {
     this.mostrarOferta = true;
   }
 
+  cerrarModalOferta() {
+    this.mostrarOferta = false;
+  }
+
   cerrarModal() {
     this.mostrarModal = false;
     this.resetearFormulario();
-  }
-
-  cerrarModalOferta() {
-    this.mostrarOferta = false;
   }
 
   resetearFormulario() {
