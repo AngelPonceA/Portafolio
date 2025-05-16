@@ -15,15 +15,15 @@ export class AdminMenuPage implements OnInit {
   }
 
   goToUsuarios() {
-    this.router.navigate(['/admin/usuarios']);
+    this.router.navigate(['/usuarios']);
   }
 
   goToReportes() {
-    this.router.navigate(['/admin/reportes-de-usuarios']);
+    this.router.navigate(['/reportes-de-usuarios']);
   }
 
   goToSolicitudesDeSoporte() {
-    this.router.navigate(['/admin/solicitudes-de-soporte']);
+    this.router.navigate(['/solicitudes-de-soporte']);
   }
 
 }
