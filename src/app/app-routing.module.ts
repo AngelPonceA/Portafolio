@@ -79,6 +79,30 @@ const routes: Routes = [
     path: 'boleta',
     loadChildren: () => import('./pages/boleta/boleta.module').then( m => m.BoletaPageModule)
   },
+  {
+    path: 'reporte',
+    loadChildren: () => import('./pages/soporte/reporte/reporte.module').then( m => m.ReportePageModule)
+  },
+  {
+    path: 'soporte',
+    loadChildren: () => import('./pages/soporte/soporte/soporte.module').then( m => m.SoportePageModule)
+  },
+  {
+    path: 'admin-menu',
+    loadChildren: () => import('./pages/admin/admin-menu/admin-menu.module').then( m => m.AdminMenuPageModule)
+  },
+  {
+    path: 'usuarios',
+    loadChildren: () => import('./pages/admin/usuarios/usuarios.module').then( m => m.UsuariosPageModule)
+  },
+  {
+    path: 'reportes-de-usuarios',
+    loadChildren: () => import('./pages/admin/reportes-de-usuarios/reportes-de-usuarios.module').then( m => m.ReportesDeUsuariosPageModule)
+  },
+  {
+    path: 'solicitudes-de-soporte',
+    loadChildren: () => import('./pages/admin/solicitudes-de-soporte/solicitudes-de-soporte.module').then( m => m.SolicitudesDeSoportePageModule)
+  },
 
 ];
 

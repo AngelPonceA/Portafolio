@@ -269,4 +269,15 @@ export class AuthService {
     }
   }
   
+  // Obtener el UID del usuario actual
+  getUserId(): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const user = this.auth.currentUser;
+      if (user) {
+        resolve(user.uid);
+      } else {
+        reject('No hay un usuario autenticado.');
+      }
+    });
+  }
 }

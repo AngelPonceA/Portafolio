@@ -5,4 +5,5 @@ export interface Usuario {
     rol: string;
     telefono: string;
     recomendacion: any[];
+    estaBloqueado?: boolean;
 }
