@@ -1,0 +1,50 @@
+<app-navegacion>
+<ion-content class="ion-padding">
+      <ion-title>Solicitud de soporte</ion-title>
+  <form [formGroup]="formularioSoporte" (ngSubmit)="enviarSolicitud()">
+    <ion-item>
+      <ion-label position="floating">Título</ion-label>
+      <ion-input formControlName="titulo"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea formControlName="descripcion"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Motivo</ion-label>
+      <ion-select formControlName="motivo">
+        <ion-select-option value="tecnico">Técnico</ion-select-option>
+        <ion-select-option value="envio">Envío</ion-select-option>
+        <ion-select-option value="sugerencia">Sugerencia</ion-select-option>
+        <ion-select-option value="usuario">Usuario</ion-select-option>
+        <ion-select-option value="otro">Otro</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Imágenes (opcional)</ion-label>
+        <label class="custom-file-button" for="fileInput">Seleccionar imágenes</label>
+        <input
+          id="fileInput"
+          class="input-img"
+          type="file"
+          multiple
+          (change)="procesarImagenes($event)"
+          accept="image/*"
+        />
+      </ion-item>
+
+
+    <div *ngIf="imagenesSeleccionadas.length > 0" class="image-preview">
+      <div *ngFor="let img of imagenesSeleccionadas; let i = index" class="preview-img">
+        <img [src]="img.preview" alt="Preview" />
+        <ion-icon name="close-circle" (click)="eliminarImagen(i)"></ion-icon>
+      </div>
+    </div>
+
+    <ion-button expand="block" type="submit">Enviar Solicitud</ion-button>
+  </form>
+</ion-content>
+</app-navegacion>

@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+
+ion-content {
+  --background: #f5f2ef;
+  height: 100%;
+}
+
+.header-toolbar {
+  --background: #D2B48C;
+  --color: white;
+}
+
+.usuarios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 5%;
+}
+
+.usuario-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .info {
+    .nombre {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .correo {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 8px;
+    }
+
+    .rol {
+      font-size: 13px;
+      font-weight: 500;
+      color: #703c3c;
+      background-color: #f3e1d3;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+  }
+
+  .acciones {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+
+    ion-button {
+      --border-radius: 8px;
+      --padding-start: 12px;
+      --padding-end: 12px;
+      font-size: 14px;
+    }
+
+    .editar {
+      --background: #D2B48C;
+      color: white;
+    }
+
+    .eliminar {
+      --background: #e57373;
+      color: white;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .usuarios-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .usuario-card {
+    padding: 12px;
+    font-size: 14px;
+  }
+}

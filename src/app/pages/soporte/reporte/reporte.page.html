@@ -1,0 +1,79 @@
+<app-navegacion>
+  <ion-content class="ion-padding">
+    <ion-title>Reportar Usuario</ion-title>
+    <form [formGroup]="formularioReporte" (ngSubmit)="enviarReporte()">
+      <ion-item>
+        <ion-label position="stacked">Título</ion-label>
+        <ion-input formControlName="titulo" required></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Motivo</ion-label>
+        <ion-select formControlName="motivo" interface="popover" required>
+          <ion-select-option value="acoso">Acoso</ion-select-option>
+          <ion-select-option value="contenido inapropiado"
+            >Contenido inapropiado</ion-select-option
+          >
+          <ion-select-option value="spam">Spam</ion-select-option>
+          <ion-select-option value="otro">Otro</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Descripción</ion-label>
+        <ion-textarea
+          formControlName="descripcion"
+          rows="6"
+          required
+        ></ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Usuario Reportado</ion-label>
+        <ion-input formControlName="usuarioReportado" required></ion-input>
+      </ion-item>
+
+      <!-- Imagenes opcionales -->
+      <ion-item>
+        <ion-label position="stacked">Imágenes (opcional)</ion-label>
+        <label class="custom-file-button" for="upload"
+          >Seleccionar imágenes</label
+        >
+        <input
+          id="upload"
+          class="input-img"
+          type="file"
+          multiple
+          (change)="procesarImagenes($event)"
+          accept="image/*"
+        />
+      </ion-item>
+
+      <!-- Mostrar miniaturas y botón de eliminar -->
+      <div class="preview-container" *ngIf="imagenesSeleccionadas.length > 0">
+        <div
+          class="preview-image"
+          *ngFor="let img of imagenesSeleccionadas; let i = index"
+        >
+          <img [src]="img.preview" alt="Imagen seleccionada" />
+          <button class="delete-btn" (click)="eliminarImagen(i)">×</button>
+        </div>
+      </div>
+
+      <!-- Contador -->
+      <div class="imagenes-info" *ngIf="imagenesSeleccionadas.length > 0">
+        {{ imagenesSeleccionadas.length }} imagen{{ imagenesSeleccionadas.length
+        > 1 ? 'es' : '' }} seleccionada{{ imagenesSeleccionadas.length > 1 ? 's'
+        : '' }}
+      </div>
+
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="formularioReporte.invalid"
+      >
+        Enviar Reporte
+      </ion-button>
+    </form>
+  </ion-content>
+</app-navegacion>
