@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, from, firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -81,9 +81,14 @@ export class ChilexpressService {
   }
 
   private cotizarEnvio(data: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Ocp-Apim-Subscription-Key': environment.chilexpress.cotizador.primaryKey
+    });
+
     return this.http.post(
       `${environment.chilexpress.urls.cotizador}/api/v1.0/rates/courier`,
-      data
+      data,
+      { headers }
     );
   }
 

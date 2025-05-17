@@ -10,6 +10,19 @@
 </ion-header>
 
 <ion-content>
+  <div class="comuna-selector">
+    <ion-item>
+      <ion-label>Comuna de envío</ion-label>
+      <ion-select [(ngModel)]="comunaDestino" (ionChange)="actualizarComuna($event.detail.value)">
+        <ion-select-option value="STGO">Santiago</ion-select-option>
+        <ion-select-option value="MAIPU">Maipú</ion-select-option>
+        <ion-select-option value="LA_FLORIDA">La Florida</ion-select-option>
+        <ion-select-option value="PROVIDENCIA">Providencia</ion-select-option>
+        <ion-select-option value="LAS_CONDES">Las Condes</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
   <div *ngIf="productos && productos.length > 0 && productos != undefined; else vacio" class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productos">
       <img src="{{ producto.imagen }}" (click)="verDetalle(producto.producto_id)"/>
@@ -20,7 +33,11 @@
           <div class="precio-oferta">${{ producto.precio_oferta | number }} CLP</div>
           <div class="precio-original-tachado">${{ producto.precio | number }} CLP</div>
         </ng-template>
-          <div class="descripcion">{{ producto.descripcion }}</div>
+        <div class="descripcion">{{ producto.descripcion }}</div>
+        <div class="costo-envio">
+          <ion-icon name="car-outline"></ion-icon>
+          Envío: ${{ obtenerCostoEnvio(producto.producto_id) | number }} CLP
+        </div>
 
         <div class="producto-controles">
           <ion-button *ngIf="producto.stock > 0" fill="outline" color="medium" (click)="restarProducto(producto.producto_id)">
@@ -42,7 +59,13 @@
   </div>
   
   <div class="boton-paypal" style="display: block;">
-    <div class="pagar"> Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
+    <div class="pagar">
+      <div class="total-desglose">
+        <div>Subtotal productos: ${{ subtotalProductos | number }} CLP</div>
+        <div>Total envíos: ${{ subtotalEnvios | number }} CLP</div>
+        <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
+      </div>
+    </div>
     <div id="paypal-button-container"></div>
   </div>
   
