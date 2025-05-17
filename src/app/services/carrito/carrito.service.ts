@@ -5,12 +5,15 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { IonicService } from "src/app/services/ionic/ionic.service";
 import { AuthService } from '../auth/auth.service';
 
+type Comuna = 'STGO' | 'MAIPU' | 'LA_FLORIDA' | 'PROVIDENCIA' | 'LAS_CONDES';
+
 @Injectable({
   providedIn: 'root'
 })
 export class CarritoService {
 
   private carritoStorage = 'carrito';
+  private comunaDestino: Comuna = 'STGO';
 
   constructor( private nativeStorage: NativeStorage, private crudService: CrudService, private firestore: Firestore,
     private ionicService: IonicService, private authService: AuthService) { }
@@ -263,4 +266,27 @@ export class CarritoService {
     console.log('Funcion insertarVentasPorVendedor Exito');
   }
   
+  async calcularCostoEnvioProducto(producto: any): Promise<number> {
+    // Costos base por comuna (en pesos chilenos)
+    const costosPorComuna: Record<Comuna, number> = {
+      'STGO': 3000,
+      'MAIPU': 3500,
+      'LA_FLORIDA': 4000,
+      'PROVIDENCIA': 3000,
+      'LAS_CONDES': 3500
+    };
+
+    // Costo base según la comuna seleccionada
+    const costoBase = costosPorComuna[this.comunaDestino as Comuna] || 5000;
+
+    // Factor de peso/tamaño (simulado, en la realidad esto vendría de los atributos del producto)
+    const factorPeso = 1.0;
+
+    // Cálculo final considerando cantidad de productos
+    return costoBase * factorPeso * producto.cantidad;
+  }
+
+  setComunaDestino(comuna: Comuna): void {
+    this.comunaDestino = comuna;
+  }
 }

@@ -5,6 +5,8 @@ import { CrudService } from 'src/app/services/crud/crud.service';
 import { timeInterval } from 'rxjs';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 
+type Comuna = 'STGO' | 'MAIPU' | 'LA_FLORIDA' | 'PROVIDENCIA' | 'LAS_CONDES';
+
 declare const paypal: any; 
 
 @Component({
@@ -17,14 +19,18 @@ export class CarritoPage implements OnInit {
 
   productos: any[] = [];
   totalAmount: number = 0;
+  costosEnvio: { [key: string]: number } = {};
+  comunaDestino: Comuna = 'STGO';
+  subtotalProductos: number = 0;
+  subtotalEnvios: number = 0;
   
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
   
   async ngOnInit() {
     await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
     await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
-
     await this.calculateTotalAmount();
+    await this.calcularCostosEnvio();
     this.iniciarBotonPaypal(); 
   }
 
@@ -55,7 +61,8 @@ export class CarritoPage implements OnInit {
         cantidad,
       });
   
-      this.calculateTotalAmount();
+      await this.calculateTotalAmount();
+      await this.calcularCostosEnvio();
 
     } else {
       console.error('No se pudo obtener el producto.');
@@ -67,7 +74,7 @@ export class CarritoPage implements OnInit {
     if (producto && producto.cantidad > 1) {
       producto.cantidad--;
       // await this.cartService.carritoSumarRestar('restar', producto.cantidad, producto_id);
-      this.calculateTotalAmount();
+      await this.calculateTotalAmount();
     }
   }
 
@@ -76,7 +83,7 @@ export class CarritoPage implements OnInit {
     if (producto && producto.stock >= producto.cantidad + 1) {
       producto.cantidad++;
       // await this.cartService.carritoSumarRestar('sumar', producto.cantidad, producto_id);
-      this.calculateTotalAmount();      
+      await this.calculateTotalAmount();      
     }    
   }
 
@@ -86,11 +93,25 @@ export class CarritoPage implements OnInit {
     this.calculateTotalAmount();
   }
 
+  async calcularCostosEnvio() {
+    for (const producto of this.productos) {
+      this.costosEnvio[producto.producto_id] = await this.cartService.calcularCostoEnvioProducto(producto);
+    }
+    this.calcularSubtotales();
+  }
+
+  obtenerCostoEnvio(producto_id: string): number {
+    return this.costosEnvio[producto_id] || 0;
+  }
+
+  calcularSubtotales() {
+    this.subtotalProductos = this.productos.reduce((total, p) => total + this.obtenerTotalProducto(p), 0);
+    this.subtotalEnvios = this.productos.reduce((total, p) => total + this.obtenerCostoEnvio(p.producto_id), 0);
+  }
+
   async calculateTotalAmount() {
-    this.totalAmount = await this.productos.reduce(
-      (total, p) => total + this.obtenerTotalProducto(p),
-      0
-    );
+    this.calcularSubtotales();
+    this.totalAmount = this.subtotalProductos + this.subtotalEnvios;
   }
 
   obtenerTotalProducto(producto: any) {
@@ -141,5 +162,11 @@ export class CarritoPage implements OnInit {
   volverAtras()  {
     this.router.navigate(['/home']);
   }
-}
 
+  async actualizarComuna(comuna: Comuna) {
+    this.comunaDestino = comuna;
+    this.cartService.setComunaDestino(comuna);
+    await this.calcularCostosEnvio();
+    await this.calculateTotalAmount();
+  }
+}
