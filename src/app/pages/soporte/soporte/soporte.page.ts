@@ -63,36 +63,6 @@ export class SoportePage implements OnInit {
   }
 
   // ===================== Imagenes =====================
-
-  procesarImagenes(event: any) {
-    const files: FileList = event.target.files;
-    this.imagenesSeleccionadas = [];
-    this.imagenesProcesadas = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-
-      reader.onload = async (e: any) => {
-        this.imagenesSeleccionadas.push({
-          file: file,
-          preview: e.target.result,
-        });
-
-        const compressed = await this.compressImage(file);
-        if (compressed) {
-          const reader2 = new FileReader();
-          reader2.onload = () => {
-            this.imagenesProcesadas.push(reader2.result as string);
-          };
-          reader2.readAsDataURL(compressed);
-        }
-      };
-
-      reader.readAsDataURL(file);
-    }
-  }
-
   async compressImage(file: File): Promise<File | null> {
     const options = {
       maxSizeMB: 0.1,
@@ -100,19 +70,59 @@ export class SoportePage implements OnInit {
       useWebWorker: true,
     };
     try {
-      return await imageCompression(file, options);
+      const compressedFile = await imageCompression(file, options);
+      console.log('Tamaño original:', file.size / 1024 / 1024, 'MB');
+      console.log(
+        'Tamaño comprimido:',
+        compressedFile.size / 1024 / 1024,
+        'MB'
+      );
+      return compressedFile;
     } catch (error) {
-      console.error('Error al comprimir imagen:', error);
+      console.error('Error al comprimir la imagen:', error);
       this.mostrarToast('Error al comprimir una imagen', 'danger');
       return null;
     }
   }
 
+procesarImagenes(event: any) {
+  const files: FileList = event.target.files;
+
+  this.imagenesSeleccionadas = [];
+  this.imagenesProcesadas = []; 
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+
+    const reader = new FileReader();
+
+    reader.onload = (e: any) => {
+      this.imagenesSeleccionadas.push({
+        file: file,
+        preview: e.target.result,
+      });
+    };
+
+    reader.readAsDataURL(file);
+
+    this.compressAndReadImage(file);
+  }
+}
+
   eliminarImagen(index: number) {
     this.imagenesSeleccionadas.splice(index, 1);
-    this.imagenesProcesadas.splice(index, 1);
   }
 
+  async compressAndReadImage(file: File): Promise<void> {
+    const compressedFile = await this.compressImage(file);
+    if (compressedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagenesProcesadas.push(reader.result as string);
+      };
+      reader.readAsDataURL(compressedFile);
+    }
+  }
   // ===================== Comportamiento =====================
 
   async mostrarToast(mensaje: string, color: 'success' | 'danger' = 'success') {
@@ -131,5 +141,9 @@ export class SoportePage implements OnInit {
       buttons: ['OK'],
     });
     await alert.present();
+  }
+
+  esArray(val: any): boolean {
+    return Array.isArray(val);
   }
 }

@@ -113,7 +113,6 @@ procesarImagenes(event: any) {
   }
 }
 
-
   eliminarImagen(index: number) {
     this.imagenesSeleccionadas.splice(index, 1);
   }

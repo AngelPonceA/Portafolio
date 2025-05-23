@@ -1,0 +1,7 @@
+<div class="modal-lightbox" (click)="cerrar()" fullscreen>
+  <swiper-container class="imagen-swiper-container" pagination="true" navigation="true">
+    <swiper-slide *ngFor="let img of imagenes" class="slide-image">
+      <img [src]="img" alt="imagen del producto" class="imagen-swiper" />
+    </swiper-slide>
+  </swiper-container>
+</div>
