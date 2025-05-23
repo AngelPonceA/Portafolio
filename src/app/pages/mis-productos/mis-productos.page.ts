@@ -86,10 +86,10 @@ export class MisProductosPage implements OnInit {
 
   // Obtener el id de la sesion
   async ngOnInit() {
-    const { id } = await this.authService.obtenerSesion();
-    if (!id) throw new Error('El usuario no ha iniciado sesion');
-    this.idUsuario = id;
-    console.debug('Sesión existente:', this.idUsuario);
+    // const { id } = await this.authService.obtenerSesion();
+    // if (!id) throw new Error('El usuario no ha iniciado sesion');
+    // this.idUsuario = id;
+    // console.debug('Sesión existente:', this.idUsuario);
   }
 
   async enviarFormularios() {
@@ -117,7 +117,6 @@ export class MisProductosPage implements OnInit {
       this.crudService.obtenerMisProductos().subscribe({
         next: async (productos) => {
           this.productos = productos;
-          console.log('Productos obtenidos:', this.productos);
 
           await this.obtenerOfertas(); // Esperar después de cargar productos
         },
@@ -144,7 +143,6 @@ export class MisProductosPage implements OnInit {
       const { id, producto } = await this.crudService.guardarProducto(
         productoToCreate
       );
-      console.log('Producto guardado:', producto);
       this.resetearFormularioProducto();
       this.cerrarModal();
       this.mostrarToast('Producto guardado con éxito');
@@ -241,7 +239,6 @@ export class MisProductosPage implements OnInit {
               this.productos = this.productos.filter(
                 (p) => p.producto_id !== productoId
               );
-              console.log('Producto eliminado:', productoId);
               this.mostrarToast('Producto eliminado con éxito');
             } catch (error) {
               console.error('Error al eliminar el producto:', error);
@@ -257,7 +254,6 @@ export class MisProductosPage implements OnInit {
   // ========================= Métodos para etiquetas =========================
 
   agregarEtiqueta() {
-    console.log('nuevaEtiqueta', this.nuevaEtiqueta);
     if (
       this.nuevaEtiqueta.trim() !== '' &&
       !this.nuevoProductoForm.etiquetas.includes(this.nuevaEtiqueta.trim())
@@ -283,15 +279,8 @@ export class MisProductosPage implements OnInit {
     };
     try {
       const compressedFile = await imageCompression(file, options);
-      console.log('Tamaño original:', file.size / 1024 / 1024, 'MB');
-      console.log(
-        'Tamaño comprimido:',
-        compressedFile.size / 1024 / 1024,
-        'MB'
-      );
       return compressedFile;
     } catch (error) {
-      console.error('Error al comprimir la imagen:', error);
       this.mostrarToast('Error al comprimir una imagen', 'danger');
       return null;
     }
@@ -339,10 +328,6 @@ export class MisProductosPage implements OnInit {
           }
         })
       );
-      console.log(
-        'Ofertas asociadas a productos:',
-        this.productos.map((p) => ({ titulo: p.titulo, oferta: p.oferta }))
-      );
     } catch (error) {
       console.error('Error al obtener las ofertas:', error);
       this.mostrarToast('Error al cargar las ofertas', 'danger');
@@ -389,7 +374,6 @@ export class MisProductosPage implements OnInit {
             text: 'Cancelar',
             role: 'cancel',
             handler: () => {
-              console.log('Reemplazo cancelado');
             },
           },
           {
@@ -399,7 +383,6 @@ export class MisProductosPage implements OnInit {
 
               if (ofertaAnterior?.id) {
                 await this.crudService.eliminarOferta(ofertaAnterior.id);
-                console.log('Oferta anterior eliminada');
                 await this.crearNuevaOferta(this.productoSeleccionado);
                 this.mostrarToast(
                   'Oferta reemplazada correctamente',
@@ -437,7 +420,6 @@ export class MisProductosPage implements OnInit {
         nuevaOferta,
         productoSeleccionado
       );
-      console.log('Oferta guardada:', oferta);
 
       this.mostrarToast('Oferta guardada con éxito');
 
@@ -504,7 +486,6 @@ export class MisProductosPage implements OnInit {
               if (this.productoSeleccionado) {
                 this.productoSeleccionado.oferta = undefined;
               }
-              console.log('Oferta eliminada:', ofertaId);
               this.mostrarToast('Oferta eliminada con éxito');
             } catch (error) {
               console.error('Error al eliminar la oferta:', error);
@@ -525,14 +506,12 @@ export class MisProductosPage implements OnInit {
       this.crudService.obtenerCategorias().subscribe({
         next: (categorias) => {
           this.categorias = categorias;
-          console.log('Categorías obtenidas:', this.categorias);
         },
         error: (error) => {
           console.error('Error al obtener las categorías:', error);
           this.mostrarToast('Error al cargar las categorías', 'danger');
         },
       });
-      console.log('Categorías obtenidas:', this.categorias);
     } catch (error) {
       console.error('Error al obtener las categorías:', error);
       this.mostrarToast('Error al cargar las categorías', 'danger');

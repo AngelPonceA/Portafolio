@@ -7,13 +7,14 @@ import { IonicModule } from '@ionic/angular';
 import { ReportesDeUsuariosPageRoutingModule } from './reportes-de-usuarios-routing.module';
 
 import { ReportesDeUsuariosPage } from './reportes-de-usuarios.page';
-
+import { ModalImagenesComponent } from 'src/app/components/admin/modal-imagenes/modal-imagenes.component';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ReportesDeUsuariosPageRoutingModule
+    ReportesDeUsuariosPageRoutingModule,
+    ModalImagenesComponent
   ],
   declarations: [ReportesDeUsuariosPage]
 })

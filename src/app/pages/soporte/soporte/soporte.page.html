@@ -23,11 +23,14 @@
       </ion-select>
     </ion-item>
 
+     <!-- Imagenes opcionales -->
       <ion-item>
         <ion-label position="stacked">Imágenes (opcional)</ion-label>
-        <label class="custom-file-button" for="fileInput">Seleccionar imágenes</label>
+        <label class="custom-file-button" for="upload"
+          >Seleccionar imágenes</label
+        >
         <input
-          id="fileInput"
+          id="upload"
           class="input-img"
           type="file"
           multiple
@@ -36,13 +39,23 @@
         />
       </ion-item>
 
-
-    <div *ngIf="imagenesSeleccionadas.length > 0" class="image-preview">
-      <div *ngFor="let img of imagenesSeleccionadas; let i = index" class="preview-img">
-        <img [src]="img.preview" alt="Preview" />
-        <ion-icon name="close-circle" (click)="eliminarImagen(i)"></ion-icon>
+      <!-- Mostrar miniaturas y botón de eliminar -->
+      <div class="preview-container" *ngIf="imagenesSeleccionadas.length > 0">
+        <div
+          class="preview-image"
+          *ngFor="let img of imagenesSeleccionadas; let i = index"
+        >
+          <img [src]="img.preview" alt="Imagen seleccionada" />
+          <button class="delete-btn" (click)="eliminarImagen(i)">×</button>
+        </div>
       </div>
-    </div>
+
+      <!-- Contador -->
+      <div class="imagenes-info" *ngIf="imagenesSeleccionadas.length > 0">
+        {{ imagenesSeleccionadas.length }} imagen{{ imagenesSeleccionadas.length
+        > 1 ? 'es' : '' }} seleccionada{{ imagenesSeleccionadas.length > 1 ? 's'
+        : '' }}
+      </div>
 
     <ion-button expand="block" type="submit">Enviar Solicitud</ion-button>
   </form>

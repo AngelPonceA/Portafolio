@@ -5,15 +5,11 @@
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Historial de Compras</ion-title>
+    <ion-title>Usuarios registrados</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="users-page">
-  <div class="title-container">
-    <h1>Usuarios registrados</h1>
-  </div>
-
   <ion-list *ngIf="usuarios.length > 0; else noUsuarios">
     <ion-item *ngFor="let user of usuarios">
       <ion-label>
