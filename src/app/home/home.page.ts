@@ -25,11 +25,14 @@ export class HomePage {
 
     // this.productosSinOferta.slice(0, 6);
     // this.productosConOferta = this.productosConOferta.slice(0, 6);
-    //Token DHL al iniciar la aplicacion
   }
 
   verCategoria(categoria: string){
-    this.router.navigate(['/busqueda'], { state: { categoria : categoria } });    
+    this.router.navigate(['/busqueda'], { state: { categoria : categoria } });
+  }
+
+  verMas(tipoProducto: string) {
+    this.router.navigate(['/busqueda'], { state: { productos: tipoProducto } });    
   }
 
   verDetalle(producto_id: string) {

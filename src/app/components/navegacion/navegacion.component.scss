@@ -148,5 +148,84 @@ ion-icon {
 ion-searchbar.searchbar {
   --border-radius: 30px;
   height: auto;
-  width: 75%;
+  width: 100%;
+  font-size: 5px;
+}
+
+.searchbar-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.sugerencias-lista {
+  position: absolute;
+  top: 90%; // Ajusta si tu searchbar es más alta
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  z-index: 20;
+  border-radius: 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.sugerencias-lista li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f1f1;
+  transition: background 0.18s;
+  background: #fff;
+}
+
+.sugerencias-lista li:last-child {
+  border-bottom: none;
+
+}
+
+.sugerencias-lista li:hover {
+  background: #f9f6f2;
+}
+
+.sugerencia-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f5f5f5;
+  border: 1px solid #eee;
+  flex-shrink: 0;
+}
+
+.sugerencia-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.sugerencia-titulo {
+  font-weight: 500;
+  font-size: 1rem;
+  color: #000000;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sugerencia-precio {
+  font-size: 1rem;
+  color: #D09A58;
+  font-weight: 600;
+  margin-top: 2px;
 }

@@ -2,7 +2,7 @@
 
   <ion-content>
 
-    <div class="perfil-vendedor-container">
+    <div *ngIf="usuario" class="perfil-vendedor-container">
       <!-- Avatar y nombre -->
       <div class="perfil-header">
         <ion-avatar class="avatar">
@@ -34,6 +34,26 @@
           <ion-icon name="cube" slot="start"></ion-icon>
           Mis Productos
         </ion-button>
+
+        <ion-button *ngIf="usuario.membresia" expand="block" fill="outline" routerLink="/prediccion-ventas">
+          <ion-icon name="cube" slot="start"></ion-icon>
+          Ver prediccion de ventas
+        </ion-button>
+
+        <ion-button *ngIf="!usuario.membresia" expand="block" fill="outline" (click)="estadoBotonPaypal()">
+          <ion-icon name="cube" slot="start"></ion-icon>
+          Ver prediccion de ventas
+        </ion-button>
+        
+        <div *ngIf="mostrarBotonPaypal" class="boton-paypal" style="display: block;">
+          <div class="pagar">
+            <div class="total-desglose">
+              <div class="total-final">Miembro 1 año ${{ this.costoMembresia | number }} CLP</div>
+              <ion-button *ngIf="!mostrarBotonPaypal" expand="block" color="tertiary" (click)="estadoBotonPaypal()">Obtener membresia</ion-button>
+            </div>
+              <div id="paypal-button-container"></div>
+            </div>
+        </div>
 
       </div>
 
