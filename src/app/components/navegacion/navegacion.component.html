@@ -2,13 +2,30 @@
   <ion-button (click)="retroceder()" class="footer-header-button">
     <ion-icon name="arrow-back-outline"></ion-icon>
   </ion-button>
-  <ion-searchbar placeholder="Buscar" class="searchbar"></ion-searchbar>
-    <ion-button (click)="navegar('/notificaciones')" class="footer-header-button">
-      <ion-icon name="notifications"></ion-icon>
-      <div *ngIf="notificaciones != undefined && notificaciones >= 0 && notificaciones < 100" class="notification-badge">{{ notificaciones }}</div>
-      <div *ngIf="notificaciones == undefined || notificaciones > 99" class="notification-badge">!</div>
-    </ion-button>
-  </ion-header>
+  
+  <div class="searchbar-wrapper">
+    <ion-searchbar
+      placeholder="Buscar..." class="searchbar" [(ngModel)]="busqueda" (ionInput)="onInputChange($event)" (keyup.enter)="buscarProducto()">
+    </ion-searchbar>
+    <ul *ngIf="sugerencias.length > 0" class="sugerencias-lista">
+      <li *ngFor="let producto of sugerencias" (click)="verDetalle(producto.producto_id)">
+        <img *ngIf="producto.imagen && producto.imagen.length > 0" [src]="producto.imagen[0]" alt="Imagen" class="sugerencia-img" />
+        <div class="sugerencia-info">
+          <span class="sugerencia-titulo">{{ producto.titulo }}</span>
+          <span class="sugerencia-precio">{{ producto.oferta?.precio_oferta ? (producto.oferta.precio_oferta | number) : (producto.precio | number) }} CLP</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  
+
+  <ion-button (click)="navegar('/notificaciones')" class="footer-header-button">
+    <ion-icon name="notifications"></ion-icon>
+    <div *ngIf="notificaciones != undefined && notificaciones >= 0 && notificaciones < 100" class="notification-badge">{{ notificaciones }}</div>
+    <div *ngIf="notificaciones == undefined || notificaciones > 99" class="notification-badge">!</div>
+  </ion-button>
+</ion-header>
+
 
 <div class="contenido">
   <ng-content></ng-content>

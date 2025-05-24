@@ -13,6 +13,8 @@ export class PerfilPage implements OnInit {
 
   estado: number = 0;
   usuario?: any;
+  mostrarPaypal: boolean = false;
+  costoMembresia: number = 50000;
 
   constructor(private router: Router, private authService: AuthService) { }
 
@@ -21,14 +23,6 @@ export class PerfilPage implements OnInit {
       this.usuario = usuario;
     })
   };
-
-  establecerVista() {
-    this.authService.obtenerSesion().then(sesion => {
-      if (sesion) {
-        this.estado = sesion.estado;        
-      }
-    });
-  }
 
   irARegistro() {
     this.router.navigate(['/registro']);
@@ -41,7 +35,5 @@ export class PerfilPage implements OnInit {
   cerrarSesion() {
     this.authService.logout();
   };
-  
-    
 
 }

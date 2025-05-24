@@ -2,7 +2,7 @@
 
   <ion-content *ngIf="favoritos && favoritos.length > 0; else vacio" class="ion-padding">
     <ion-list lines="none">
-      <ion-item *ngFor="let item of favoritos" class="favorito-item" (click)="verDetalle(item.variante_id)">
+      <ion-item *ngFor="let item of favoritos" class="favorito-item" (click)="verDetalle(item.producto_id)">
         
         <ion-thumbnail slot="start">
           <img [src]="item.imagen[0]" />

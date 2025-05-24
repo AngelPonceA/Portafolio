@@ -76,7 +76,7 @@ ion-content {
   max-width: 350px;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.5rem;
 }
 
 .accion-btn {
@@ -201,4 +201,48 @@ ion-content {
 
 .invitado-container ion-button:last-child {
   --background: #D1A15A; /* Color secundario */
+}
+
+.boton-paypal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.pagar {
+  width: 100%;
+  text-align: center;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.total-desglose {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 0;
+
+  .total-final {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #000;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+  }
+}
+
+#paypal-button-container {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

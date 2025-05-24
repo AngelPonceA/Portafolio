@@ -23,6 +23,7 @@ export class ProductoPage implements OnInit {
   cantidadOpciones: number[] = [];
   opcionStock: number = 1;
   mostrarPaypal: boolean = false;
+
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
     
   async ngOnInit() {

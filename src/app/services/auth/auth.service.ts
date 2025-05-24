@@ -53,8 +53,8 @@ export class AuthService {
       const snap = await getDoc(usuarioRef);
 
       if (snap.exists()) {
-        const { nombre, email, rol } = snap.data() as { nombre: string; email: string; rol: string };
-        return { nombre, email, rol };
+        const { nombre, email, rol, membresia } = snap.data() as { nombre: string; email: string; rol: string, membresia: boolean };
+        return { nombre, email, rol, membresia };
       } else {
         console.error('Usuario no encontrado en Firestore.');
         return null;
@@ -141,6 +141,18 @@ export class AuthService {
     }
   }
 
+    async actualizarMembresia(nuevoEstado: boolean) {
+    try {
+      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      await updateDoc(usuarioRef, { membresia: nuevoEstado });
+    } catch (error) {
+      console.error('Error al actualizar el estado de membresia:', error);
+      throw error;
+    }
+  }
+
   async login(email: string, clave: string) {
     try {
       const cred = await signInWithEmailAndPassword(this.auth, email, clave);
@@ -155,7 +167,8 @@ export class AuthService {
 
       console.log('Credenciales ingresadas:', uid);
       const { rol } = snap.data()!;
-      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol });
+      const { membresia } = snap.data()!;
+      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol, membresia: membresia });
       // this.router.navigate(['/home']);
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -182,11 +195,13 @@ export class AuthService {
         email: email,
         rol: 'usuario',
         telefono: number,
+        membresia: false,
+        miembroHasta: '',
         recomendacion: [],
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
-      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: nuevoUsuario.rol });
+      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: nuevoUsuario.rol, membresia: nuevoUsuario.membresia });
       this.router.navigate(['/home']);
       console.log('Usuario registrado y guardado en Firestore:', nuevoUsuario);
     } catch (error) {
@@ -280,4 +295,5 @@ export class AuthService {
       }
     });
   }
+
 }

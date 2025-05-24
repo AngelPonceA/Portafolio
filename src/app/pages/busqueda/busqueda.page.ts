@@ -24,10 +24,20 @@ export class BusquedaPage implements OnInit {
       this.busqueda = state['categoria'];
       this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
     } else if (state?.['busqueda']) {
-      console.log('Por implementar');
-      
+      this.productos = this.crudService.buscarProductosPorNombre(state['busqueda']);
+      this.busqueda = state['busqueda'];
+      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+    } else if (state?.['productos']) {
+      if (state['productos'] == 'sinOferta') {
+        this.productos = this.crudService.obtenerProductosYOferta();
+        this.busqueda = 'Productos sin oferta';
+        this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+      } else if (state['productos'] == 'conOferta') {
+        this.productos = this.crudService.obtenerProductosConOferta();
+        this.busqueda = 'Productos con oferta';
+        this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+      }
     }
-
   }
 
   verDetalle(producto_id: string){

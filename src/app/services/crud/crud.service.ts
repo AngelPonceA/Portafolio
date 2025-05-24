@@ -59,6 +59,16 @@ export class CrudService {
     );
   }
 
+  buscarProductosPorNombre(nombre: string): Observable<Producto[]> {
+    return this.obtenerProductosYOferta().pipe(
+      map(productos =>
+        productos.filter(producto =>
+          producto.titulo.toLowerCase().includes(nombre.toLowerCase())
+        )
+      )
+    );
+  }
+
   obtenerProductosCategoria(categoria: string): Observable<Producto[]> {
     return this.obtenerProductosYOferta().pipe(
       map((productos) => productos.filter(item => item.categoria == categoria))

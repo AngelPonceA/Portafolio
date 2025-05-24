@@ -76,6 +76,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/historial-compra/historial-compra.module').then( m => m.HistorialCompraPageModule)
   },
   {
+    path: 'prediccion-ventas',
+    loadChildren: () => import('./pages/prediccion-ventas/prediccion-ventas.module').then( m => m.PrediccionVentasPageModule)
+  },
+  {
     path: 'boleta',
     loadChildren: () => import('./pages/boleta/boleta.module').then( m => m.BoletaPageModule)
   },
@@ -103,6 +107,7 @@ const routes: Routes = [
     path: 'solicitudes-de-soporte',
     loadChildren: () => import('./pages/admin/solicitudes-de-soporte/solicitudes-de-soporte.module').then( m => m.SolicitudesDeSoportePageModule)
   },
+
 
 ];
 
