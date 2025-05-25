@@ -5,49 +5,85 @@
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Historial de Compras</ion-title>
+    <ion-title>Mis compras</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="historial-grid">
-    <div class="compra-card" *ngFor="let compra of historialCompra">
-      <ion-card-content>
-        <div class="detalle">
-          <div class="fecha-hora">
-            <span class="fecha">{{ compra.fecha }}</span>
-            <span class="hora">{{ compra.hora }}</span>
+<ion-content>
+  <div class="historial-lista">
+    <div class="pedido-card" *ngFor="let pedido of historialCompra">
+      <div class="pedido-header">
+        <span class="fecha">
+          {{ pedido.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}
+        </span>
+        <span class="estado-pago" [ngClass]="pedido.estado_pago === 'COMPLETED' ? 'pagado' : 'pendiente'">
+          {{ pedido.estado_pago === 'COMPLETED' ? 'Pagado' : pedido.estado_pago }}
+        </span>
+      </div>
+      <div class="productos-lista">
+        <div class="producto-item" *ngFor="let detalle of pedido.detalles" (click)="verDetalle(detalle)">
+          <div class="producto-info">
+            <div class="producto-titulo">{{ detalle.producto_titulo }}</div>
+            <div class="producto-cantidad">Cantidad: {{ detalle.cantidad }}</div>
+            <div class="producto-subtotal">Valor unitario: ${{ detalle.valor_unitario | number }}</div>
           </div>
-          <!-- Información del cliente -->
-          <div class="cliente-detalle">
-            <div class="nombre">Nombre: {{ compra.cliente.nombre }}</div>
-            <div class="correo">Correo: {{ compra.cliente.correo }}</div>
+          <div class="estado-envio" [ngClass]="detalle.estado_envio">
+            Estado envío: {{ detalle.estado_envio | titlecase }}
+            <span *ngIf="detalle.numero_seguimiento">| Seguimiento: {{ detalle.numero_seguimiento }}</span>
           </div>
-          <!-- Si hay un solo producto -->
-          <div *ngIf="compra.productos.length === 1" class="producto-unico">
-            <div class="producto-nombre">{{ compra.productos[0].nombre }}</div>
-            <div class="id">ID: {{ compra.productos[0].id }}</div>
-            <div class="precio">Precio: ${{ compra.productos[0].precio }}</div>
-          </div>
-          <!-- Si hay varios productos -->
-          <div *ngIf="compra.productos.length > 1">
-            <div *ngFor="let producto of compra.productos" class="producto-detalle">
-              <div class="producto-nombre">{{ producto.nombre }}</div>
-              <div class="id">ID: {{ producto.id }}</div>
-              <div class="precio">Precio: ${{ producto.precio }}</div>
-            </div>
-          </div>
-          <div class="direccion">
-            Dirección: {{ compra.direccion }}
-          </div>
-          <div class="comuna-region">
-            Comuna: {{ compra.comuna }}, Región: {{ compra.region }}
-          </div>
-          <div class="sexo">
-            Comprador: {{ compra.sexo }}
-          </div>
+
         </div>
-      </ion-card-content>
+      </div>
+      <div class="pedido-footer">
+        <span *ngIf="pedido.direccion">Dirección: {{ pedido.direccion | titlecase }}</span>
+        <div class="pedido-total">
+          <span>Total pagado:</span>
+          <span class="monto">${{ pedido.total_pagado | number }}</span>
+        </div>
+        <div class="pedido-medio">
+          <span>Método de pago: </span>
+          <span>{{ pedido.medio_pago }}</span>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Modal de detalles del producto -->
+  <ion-modal [isOpen]="detalleSeleccionado !== null" (didDismiss)="detalleSeleccionado = null" class="detalle-modal-ml">
+    <ng-template>
+      <div class="detalle-modal" *ngIf="detalleSeleccionado">
+        <div class="detalle-modal-header">
+          <ion-icon name="cube-outline" class="detalle-modal-icon"></ion-icon>
+          <h2>{{ detalleSeleccionado.producto_titulo }}</h2>
+        </div>
+        <div class="detalle-modal-body">
+          <div class="detalle-row">
+            <span class="detalle-label">Cantidad:</span>
+            <span class="detalle-value">{{ detalleSeleccionado.cantidad }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Valor unitario:</span>
+            <span class="detalle-value">${{ detalleSeleccionado.valor_unitario | number }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Subtotal:</span>
+            <span class="detalle-value">${{ detalleSeleccionado.subtotal | number }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Estado envío:</span>
+            <span class="detalle-value estado-envio-modal" [ngClass]="detalleSeleccionado.estado_envio">
+              {{ detalleSeleccionado.estado_envio | titlecase }}
+            </span>
+          </div>
+          <div class="detalle-row" *ngIf="detalleSeleccionado.numero_seguimiento">
+            <span class="detalle-label">N° Seguimiento:</span>
+            <span class="detalle-value">{{ detalleSeleccionado.numero_seguimiento }}</span>
+          </div>
+        </div>
+        <ion-button expand="block" color="medium" (click)="detalleSeleccionado = null" class="detalle-modal-btn">
+          Cerrar
+        </ion-button>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

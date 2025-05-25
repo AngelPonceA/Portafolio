@@ -30,7 +30,7 @@ export class BusquedaPage implements OnInit {
     } else if (state?.['productos']) {
       if (state['productos'] == 'sinOferta') {
         this.productos = this.crudService.obtenerProductosYOferta();
-        this.busqueda = 'Productos sin oferta';
+        this.busqueda = 'Todos los productos';
         this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
       } else if (state['productos'] == 'conOferta') {
         this.productos = this.crudService.obtenerProductosConOferta();

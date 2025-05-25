@@ -1,6 +1,6 @@
 import { Categoria } from './../../models/categoria.models';
 import { Injectable } from '@angular/core';
-import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc } from '@angular/fire/firestore';
+import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc, orderBy } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, from, map, Observable, of, switchMap } from 'rxjs';
 import { Producto } from '../../models/producto.models';
 import { Oferta } from 'src/app/models/oferta.models';
@@ -262,6 +262,39 @@ export class CrudService {
     }
   }
 
+  async obtenerHistorialCompra() {
+    try {
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const historialCompraRef = collection(this.firestore, 'pedidos');
+      const q = query(historialCompraRef, where('usuario_id', '==', uid), orderBy('fecha_creacion', 'desc'));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return [];
+      }
+
+      const historial = [];
+      for (const pedidoDoc of querySnapshot.docs) {
+        const pedidoData = pedidoDoc.data();
+        const pedido_id = pedidoDoc.id;
+
+        // Accede a la subcolección 'detalle' de este pedido
+        const detalleRef = collection(this.firestore, `pedidos/${pedido_id}/detalle`);
+        const detalleSnapshot = await getDocs(detalleRef);
+
+        const detalles = detalleSnapshot.docs.map(doc => doc.data());
+
+        historial.push({ pedido_id, ...pedidoData, detalles });
+      }
+
+      console.log('historial', historial);
+      
+      return historial;
+    } catch (error) {
+      this.ionicService.mostrarAlerta('Error al obtener el historial de compra', 'error');
+      return [];
+    }
+  }
 
   // ======================== MIS PRODUCTOS PAGE =========================
   // Métodos de clase producto
