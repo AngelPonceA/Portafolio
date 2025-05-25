@@ -39,7 +39,7 @@ export class UsuarioVendedorPage implements OnInit {
   estadoBotonPaypal() {
     if (!this.mostrarBotonPaypal) {
       this.mostrarBotonPaypal = true;
-      this.ionicService.mostrarAlerta('¡Atención!', 'Para poder ver las predicciones de venta debes pagar una membresía de $50.00 USD, esta dura un año!.')
+      this.ionicService.mostrarAlerta('¡Atención!', 'Para poder ver las predicciones de venta debes pagar una membresía de $50.00 USD, esta dura un año!')
       setTimeout(() => {
       this.iniciarBotonPaypal();}, 0);    
     } else {

@@ -146,7 +146,10 @@ export class AuthService {
       // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
-      await updateDoc(usuarioRef, { membresia: nuevoEstado });
+      const fechaActual = new Date();
+      const nuevaMembresia = new Date(fechaActual);
+      nuevaMembresia.setFullYear(nuevaMembresia.getFullYear() + 1);
+      await updateDoc(usuarioRef, { membresia: nuevoEstado, miembroHasta: nuevaMembresia });
     } catch (error) {
       console.error('Error al actualizar el estado de membresia:', error);
       throw error;
