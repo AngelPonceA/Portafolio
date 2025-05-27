@@ -1,0 +1,128 @@
+:host {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  
+  ion-content {
+  --background: #f5f2ef;
+  padding: 10px;
+  flex-grow: 1;
+  contain: strict;
+  overflow-y: auto;
+  }
+}
+
+/* Estilo del encabezado del modal */
+ion-header {
+  flex-shrink: 0;
+
+  ion-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  ion-button {
+    --color: #d1a15a;
+  }
+}
+
+/* Formulario de nuevo producto */
+form.form-producto {
+  padding: 10px;
+
+  ion-item {
+    margin-bottom: 10px;
+  }
+
+  ion-label {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  ion-chip {
+    margin: 4px 4px 0 0;
+  }
+}
+
+/* Etiquetas con scroll horizontal */
+.etiquetas-scroll {
+  width: 100%;
+  overflow-x: auto;
+  padding: 0 1rem 0.5rem;
+  margin-bottom: 10px;
+
+  .chip-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+    width: max-content;
+  }
+}
+
+ion-chip {
+  flex-shrink: 0;
+}
+
+.close-icon {
+  cursor: pointer;
+}
+
+.hidden-file-input {
+  position: absolute; /* Take it out of normal flow */
+  width: 1px; /* Make it tiny */
+  height: 1px; /* Make it tiny */
+  padding: 0; /* No padding */
+  margin: -1px; /* No margin */
+  overflow: hidden; /* Hide overflow content */
+  clip: rect(0, 0, 0, 0); /* Clip it to be invisible */
+  border: 0; /* No border */
+  white-space: nowrap; /* Prevent text wrapping */
+  -webkit-appearance: none; /* Remove default browser styling */
+  appearance: none; /* Remove default browser styling */
+}
+
+.custom-file-button {
+  display: inline-block;
+  padding: 8px 15px;
+  background-color: #D1A15A;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: auto;
+}
+
+.custom-file-button:hover {
+  background-color: #b88c3e; /* Cambio de color al pasar el ratón */
+}
+
+.custom-file-button {
+  margin-left: 15px; /* Se asegura de que el botón esté alineado a la derecha */
+}
+
+/* Botones */
+ion-button {
+  --background: #D1A15A;
+  --color: white;
+  --border-radius: 1rem;
+  --border-color: #9a73399e;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 12px 0;
+
+  ion-icon {
+    margin-right: 8px;
+  }
+
+  &:hover {
+    background-color: #b88c3e;
+  }
+
+  &:disabled {
+    --background: #e0c8a1;
+    --border-color: #d1b89e;
+  }
+}
