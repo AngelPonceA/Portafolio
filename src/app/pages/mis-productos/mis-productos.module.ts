@@ -1,11 +1,14 @@
+// src/app/pages/mis-productos/mis-productos.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { MisProductosPageRoutingModule } from './mis-productos-routing.module';
 import { MisProductosPage } from './mis-productos.page';
 import { NavegacionComponent } from 'src/app/components/navegacion/navegacion.component';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { MisProductosPageRoutingModule } from './mis-productos-routing.module';
+import { ModalAgregarProductoComponent } from 'src/app/components/mis-productos/modal-agregar-producto/modal-agregar-producto.component';
+import { ModalEditarProductoComponent } from 'src/app/components/mis-productos/modal-editar-producto/modal-editar-producto.component';
 
 @NgModule({
   imports: [
@@ -13,7 +16,9 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
     FormsModule,
     IonicModule,
     MisProductosPageRoutingModule,
-    NavegacionComponent
+    NavegacionComponent,
+    ModalAgregarProductoComponent,
+    ModalEditarProductoComponent
   ],
   declarations: [MisProductosPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

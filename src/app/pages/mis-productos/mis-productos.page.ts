@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ToastController, AlertController } from '@ionic/angular';
-import imageCompression from 'browser-image-compression';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { ToastController, AlertController, ModalController } from '@ionic/angular'; // Importa ModalController
+import imageCompression from 'browser-image-compression'; // Solo si lo usas en otros lugares de esta página
 import { NgForm } from '@angular/forms';
-import { ChangeDetectorRef } from '@angular/core';
+import { Timestamp } from '@angular/fire/firestore';
 
 // importar modelos
 import { Producto } from 'src/app/models/producto.models';
@@ -12,7 +12,10 @@ import { Categoria } from 'src/app/models/categoria.models';
 // importar servicios
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
-import { Timestamp } from '@angular/fire/firestore';
+
+// Importa tu nuevo componente modal
+import { ModalAgregarProductoComponent } from 'src/app/components/mis-productos/modal-agregar-producto/modal-agregar-producto.component';
+import { ModalEditarProductoComponent } from 'src/app/components/mis-productos/modal-editar-producto/modal-editar-producto.component';
 
 @Component({
   selector: 'app-mis-productos',
@@ -21,49 +24,15 @@ import { Timestamp } from '@angular/fire/firestore';
   standalone: false,
 })
 export class MisProductosPage implements OnInit {
-  // Variables
-  //Inicializar Variables relacionadas a modelos
   categorias: Categoria[] = [];
   productos: Producto[] = [];
   ofertas: Oferta[] = [];
-  etiquetas = [];
-
-  // Variables para comportamientos
-  mostrarModal = false;
-  oferta = false;
-
-  // Variables para formulario
-  idUsuario: string = '';
   estados = ['nuevo', 'segunda mano'];
-  nuevaEtiqueta = '';
+  oferta = false;
+  idUsuario: string = 'LtOy7x75rVTK4f56xhErfdDPEs92'; 
+
   mostrarOferta: boolean = false;
   productoSeleccionado!: Producto;
-
-  // modal AutoStock
-  mostrarModalAutostock = false;
-  productoParaAutostock: Producto | null = null;
-  stockMinimo = 1;
-  activarAutoStock = false;
-
-  mostrarModalEdicion = false;
-  productoEnEdicion: Producto | null = null;
-  productoEditandoForm: any = {};
-  nuevaEtiquetaEdit: string = '';
-
-  //Para crearlos individualmente
-  nuevoProductoForm: Producto = {
-    usuario_id: '',
-    categoria: '',
-    titulo: '',
-    descripcion: '',
-    etiquetas: [],
-    estado: '',
-    precio: 0,
-    stock: 0,
-    inventario_minimo: 0,
-    auto_stock: false,
-    imagen: [],
-  };
 
   nuevaOfertaForm: {
     precio_oferta: number;
@@ -75,16 +44,20 @@ export class MisProductosPage implements OnInit {
     fecha_fin: new Date().toISOString(),
   };
 
-  //Constructor de la pagina
+  mostrarModalAutostock = false;
+  productoParaAutostock: Producto | null = null;
+  stockMinimo = 1;
+  activarAutoStock = false;
+
   constructor(
     private toastController: ToastController,
     private alertController: AlertController,
     private authService: AuthService,
     private crudService: CrudService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private modalController: ModalController 
   ) {}
 
-  // Obtener el id de la sesion
   async ngOnInit() {
     // const { id } = await this.authService.obtenerSesion();
     // if (!id) throw new Error('El usuario no ha iniciado sesion');
@@ -92,40 +65,20 @@ export class MisProductosPage implements OnInit {
     // console.debug('Sesión existente:', this.idUsuario);
   }
 
-  async enviarFormularios() {
-    try {
-      if (this.productoEnEdicion) {
-        await this.editarProducto(this.nuevoProductoForm);
-      } else {
-        const { id: productoId } = await this.guardarProducto(
-          this.nuevoProductoForm
-        );
-        if (!productoId) throw new Error('No se pudo guardar el producto');
-      }
-    } catch (error) {
-      console.error('Error al enviar los formularios:', error);
-      this.mostrarToast('Error al enviar los formularios', 'danger');
-    }
-  }
-
-  // ========================= Métodos de productos =========================
-
-  // Obtener los productos del usuario
   async ionViewWillEnter() {
     try {
       this.obtenerCategorias();
       this.crudService.obtenerMisProductos().subscribe({
         next: async (productos) => {
           this.productos = productos;
-
-          await this.obtenerOfertas(); // Esperar después de cargar productos
+          await this.obtenerOfertas(); 
+          this.cdr.detectChanges(); 
         },
         error: (error) => {
           console.error('Error al obtener los productos:', error);
           this.mostrarToast('Error al cargar los productos', 'danger');
         },
       });
-
       await this.obtenerOfertas();
     } catch (error) {
       console.error('Error al obtener los productos:', error);
@@ -133,96 +86,6 @@ export class MisProductosPage implements OnInit {
     }
   }
 
-  // Guardar producto
-  async guardarProducto(productoToCreate: Producto) {
-    try {
-      const esValido = await this.validarProducto(productoToCreate);
-      if (!esValido) {
-        return {};
-      }
-      const { id, producto } = await this.crudService.guardarProducto(
-        productoToCreate
-      );
-      this.resetearFormularioProducto();
-      this.cerrarModal();
-      this.mostrarToast('Producto guardado con éxito');
-      return { id, producto };
-    } catch (error: any) {
-      console.error('Error al guardar el producto:', error);
-      this.mostrarToast('Error al guardar el producto', 'danger');
-    }
-    return {};
-  }
-
-  async validarProducto(producto: Producto) {
-    if (producto.titulo.trim() === '') {
-      this.mostrarToast('El título no puede estar vacío', 'warning');
-      return false;
-    }
-    if (producto.descripcion.trim() === '') {
-      this.mostrarToast('La descripción no puede estar vacía', 'warning');
-      return false;
-    }
-    if (producto.categoria.trim() === '') {
-      this.mostrarToast('La categoría no puede estar vacía', 'warning');
-      return false;
-    }
-    if (producto.precio <= 0) {
-      this.mostrarToast('El precio debe ser mayor a 0', 'warning');
-      return false;
-    }
-    if (producto.stock < 0) {
-      this.mostrarToast('El stock no puede ser negativo', 'warning');
-      return false;
-    }
-    if (producto.etiquetas.length === 0) {
-      this.mostrarToast(
-        'El producto debe tener al menos una etiqueta',
-        'warning'
-      );
-      return false;
-    }
-    if (producto.imagen.length === 0) {
-      this.mostrarToast(
-        'El producto debe tener al menos una imagen',
-        'warning'
-      );
-      return false;
-    }
-    if (producto.estado.trim() === '') {
-      this.mostrarToast('El estado no puede estar vacío', 'warning');
-      return false;
-    }
-    return true;
-  }
-
-  async editarProducto(productoEditado: Producto) {
-    try {
-      if (!productoEditado.producto_id) {
-        this.mostrarToast('Producto sin ID válido', 'danger');
-        return;
-      }
-
-      const esValido = await this.validarProducto(productoEditado);
-      if (!esValido) {
-        return;
-      }
-
-      await this.crudService.editarProducto(
-        productoEditado.producto_id,
-        productoEditado
-      );
-      this.mostrarToast('Producto editado con éxito');
-      this.cerrarModal();
-      this.resetearFormularioProducto();
-      await this.ionViewWillEnter();
-    } catch (error) {
-      console.error('Error al editar el producto:', error);
-      this.mostrarToast('Error al editar el producto', 'danger');
-    }
-  }
-
-  // Eliminar producto
   async eliminarProducto(productoId: string) {
     const alert = await this.alertController.create({
       header: 'Confirmar eliminación',
@@ -251,69 +114,7 @@ export class MisProductosPage implements OnInit {
     await alert.present();
   }
 
-  // ========================= Métodos para etiquetas =========================
-
-  agregarEtiqueta() {
-    if (
-      this.nuevaEtiqueta.trim() !== '' &&
-      !this.nuevoProductoForm.etiquetas.includes(this.nuevaEtiqueta.trim())
-    ) {
-      this.nuevoProductoForm.etiquetas.push(this.nuevaEtiqueta.trim());
-
-      this.nuevaEtiqueta = '';
-    }
-  }
-
-  eliminarEtiqueta(etiqueta: string) {
-    this.nuevoProductoForm.etiquetas = this.nuevoProductoForm.etiquetas.filter(
-      (e) => e !== etiqueta
-    );
-  }
-
-  // ========================= Métodos de imagenes =========================
-  async compressImage(file: File): Promise<File | null> {
-    const options = {
-      maxSizeMB: 0.1,
-      maxWidthOrHeight: 1024,
-      useWebWorker: true,
-    };
-    try {
-      const compressedFile = await imageCompression(file, options);
-      return compressedFile;
-    } catch (error) {
-      this.mostrarToast('Error al comprimir una imagen', 'danger');
-      return null;
-    }
-  }
-
-  procesarImagenes(event: any) {
-    const archivos = event.target.files;
-    if (archivos && archivos.length > 0) {
-      this.nuevoProductoForm.imagen = [];
-      for (const file of archivos) {
-        this.compressAndReadImage(file);
-      }
-    }
-  }
-
-  async compressAndReadImage(file: File): Promise<void> {
-    const compressedFile = await this.compressImage(file);
-    if (compressedFile) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.nuevoProductoForm.imagen.push(reader.result as string);
-      };
-      reader.readAsDataURL(compressedFile);
-    }
-  }
-
-  esArray(val: any): boolean {
-    return Array.isArray(val);
-  }
-
-  // ========================= Métodos de ofertas =========================
-
-  // Obtener ofertas del producto
+  // --- Métodos de ofertas (se quedan aquí) ---
   async obtenerOfertas() {
     try {
       await Promise.all(
@@ -325,6 +126,8 @@ export class MisProductosPage implements OnInit {
           );
           if (ofertas.length > 0) {
             producto.oferta = ofertas[0];
+          } else {
+            producto.oferta = undefined; 
           }
         })
       );
@@ -373,8 +176,7 @@ export class MisProductosPage implements OnInit {
           {
             text: 'Cancelar',
             role: 'cancel',
-            handler: () => {
-            },
+            handler: () => {},
           },
           {
             text: 'Reemplazar',
@@ -487,6 +289,7 @@ export class MisProductosPage implements OnInit {
                 this.productoSeleccionado.oferta = undefined;
               }
               this.mostrarToast('Oferta eliminada con éxito');
+              await this.obtenerOfertas(); // Recargar ofertas después de eliminar
             } catch (error) {
               console.error('Error al eliminar la oferta:', error);
               this.mostrarToast('Error al eliminar la oferta', 'danger');
@@ -498,9 +301,6 @@ export class MisProductosPage implements OnInit {
     await alert.present();
   }
 
-  // ========================= Métodos de categorias =========================
-
-  // Obtener categorias
   async obtenerCategorias() {
     try {
       this.crudService.obtenerCategorias().subscribe({
@@ -518,132 +318,10 @@ export class MisProductosPage implements OnInit {
     }
   }
 
-  //Obtener nombre categoria
   obtenerNombreCategoriaPorId(id: string) {
     return this.categorias.find((c) => c.id === id)?.nombre;
   }
 
-  // Validar categorias
-  validarCategorias(categorias: Categoria[]): boolean {
-    for (const categoria of categorias) {
-      if (categoria === null) {
-        this.mostrarToast('La categoría no puede ser nula', 'warning');
-        return false;
-      }
-    }
-    return true;
-  }
-  // ========================= Métodos de editarProducto =========================
-  guardarCambiosProducto(form: any) {
-    const error = this.validarEdicion(form);
-
-    if (error) {
-      return;
-    }
-
-    const id = form.producto_id;
-    this.crudService.editarProducto(id, form).then(() => {
-      this.cerrarModalEdicion();
-      this.ionViewWillEnter(); // Refresca lista
-    });
-  }
-
-  eliminarEtiquetaEdicion(etiqueta: string) {
-    this.productoEditandoForm.etiquetas =
-      this.productoEditandoForm.etiquetas.filter((e: string) => e !== etiqueta);
-  }
-
-  agregarEtiquetaEdicion() {
-    const nueva = this.nuevaEtiquetaEdit?.trim();
-    if (
-      nueva &&
-      !this.productoEditandoForm.etiquetas.includes(nueva) &&
-      this.productoEditandoForm.etiquetas.length < 10
-    ) {
-      this.productoEditandoForm.etiquetas.push(nueva);
-    }
-    this.nuevaEtiquetaEdit = '';
-  }
-
-  procesarImagenesEdicion(event: any) {
-    const archivos: FileList = event.target.files;
-    for (let i = 0; i < archivos.length; i++) {
-      const lector = new FileReader();
-      lector.onload = (e: any) => {
-        this.productoEditandoForm.imagen.push(e.target.result);
-      };
-      lector.readAsDataURL(archivos[i]);
-    }
-  }
-
-  validarEdicion(productoEditandoForm: Partial<Producto>): string | null {
-    if (
-      !productoEditandoForm.titulo ||
-      productoEditandoForm.titulo.trim() === ''
-    ) {
-      this.mostrarToast('El título no puede estar vacío', 'warning');
-      return 'El título no puede estar vacío';
-    }
-    if (
-      !productoEditandoForm.descripcion ||
-      productoEditandoForm.descripcion.trim() === ''
-    ) {
-      this.mostrarToast('La descripción no puede estar vacía', 'warning');
-      return 'La descripción no puede estar vacía';
-    }
-    if (
-      !productoEditandoForm.categoria ||
-      productoEditandoForm.categoria.trim() === ''
-    ) {
-      this.mostrarToast('La categoría no puede estar vacía', 'warning');
-      return 'La categoría no puede estar vacía';
-    }
-    if (
-      productoEditandoForm.precio === undefined ||
-      productoEditandoForm.precio <= 0
-    ) {
-      this.mostrarToast('El precio debe ser mayor a 0', 'warning');
-      return 'El precio debe ser mayor a 0';
-    }
-    if (
-      productoEditandoForm.stock === undefined ||
-      productoEditandoForm.stock < 0
-    ) {
-      this.mostrarToast('El stock no puede ser negativo', 'warning');
-      return 'El stock no puede ser negativo';
-    }
-    if (
-      !productoEditandoForm.etiquetas ||
-      productoEditandoForm.etiquetas.length === 0
-    ) {
-      this.mostrarToast(
-        'El producto debe tener al menos una etiqueta',
-        'warning'
-      );
-      return 'El producto debe tener al menos una etiqueta';
-    }
-    if (
-      !productoEditandoForm.imagen ||
-      productoEditandoForm.imagen.length === 0
-    ) {
-      this.mostrarToast(
-        'El producto debe tener al menos una imagen',
-        'warning'
-      );
-      return 'El producto debe tener al menos una imagen';
-    }
-    if (
-      !productoEditandoForm.estado ||
-      productoEditandoForm.estado.trim() === ''
-    ) {
-      this.mostrarToast('El estado no puede estar vacío', 'warning');
-      return 'El estado no puede estar vacío';
-    }
-    return null;
-  }
-
-  // ========================= Métodos de comportamiento =========================
-  // Mostrar toast
   async mostrarToast(mensaje: string, color: string = 'success') {
     const toast = await this.toastController.create({
       message: mensaje,
@@ -667,28 +345,48 @@ export class MisProductosPage implements OnInit {
     }
   }
 
-  // Modal
-  abrirModal() {
-    this.mostrarModal = true;
+  // Nuevo método para abrir el modal de agregar producto
+  async abrirModalAgregarProducto() {
+    const modal = await this.modalController.create({
+      component: ModalAgregarProductoComponent,
+      componentProps: {
+        userId: this.idUsuario, 
+      },
+    });
+
+    modal.onDidDismiss().then(async (result) => {
+      if (result.data && result.data.productSaved) {
+        await this.ionViewWillEnter();
+        this.mostrarToast('Producto agregado exitosamente y lista actualizada.', 'success');
+      }
+    });
+
+    await modal.present();
+    
   }
 
-  abrirModalEditar(producto: any) {
-    this.productoEditandoForm = { ...producto }; // Copia profunda si es necesario
-    this.mostrarModalEdicion = true;
+  async abrirModalEditarProducto(producto: Producto) {
+    const modal = await this.modalController.create({
+      component: ModalEditarProductoComponent,
+      componentProps: {
+        initialProductData: producto, // Pasa el producto a editar
+        userId: this.idUsuario, // Pasa el ID del usuario
+      },
+    });
+    modal.onDidDismiss().then((resultado) => {
+        if (resultado.data?.actualizado) {
+          this.mostrarToast('Producto actualizado correctamente', 'success');
+          this.ionViewWillEnter();
+        }
+      });
+    await modal.present();
   }
 
-  cerrarModalEdicion() {
-    this.mostrarModalEdicion = false;
-    this.productoEditandoForm = {};
-  }
-
-  // Modal para crear oferta
   abrirModalOferta(producto: Producto) {
     this.productoSeleccionado = producto;
 
-    // Fecha actual en local (incluye hora)
     const ahora = new Date();
-    const tzOffset = ahora.getTimezoneOffset() * 60000; // offset en ms
+    const tzOffset = ahora.getTimezoneOffset() * 60000;
     const ahoraLocalISO = new Date(ahora.getTime() - tzOffset)
       .toISOString()
       .slice(0, 16);
@@ -704,32 +402,6 @@ export class MisProductosPage implements OnInit {
 
   cerrarModalOferta() {
     this.mostrarOferta = false;
-  }
-
-  cerrarModal() {
-    this.mostrarModal = false;
-    this.resetearFormulario();
-  }
-
-  resetearFormulario() {
-    this.oferta = false;
-  }
-
-  resetearFormularioProducto() {
-    this.nuevoProductoForm = {
-      usuario_id: '',
-      titulo: '',
-      descripcion: '',
-      categoria: '',
-      etiquetas: [],
-      precio: 0,
-      stock: 0,
-      estado: '',
-      inventario_minimo: 0,
-      auto_stock: false,
-      imagen: [],
-    };
-    this.nuevaEtiqueta = '';
   }
 
   // Abrir modal y precargar valores
@@ -759,7 +431,6 @@ export class MisProductosPage implements OnInit {
       return;
     }
 
-    // Actualizo modelo local
     this.productoParaAutostock.inventario_minimo = minimo;
     this.productoParaAutostock.auto_stock = this.activarAutoStock;
 

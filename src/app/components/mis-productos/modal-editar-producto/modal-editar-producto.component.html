@@ -1,0 +1,166 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Producto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form
+    *ngIf="nuevoProductoEditadoForm"
+    (ngSubmit)="guardarProductoEditado()"
+    class="form-producto"
+  >
+    <ion-list-header>
+      <ion-label>Información del Producto</ion-label>
+    </ion-list-header>
+
+    <ion-item>
+      <ion-label position="floating">Nombre del Producto</ion-label>
+      <ion-input
+        [(ngModel)]="nuevoProductoEditadoForm.titulo"
+        name="tituloEdit"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Descripción</ion-label>
+      <ion-textarea
+        [(ngModel)]="nuevoProductoEditadoForm.descripcion"
+        name="descripcionEdit"
+        rows="3"
+      ></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Estado</ion-label>
+      <ion-select
+        [(ngModel)]="nuevoProductoEditadoForm.estado"
+        name="estadoEdit"
+        required
+      >
+        <ion-select-option *ngFor="let estado of estados" [value]="estado">
+          {{ estado }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Categoría</ion-label>
+      <ion-select
+        [(ngModel)]="nuevoProductoEditadoForm.categoria"
+        name="categoriaEdit"
+      >
+        <ion-select-option
+          *ngFor="let categoria of categorias"
+          [value]="categoria.nombre"
+        >
+          {{ categoria.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-label>Etiquetas</ion-label>
+    <div class="etiquetas-scroll">
+      <div class="chip-wrapper">
+        <ion-chip *ngFor="let etiqueta of nuevoProductoEditadoForm.etiquetas">
+          <ion-label>{{ etiqueta }}</ion-label>
+          <ion-icon
+            name="close"
+            (click)="eliminarEtiqueta(etiqueta)"
+            class="close-icon"
+          ></ion-icon>
+        </ion-chip>
+      </div>
+    </div>
+
+    <ion-item>
+      <ion-input
+        placeholder="Nueva Etiqueta"
+        [(ngModel)]="nuevaEtiqueta"
+        name="nuevaEtiquetaEdit"
+        (keyup.enter)="agregarEtiqueta()"
+      ></ion-input>
+      <ion-button
+        slot="end"
+        (click)="agregarEtiqueta()"
+        [disabled]="nuevoProductoEditadoForm.etiquetas.length >= 10"
+      >
+        Agregar
+      </ion-button>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Precio (CLP)</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="nuevoProductoEditadoForm.precio"
+        name="precioEdit"
+        min="1"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Stock disponible</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="nuevoProductoEditadoForm.stock"
+        name="stockEdit"
+        min="1"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Stock mínimo</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="nuevoProductoEditadoForm.inventario_minimo"
+        name="stockMinimoEdit"
+        min="0"
+      ></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Imágenes</ion-label>
+      <input
+        id="fileEditInput"
+        class="input-img"
+        type="file"
+        multiple
+        (change)="procesarImagenes($event)"
+        accept="image/*"
+      />
+      <label for="fileEditInput" class="custom-file-button"
+        >Elegir Archivos</label
+      >
+    </ion-item>
+
+    <div
+      *ngIf="nuevoProductoEditadoForm.imagen.length > 0"
+      class="imagenes-grid"
+    >
+      <ion-grid>
+        <ion-row>
+          <ion-col size="4" *ngFor="let img of nuevoProductoEditadoForm.imagen">
+            <img
+              [src]="img || 'assets/img/placeholder.png'"
+              class="imagen-preview"
+            />
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <ion-button expand="block" type="submit">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Guardar Cambios
+    </ion-button>
+  </form>
+</ion-content>
