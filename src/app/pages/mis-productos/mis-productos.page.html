@@ -23,18 +23,17 @@
     <ion-card *ngFor="let producto of productos" class="producto-card">
       <!-- Sección de imágenes -->
       <div class="imagen-container">
-        <swiper-container
-        slides-per-view="1"
-        style="width: 100%; height: auto;"
-        >
+        <swiper-container slides-per-view="1" style="width: 100%; height: auto">
           <swiper-slide *ngFor="let img of producto.imagen">
             <div class="slide-image">
-              <img [src]="img || 'assets/img/placeholder.png'" alt="Imagen del producto" />
+              <img
+                [src]="img || 'assets/img/placeholder.png'"
+                alt="Imagen del producto"
+              />
             </div>
           </swiper-slide>
         </swiper-container>
       </div>
-
 
       <!-- Sección datos -->
       <ion-card-header>
@@ -114,7 +113,7 @@
           <ion-button
             fill="clear"
             color="warning"
-            (click)="abrirModalAutostock(producto)"
+            (click)="abrirModalAlertaStock(producto)"
           >
             <ion-icon name="notifications-outline"></ion-icon>
           </ion-button>
@@ -138,66 +137,4 @@
       </ion-card-content>
     </ion-card>
   </div>
-
-  <!-- Modal agregar producto -->
-
-  <!-- Modal Agregar Oferta -->
-
-  <!-- Modal Editar Producto -->
-
-  <!-- Modal Configurar AutoStock -->
-  <ion-modal
-    [isOpen]="mostrarModalAutostock"
-    (didDismiss)="cerrarModalAutostock()"
-    class="auto-stock-modal"
-  >
-    <ng-template>
-      <ion-header>
-        <ion-toolbar>
-          <ion-title>Configurar alerta de stock</ion-title>
-          <ion-buttons slot="end">
-            <ion-button (click)="cerrarModalAutostock()">
-              <ion-icon name="close-outline"></ion-icon>
-            </ion-button>
-          </ion-buttons>
-        </ion-toolbar>
-      </ion-header>
-
-      <ion-content>
-        <form
-          #autoStockForm="ngForm"
-          (ngSubmit)="guardarAutostock(autoStockForm)"
-          class="form-autostock"
-        >
-          <ion-list>
-            <ion-item>
-              <ion-label position="stacked">Stock mínimo</ion-label>
-              <ion-input
-                type="number"
-                [(ngModel)]="stockMinimo"
-                name="stockMinimo"
-                required
-                min="1"
-              ></ion-input>
-            </ion-item>
-
-            <ion-item lines="none">
-              <ion-label>Activar alerta de stock</ion-label>
-              <ion-toggle
-                [(ngModel)]="activarAutoStock"
-                name="activarAutoStock"
-              ></ion-toggle>
-            </ion-item>
-          </ion-list>
-
-          <ion-footer>
-            <ion-button expand="block" type="submit">Guardar</ion-button>
-          </ion-footer>
-        </form>
-      </ion-content>
-    </ng-template>
-  </ion-modal>
-
-
-
 </app-navegacion>
