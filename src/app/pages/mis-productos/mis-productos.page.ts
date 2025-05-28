@@ -1,8 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ToastController, AlertController, ModalController } from '@ionic/angular'; // Importa ModalController
-import imageCompression from 'browser-image-compression'; // Solo si lo usas en otros lugares de esta página
 import { NgForm } from '@angular/forms';
-import { Timestamp } from '@angular/fire/firestore';
 
 // importar modelos
 import { Producto } from 'src/app/models/producto.models';
@@ -16,6 +14,7 @@ import { CrudService } from 'src/app/services/crud/crud.service';
 // Importa tu nuevo componente modal
 import { ModalAgregarProductoComponent } from 'src/app/components/mis-productos/modal-agregar-producto/modal-agregar-producto.component';
 import { ModalEditarProductoComponent } from 'src/app/components/mis-productos/modal-editar-producto/modal-editar-producto.component';
+import { ModalOfertaComponent } from 'src/app/components/mis-productos/modal-oferta/modal-oferta.component';
 
 @Component({
   selector: 'app-mis-productos',
@@ -114,193 +113,6 @@ export class MisProductosPage implements OnInit {
     await alert.present();
   }
 
-  // --- Métodos de ofertas (se quedan aquí) ---
-  async obtenerOfertas() {
-    try {
-      await Promise.all(
-        this.productos.map(async (producto) => {
-          if (!producto.producto_id) return;
-
-          const ofertas = await this.crudService.obtenerOfertaPorProducto(
-            producto.producto_id
-          );
-          if (ofertas.length > 0) {
-            producto.oferta = ofertas[0];
-          } else {
-            producto.oferta = undefined; 
-          }
-        })
-      );
-    } catch (error) {
-      console.error('Error al obtener las ofertas:', error);
-      this.mostrarToast('Error al cargar las ofertas', 'danger');
-    }
-  }
-
-  async guardarOferta(form: NgForm) {
-    if (!form.valid || !this.productoSeleccionado) {
-      this.mostrarToast('Complete todos los campos', 'warning');
-      return;
-    }
-
-    const productoId = this.productoSeleccionado.producto_id;
-    if (!productoId) {
-      console.error('Error: ID del producto no definido.');
-      this.mostrarToast(
-        'Error al crear la oferta: ID del producto no válido',
-        'danger'
-      );
-      return;
-    }
-
-    const nuevaOferta: Oferta = {
-      producto_id: productoId,
-      precio_oferta: this.nuevaOfertaForm.precio_oferta,
-      fecha_inicio: new Date(this.nuevaOfertaForm.fecha_inicio),
-      fecha_fin: new Date(this.nuevaOfertaForm.fecha_fin),
-    };
-
-    const esValida = this.validarOferta(nuevaOferta, this.productoSeleccionado);
-    if (!esValida) return;
-
-    const ofertasExistentes = await this.crudService.obtenerOfertaPorProducto(
-      productoId
-    );
-
-    if (ofertasExistentes.length > 0) {
-      const alerta = await this.alertController.create({
-        header: 'Oferta existente',
-        message:
-          'Este producto ya tiene una oferta activa. ¿Deseas reemplazarla?',
-        buttons: [
-          {
-            text: 'Cancelar',
-            role: 'cancel',
-            handler: () => {},
-          },
-          {
-            text: 'Reemplazar',
-            handler: async () => {
-              const ofertaAnterior = ofertasExistentes[0];
-
-              if (ofertaAnterior?.id) {
-                await this.crudService.eliminarOferta(ofertaAnterior.id);
-                await this.crearNuevaOferta(this.productoSeleccionado);
-                this.mostrarToast(
-                  'Oferta reemplazada correctamente',
-                  'success'
-                );
-                this.obtenerOfertas();
-              } else {
-                console.error('Error: ID de la oferta anterior no definido.');
-                this.mostrarToast('Error al reemplazar la oferta', 'danger');
-              }
-            },
-          },
-        ],
-      });
-      await alerta.present();
-    } else {
-      await this.crearNuevaOferta(this.productoSeleccionado);
-      this.mostrarToast('Oferta creada correctamente', 'success');
-      this.obtenerOfertas();
-    }
-  }
-
-  async crearNuevaOferta(productoSeleccionado: Producto) {
-    try {
-      const nuevaOferta: Oferta = {
-        producto_id: productoSeleccionado.producto_id,
-        precio_oferta: this.nuevaOfertaForm.precio_oferta,
-        fecha_inicio: Timestamp.fromDate(
-          new Date(this.nuevaOfertaForm.fecha_inicio)
-        ),
-        fecha_fin: Timestamp.fromDate(new Date(this.nuevaOfertaForm.fecha_fin)),
-      };
-
-      const oferta = await this.crudService.guardarOferta(
-        nuevaOferta,
-        productoSeleccionado
-      );
-
-      this.mostrarToast('Oferta guardada con éxito');
-
-      await this.obtenerOfertas();
-      this.cdr.detectChanges();
-
-      this.mostrarOferta = false;
-    } catch (error) {
-      console.error('Error al guardar la oferta:', error);
-      this.mostrarToast('Error al guardar la oferta', 'danger');
-    }
-  }
-
-  // Validar ofertas
-  validarOferta(oferta: Oferta, producto: Producto): boolean {
-    if (oferta.precio_oferta <= 0) {
-      this.mostrarToast('El precio de la oferta debe ser mayor a 0', 'warning');
-      return false;
-    }
-    if (oferta.precio_oferta > producto.precio) {
-      this.mostrarToast(
-        'El precio de la oferta no puede ser mayor al precio normal',
-        'warning'
-      );
-      return false;
-    }
-    if (oferta.fecha_fin < oferta.fecha_inicio) {
-      this.mostrarToast(
-        'La fecha de fin de la oferta no puede ser anterior a la fecha de inicio',
-        'warning'
-      );
-      return false;
-    }
-    if (new Date(oferta.fecha_inicio) < new Date()) {
-      this.mostrarToast(
-        'La fecha de inicio de la oferta no puede ser anterior a la fecha actual',
-        'warning'
-      );
-      return false;
-    }
-    if (new Date(oferta.fecha_fin) < new Date()) {
-      this.mostrarToast(
-        'La fecha de fin de la oferta no puede ser anterior a la fecha actual',
-        'warning'
-      );
-      return false;
-    }
-    return true;
-  }
-
-  async eliminarOferta(ofertaId: string) {
-    const alert = await this.alertController.create({
-      header: 'Confirmar eliminación',
-      message: '¿Estás seguro de que deseas eliminar esta oferta?',
-      buttons: [
-        { text: 'Cancelar', role: 'cancel' },
-        {
-          text: 'Eliminar',
-          handler: async () => {
-            (document.activeElement as HTMLElement)?.blur();
-
-            try {
-              await this.crudService.eliminarOferta(ofertaId);
-              if (this.productoSeleccionado) {
-                this.productoSeleccionado.oferta = undefined;
-              }
-              this.mostrarToast('Oferta eliminada con éxito');
-              await this.obtenerOfertas(); // Recargar ofertas después de eliminar
-            } catch (error) {
-              console.error('Error al eliminar la oferta:', error);
-              this.mostrarToast('Error al eliminar la oferta', 'danger');
-            }
-          },
-        },
-      ],
-    });
-    await alert.present();
-  }
-
   async obtenerCategorias() {
     try {
       this.crudService.obtenerCategorias().subscribe({
@@ -331,18 +143,6 @@ export class MisProductosPage implements OnInit {
       buttons: [{ icon: 'close', role: 'cancel' }],
     });
     await toast.present();
-  }
-
-  onOfertaToggle() {
-    if (!this.mostrarOferta) {
-      this.nuevaOfertaForm.precio_oferta = 0;
-      this.nuevaOfertaForm.fecha_inicio = Timestamp.fromDate(new Date())
-        .toDate()
-        .toISOString();
-      this.nuevaOfertaForm.fecha_fin = Timestamp.fromDate(new Date())
-        .toDate()
-        .toISOString();
-    }
   }
 
   // Nuevo método para abrir el modal de agregar producto
@@ -382,28 +182,76 @@ export class MisProductosPage implements OnInit {
     await modal.present();
   }
 
-  abrirModalOferta(producto: Producto) {
-    this.productoSeleccionado = producto;
-
-    const ahora = new Date();
-    const tzOffset = ahora.getTimezoneOffset() * 60000;
-    const ahoraLocalISO = new Date(ahora.getTime() - tzOffset)
-      .toISOString()
-      .slice(0, 16);
-
-    this.nuevaOfertaForm = {
-      precio_oferta: producto.oferta?.precio_oferta ?? 0,
-      fecha_inicio: ahoraLocalISO,
-      fecha_fin: ahoraLocalISO,
-    };
-
-    this.mostrarOferta = true;
+ async abrirModalOferta(producto: Producto){
+    const modal = await this.modalController.create({
+      component: ModalOfertaComponent,
+      componentProps: {
+        initialProductData: producto, // Pasa el producto a editar
+        userId: this.idUsuario, // Pasa el ID del usuario
+      },
+    });
+    modal.onDidDismiss().then((resultado) => {
+        if (resultado.data?.actualizado) {
+          this.mostrarToast('Producto actualizado correctamente', 'success');
+          this.ionViewWillEnter();
+        }
+      });
+    await modal.present();
   }
 
-  cerrarModalOferta() {
-    this.mostrarOferta = false;
+  // Método para obtener ofertas 
+  async obtenerOfertas() {
+    try {
+      await Promise.all(
+        this.productos.map(async (producto) => {
+          if (!producto.producto_id) return;
+
+          const ofertas = await this.crudService.obtenerOfertaPorProducto(
+            producto.producto_id
+          );
+          if (ofertas.length > 0) {
+            producto.oferta = ofertas[0];
+          } else {
+            producto.oferta = undefined; 
+          }
+        })
+      );
+    } catch (error) {
+      console.error('Error al obtener las ofertas:', error);
+      this.mostrarToast('Error al cargar las ofertas', 'danger');
+    }
   }
 
+  async eliminarOferta(ofertaId: string) {
+      const alert = await this.alertController.create({
+        header: 'Confirmar eliminación',
+        message: '¿Estás seguro de que deseas eliminar esta oferta?',
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          {
+            text: 'Eliminar',
+            handler: async () => {
+              (document.activeElement as HTMLElement)?.blur();
+  
+              try {
+                await this.crudService.eliminarOferta(ofertaId);
+                if (this.productoSeleccionado) {
+                  this.productoSeleccionado.oferta = undefined;
+                }
+                this.mostrarToast('Oferta eliminada con éxito');
+                await this.obtenerOfertas(); // Recargar ofertas después de eliminar
+              } catch (error) {
+                console.error('Error al eliminar la oferta:', error);
+                this.mostrarToast('Error al eliminar la oferta', 'danger');
+              }
+            },
+          },
+        ],
+      });
+      await alert.present();
+    }
+
+  // ======================= MODAL ALERTA STOCK ======================
   // Abrir modal y precargar valores
   abrirModalAutostock(producto: Producto) {
     this.productoParaAutostock = producto;
