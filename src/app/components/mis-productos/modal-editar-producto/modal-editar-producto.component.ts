@@ -16,7 +16,6 @@ import { Categoria } from 'src/app/models/categoria.models';
 // Importar servicios
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { user } from '@angular/fire/auth';
 
 @Component({
   selector: 'app-modal-editar-producto',

@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Nueva Oferta</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form
+    #ofertaForm="ngForm"
+    (ngSubmit)="guardarOferta(ofertaForm)"
+    class="form-oferta"
+  >
+    <ng-container *ngIf="nuevaOfertaForm">
+      <ion-item>
+        <ion-label position="floating">Precio oferta</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="nuevaOfertaForm.precio_oferta"
+          name="precio_oferta"
+          min="1"
+          required
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Fecha de inicio</ion-label>
+        <ion-datetime
+          [(ngModel)]="nuevaOfertaForm.fecha_inicio"
+          name="fecha_inicio"
+          locale="es-CL"
+          display-format="DD [de] MMMM [de] YYYY, HH:mm"
+          picker-format="DD MM YYYY HH mm"
+          presentation="date-time"
+          required
+        >
+        </ion-datetime>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Fecha de fin</ion-label>
+        <ion-datetime
+          [(ngModel)]="nuevaOfertaForm.fecha_fin"
+          name="fecha_fin"
+          locale="es-CL"
+          display-format="DD [de] MMMM [de] YYYY, HH:mm"
+          picker-format="DD MM YYYY HH mm"
+          presentation="date-time"
+          required
+        >
+        </ion-datetime>
+      </ion-item>
+    </ng-container>
+
+    <ion-button expand="block" type="submit" [disabled]="ofertaForm.invalid">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Guardar Oferta
+    </ion-button>
+  </form>
+</ion-content>
