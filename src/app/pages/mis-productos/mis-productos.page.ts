@@ -15,6 +15,7 @@ import { CrudService } from 'src/app/services/crud/crud.service';
 import { ModalAgregarProductoComponent } from 'src/app/components/mis-productos/modal-agregar-producto/modal-agregar-producto.component';
 import { ModalEditarProductoComponent } from 'src/app/components/mis-productos/modal-editar-producto/modal-editar-producto.component';
 import { ModalOfertaComponent } from 'src/app/components/mis-productos/modal-oferta/modal-oferta.component';
+import { ModalAlertaStockComponent } from 'src/app/components/mis-productos/modal-alerta-stock/modal-alerta-stock.component';
 
 @Component({
   selector: 'app-mis-productos',
@@ -42,11 +43,6 @@ export class MisProductosPage implements OnInit {
     fecha_inicio: new Date().toISOString(),
     fecha_fin: new Date().toISOString(),
   };
-
-  mostrarModalAutostock = false;
-  productoParaAutostock: Producto | null = null;
-  stockMinimo = 1;
-  activarAutoStock = false;
 
   constructor(
     private toastController: ToastController,
@@ -145,61 +141,7 @@ export class MisProductosPage implements OnInit {
     await toast.present();
   }
 
-  // Nuevo método para abrir el modal de agregar producto
-  async abrirModalAgregarProducto() {
-    const modal = await this.modalController.create({
-      component: ModalAgregarProductoComponent,
-      componentProps: {
-        userId: this.idUsuario, 
-      },
-    });
-
-    modal.onDidDismiss().then(async (result) => {
-      if (result.data && result.data.productSaved) {
-        await this.ionViewWillEnter();
-        this.mostrarToast('Producto agregado exitosamente y lista actualizada.', 'success');
-      }
-    });
-
-    await modal.present();
-    
-  }
-
-  async abrirModalEditarProducto(producto: Producto) {
-    const modal = await this.modalController.create({
-      component: ModalEditarProductoComponent,
-      componentProps: {
-        initialProductData: producto, // Pasa el producto a editar
-        userId: this.idUsuario, // Pasa el ID del usuario
-      },
-    });
-    modal.onDidDismiss().then((resultado) => {
-        if (resultado.data?.actualizado) {
-          this.mostrarToast('Producto actualizado correctamente', 'success');
-          this.ionViewWillEnter();
-        }
-      });
-    await modal.present();
-  }
-
- async abrirModalOferta(producto: Producto){
-    const modal = await this.modalController.create({
-      component: ModalOfertaComponent,
-      componentProps: {
-        initialProductData: producto, // Pasa el producto a editar
-        userId: this.idUsuario, // Pasa el ID del usuario
-      },
-    });
-    modal.onDidDismiss().then((resultado) => {
-        if (resultado.data?.actualizado) {
-          this.mostrarToast('Producto actualizado correctamente', 'success');
-          this.ionViewWillEnter();
-        }
-      });
-    await modal.present();
-  }
-
-  // Método para obtener ofertas 
+    // Método para obtener ofertas 
   async obtenerOfertas() {
     try {
       await Promise.all(
@@ -251,52 +193,79 @@ export class MisProductosPage implements OnInit {
       await alert.present();
     }
 
-  // ======================= MODAL ALERTA STOCK ======================
-  // Abrir modal y precargar valores
-  abrirModalAutostock(producto: Producto) {
-    this.productoParaAutostock = producto;
-    this.stockMinimo = producto.inventario_minimo || 1;
-    this.activarAutoStock = !!producto.auto_stock;
-    this.mostrarModalAutostock = true;
+  // Nuevo método para abrir el modal de agregar producto
+  async abrirModalAgregarProducto() {
+    const modal = await this.modalController.create({
+      component: ModalAgregarProductoComponent,
+      componentProps: {
+        userId: this.idUsuario, 
+      },
+    });
+
+    modal.onDidDismiss().then(async (result) => {
+      if (result.data && result.data.productSaved) {
+        await this.ionViewWillEnter();
+        this.mostrarToast('Producto agregado exitosamente y lista actualizada.', 'success');
+      }
+    });
+
+    await modal.present();
+    
   }
 
-  // Cerrar sin guardar
-  cerrarModalAutostock() {
-    this.mostrarModalAutostock = false;
-    this.productoParaAutostock = null;
+  // Nuevo método para abrir el modal de editar producto
+  async abrirModalEditarProducto(producto: Producto) {
+    const modal = await this.modalController.create({
+      component: ModalEditarProductoComponent,
+      componentProps: {
+        initialProductData: producto, // Pasa el producto a editar
+        userId: this.idUsuario, // Pasa el ID del usuario
+      },
+    });
+    modal.onDidDismiss().then((resultado) => {
+        if (resultado.data?.actualizado) {
+          this.mostrarToast('Producto actualizado correctamente', 'success');
+          this.ionViewWillEnter();
+        }
+      });
+    await modal.present();
   }
 
-  // Guardar cambios de AutoStock
-  async guardarAutostock(form: NgForm) {
-    if (form.invalid || !this.productoParaAutostock) {
-      this.mostrarToast('Complete correctamente el formulario', 'warning');
-      return;
-    }
-
-    const minimo = Number(this.stockMinimo);
-    if (isNaN(minimo) || minimo < 1) {
-      this.mostrarToast('El stock mínimo debe ser ≥ 1', 'warning');
-      return;
-    }
-
-    this.productoParaAutostock.inventario_minimo = minimo;
-    this.productoParaAutostock.auto_stock = this.activarAutoStock;
-
-    try {
-      await this.crudService.editarProducto(
-        this.productoParaAutostock.producto_id!,
-        {
-          usuario_id: this.productoParaAutostock.usuario_id,
-          inventario_minimo: minimo,
-          auto_stock: this.activarAutoStock,
-        } as Producto
-      );
-      this.mostrarToast('AutoStock configurado', 'success');
-      this.cerrarModalAutostock();
-      form.resetForm();
-    } catch (err) {
-      console.error('Error al guardar autostock:', err);
-      this.mostrarToast('No se pudo configurar la alerta', 'danger');
-    }
+  // Nuevo método para abrir el modal de agregar oferta a producto
+ async abrirModalOferta(producto: Producto){
+    const modal = await this.modalController.create({
+      component: ModalOfertaComponent,
+      componentProps: {
+        initialProductData: producto, // Pasa el producto a editar
+        userId: this.idUsuario, // Pasa el ID del usuario
+      },
+    });
+    modal.onDidDismiss().then((resultado) => {
+        if (resultado.data?.actualizado) {
+          this.mostrarToast('Producto actualizado correctamente', 'success');
+          this.ionViewWillEnter();
+        }
+      });
+    await modal.present();
   }
+
+  // Nuevo método para abrir el modal de alerta stock
+  async abrirModalAlertaStock(producto: Producto) {
+    const modal = await this.modalController.create({
+      component: ModalAlertaStockComponent,
+      componentProps: {
+        productoParaAutostock: producto, // Pasa el producto para autostock
+      },
+    });
+
+    modal.onDidDismiss().then((resultado) => {
+      if (resultado.data?.actualizado) {
+        this.mostrarToast('AutoStock configurado correctamente', 'success');
+        this.ionViewWillEnter();
+      }
+    });
+
+    await modal.present();
+  }
+
 }

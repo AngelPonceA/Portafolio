@@ -9,6 +9,8 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { MisProductosPageRoutingModule } from './mis-productos-routing.module';
 import { ModalAgregarProductoComponent } from 'src/app/components/mis-productos/modal-agregar-producto/modal-agregar-producto.component';
 import { ModalEditarProductoComponent } from 'src/app/components/mis-productos/modal-editar-producto/modal-editar-producto.component';
+import { ModalAlertaStockComponent } from 'src/app/components/mis-productos/modal-alerta-stock/modal-alerta-stock.component';
+import { ModalOfertaComponent } from 'src/app/components/mis-productos/modal-oferta/modal-oferta.component';
 
 @NgModule({
   imports: [
@@ -18,7 +20,9 @@ import { ModalEditarProductoComponent } from 'src/app/components/mis-productos/m
     MisProductosPageRoutingModule,
     NavegacionComponent,
     ModalAgregarProductoComponent,
-    ModalEditarProductoComponent
+    ModalEditarProductoComponent,
+    ModalOfertaComponent,
+    ModalAlertaStockComponent
   ],
   declarations: [MisProductosPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

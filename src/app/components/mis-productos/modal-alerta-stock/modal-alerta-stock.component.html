@@ -1,0 +1,42 @@
+<ion-header>
+        <ion-toolbar>
+          <ion-title>Configurar alerta de stock</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content>
+        <form
+          #autoStockForm="ngForm"
+          (ngSubmit)="guardarAutostock(autoStockForm)"
+          class="form-autostock"
+        >
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Stock mínimo</ion-label>
+              <ion-input
+                type="number"
+                [(ngModel)]="stockMinimo"
+                name="stockMinimo"
+                required
+                min="1"
+              ></ion-input>
+            </ion-item>
+
+            <ion-item lines="none">
+              <ion-label>Activar alerta de stock</ion-label>
+              <ion-toggle
+                [(ngModel)]="activarAutoStock"
+                name="activarAutoStock"
+              ></ion-toggle>
+            </ion-item>
+          </ion-list>
+
+          <ion-footer>
+            <ion-button expand="block" type="submit">Guardar</ion-button>
+          </ion-footer>
+        </form>
