@@ -2,27 +2,36 @@
   display: flex;
   height: 100%;
   flex-direction: column;
-  
+
   ion-content {
-  --background: #f5f2ef;
-  padding: 10px;
-  flex-grow: 1;
-  contain: strict;
-  overflow-y: auto;
+    --background: #f5f2ef;
+    padding: 10px;
+    flex-grow: 1;
+    contain: strict;
+    overflow-y: auto;
   }
 }
 
 /* Estilo del encabezado del modal */
 ion-header {
   flex-shrink: 0;
+  height: 48px;
+
+  ion-toolbar {
+    --background: #f5f2ef;
+    --border-color: transparent;
+  }
 
   ion-title {
     font-size: 18px;
     font-weight: bold;
+    color: #333;
   }
 
-  ion-button {
-    --color: #d1a15a;
+  ion-buttons {
+    ion-button {
+      --color: #d1a15a;
+    }
   }
 }
 
@@ -84,7 +93,7 @@ ion-chip {
 .custom-file-button {
   display: inline-block;
   padding: 8px 15px;
-  background-color: #D1A15A;
+  background-color: #d1a15a;
   color: white;
   border-radius: 20px;
   cursor: pointer;
@@ -104,7 +113,7 @@ ion-chip {
 
 /* Botones */
 ion-button {
-  --background: #D1A15A;
+  --background: #d1a15a;
   --color: white;
   --border-radius: 1rem;
   --border-color: #9a73399e;
