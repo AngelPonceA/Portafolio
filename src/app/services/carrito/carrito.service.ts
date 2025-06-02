@@ -188,7 +188,6 @@ export class CarritoService {
     for (const producto of lista) {
       const precio = producto.precio_oferta || producto.precio;
       const total = precio * producto.cantidad;
-      // Tengo que calcular la comision si tiene prediccion de venta con funcion
       const comision = total * 0.1;
 
       await addDoc(collection(this.firestore, `pedidos/${pedidoId}/detalle`), {

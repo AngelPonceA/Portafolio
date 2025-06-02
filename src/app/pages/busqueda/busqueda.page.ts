@@ -14,6 +14,7 @@ export class BusquedaPage implements OnInit {
   productos!: Observable<any[]>;
   hayProductos!: Observable<boolean>;
   busqueda!: string;
+  ordenActual: 'asc' | 'desc' | 'oferta' | null = null;
 
   constructor(private router: Router, private crudService: CrudService) { }
 
@@ -38,10 +39,45 @@ export class BusquedaPage implements OnInit {
         this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
       }
     }
+
+    window.addEventListener('actualizarBusqueda', (event: any) => {
+      const nuevaBusqueda = event.detail;
+      this.productos = this.crudService.buscarProductosPorNombre(nuevaBusqueda);
+      this.busqueda = nuevaBusqueda;
+      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+      this.ordenActual = null;
+    });
   }
 
   verDetalle(producto_id: string){
     this.router.navigate(['/producto'], { state: { producto_id } });
+  }
+
+  ordenarPorPrecio(orden: 'asc' | 'desc') {
+    this.ordenActual = orden;
+    this.productos = this.productos.pipe(
+      map(productos => {
+        return [...productos].sort((a, b) =>
+          orden === 'asc'
+            ? (a.oferta?.precio_oferta ?? a.precio) - (b.oferta?.precio_oferta ?? b.precio)
+            : (b.oferta?.precio_oferta ?? b.precio) - (a.oferta?.precio_oferta ?? a.precio)
+        );
+      })
+    );
+  }
+
+  ordenarPorOferta() {
+    if (this.ordenActual === 'oferta') return; 
+    this.ordenActual = 'oferta';
+    this.productos = this.productos.pipe(
+      map(productos => {
+        return [...productos].sort((a, b) => {
+          if (a.oferta && !b.oferta) return -1;
+          if (!a.oferta && b.oferta) return 1;
+          return 0;
+        });
+      })
+    );
   }
 
 }

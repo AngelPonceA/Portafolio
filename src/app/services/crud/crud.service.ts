@@ -296,6 +296,124 @@ export class CrudService {
     }
   }
 
+  async obtenerVentasHistoricas() {
+    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+    const ventasRef = collection(this.firestore, `ventas/${uid}/detalle`);
+    const ventasSnapshot = await getDocs(ventasRef);
+
+    // Agrupa y suma ventas por producto, año y mes
+    const agrupadas: { [key: string]: { producto_id: string, anio: number, mes: number, cantidad: number } } = {};
+    const productos = new Set<string>();
+    const anios = new Set<number>();
+
+    ventasSnapshot.docs.forEach(docSnap => {
+      const data = docSnap.data();
+      const producto_id = data['producto_id'];
+      const anio = data['fecha']?.anio;
+      const mes = data['fecha']?.mes;
+      const cantidad = data['cantidad'] || 0;
+      if (!producto_id || !anio || !mes) return;
+
+      productos.add(producto_id);
+      anios.add(anio);
+
+      const key = `${producto_id}_${anio}_${mes}`;
+      if (!agrupadas[key]) agrupadas[key] = { producto_id, anio, mes, cantidad: 0 };
+      agrupadas[key].cantidad += cantidad;
+    });
+
+    // Obtiene título e imagen principal de cada producto
+    const detalles: { [producto_id: string]: { titulo: string, imagen: any } } = {};
+    await Promise.all(Array.from(productos).map(async producto_id => {
+      const detalle = await this.obtenerDetalleProducto(producto_id);
+      detalles[producto_id] = {
+        titulo: detalle?.producto_titulo,
+        imagen: detalle?.imagen?.[0]
+      };
+    }));
+
+    // Asegura los 12 meses para cada producto y año, agregando título e imagen
+    const ventas: { producto_id: string, titulo: string, anio: number, mes: number, cantidad: number, imagen: any }[] = [];
+    productos.forEach(producto_id => {
+      anios.forEach(anio => {
+        for (let mes = 1; mes <= 12; mes++) {
+          const key = `${producto_id}_${anio}_${mes}`;
+          const base = agrupadas[key] || { producto_id, anio, mes, cantidad: 0 };
+          ventas.push({ ...base, ...detalles[producto_id] });
+        }
+      });
+    });
+
+    // Ordena por producto, año y mes
+    ventas.sort((a, b) =>
+      a.producto_id.localeCompare(b.producto_id) ||
+      a.anio - b.anio ||
+      a.mes - b.mes
+    );
+
+    return ventas;
+  }
+
+async obtenerEstimacionUsuario(producto_id: string) {
+  const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+  const anio = new Date().getFullYear();
+  const estimacionesRef = collection(this.firestore, 'estimaciones');
+  const q = query(
+    estimacionesRef,
+    where('usuario_id', '==', uid),
+    where('producto_id', '==', producto_id),
+    where('anio', '==', anio)
+  );
+  const querySnapshot = await getDocs(q);
+
+  if (!querySnapshot.empty) {
+    const docData = querySnapshot.docs[0].data();
+    let estimacion = docData['estimacion'];
+    if (Array.isArray(estimacion)) {
+      return estimacion.length === 12 ? estimacion : Array(12).fill(null).map((_,i) => estimacion[i] ?? null);
+    }
+    // Si es objeto (caso antiguo), conviértelo a array
+    if (typeof estimacion === 'object' && estimacion !== null) {
+      return Array.from({length: 12}, (_, i) => estimacion[i] ?? null);
+    }
+    return Array(12).fill(null);
+  } else {
+    const nuevaEstimacion = {
+      usuario_id: uid,
+      producto_id,
+      anio,
+      estimacion: Array(12).fill(null)
+    };
+    const docRef = doc(estimacionesRef);
+    await setDoc(docRef, nuevaEstimacion);
+    return nuevaEstimacion.estimacion;
+  }
+}
+
+  async actualizarEstimacionUsuario(producto_id: string, estimacion: number[]) {
+    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+    const anio = new Date().getFullYear();
+    const estimacionesRef = collection(this.firestore, 'estimaciones');
+    const q = query(estimacionesRef, where('usuario_id', '==', uid), where('producto_id', '==', producto_id), where('anio', '==', anio));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // Actualiza el documento existente
+      const docRef = querySnapshot.docs[0].ref;
+      await updateDoc(docRef, { estimacion });
+    } else {
+      // Crea uno nuevo
+      const nuevaEstimacion = {
+        usuario_id: uid,
+        producto_id,
+        anio,
+        estimacion
+      };
+      const docRef = doc(estimacionesRef);
+      await setDoc(docRef, nuevaEstimacion);
+    }
+  }
+
   // ======================== MIS PRODUCTOS PAGE =========================
   // Métodos de clase producto
 obtenerMisProductos(): Observable<Producto[]> {

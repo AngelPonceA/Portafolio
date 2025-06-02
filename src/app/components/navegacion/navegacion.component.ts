@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { FormsModule } from '@angular/forms';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-navegacion',
@@ -20,7 +21,9 @@ export class NavegacionComponent  implements OnInit {
   busqueda: string = '';
   sugerencias: any[] = [];
 
-  constructor( private router: Router, private navCtrl: NavController, private authService: AuthService, private crudService: CrudService ) { }
+  constructor( private router: Router, private navCtrl: NavController, private authService: AuthService, private crudService: CrudService,
+    private location: Location
+   ) { }
   
   ngOnInit() {
     this.authService.obtenerNotificacionesNav().subscribe((notificacionesEntrantes) => {
@@ -44,12 +47,17 @@ export class NavegacionComponent  implements OnInit {
     this.sugerencias = [];
   }
   
-  buscarProducto() {
-    if (this.busqueda && this.busqueda.trim() !== '') {
+buscarProducto() {
+  if (this.busqueda && this.busqueda.trim() !== '') {
+    const currentUrl = this.router.url;
+    if (currentUrl.startsWith('/busqueda')) {
+      window.dispatchEvent(new CustomEvent('actualizarBusqueda', { detail: this.busqueda.trim() }));
+    } else {
       this.router.navigate(['/busqueda'], { state: { busqueda: this.busqueda.trim() } });
-      this.sugerencias = [];
     }
+    this.sugerencias = [];
   }
+}
 
   navegar(ruta: string) {
     this.router.navigate([ruta]);

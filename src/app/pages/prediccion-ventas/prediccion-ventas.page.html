@@ -1,13 +1,63 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>prediccion-ventas</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">prediccion-ventas</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+<app-navegacion>
+  <ion-content>
+    <ion-spinner *ngIf="cargando"></ion-spinner>
+    <ng-container *ngIf="!cargando && productos.length > 0">
+      <div *ngFor="let producto of productos; let i = index">
+        <ion-card class="producto-card">
+          <ion-card-header class="producto-header">
+            <div class="producto-header-content">
+              <img
+                (click)="verDetalle(producto)"
+                *ngIf="ventasPorProducto[producto][0]?.imagen"
+                [src]="ventasPorProducto[producto][0]?.imagen"
+                alt="img"
+                class="producto-img"
+              />
+              <div class="producto-titulo">
+                {{ ventasPorProducto[producto][0]?.titulo || producto }}
+              </div>
+              <button class="expand-btn" (click)="expandirTabla[producto] = !expandirTabla[producto]">
+                <ion-icon [name]="expandirTabla[producto] ? 'chevron-up' : 'chevron-down'"></ion-icon>
+                {{ expandirTabla[producto] ? 'Ocultar tabla' : 'Mostrar tabla' }}
+              </button>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="tabla-scroll" *ngIf="expandirTabla[producto]">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Mes</th>
+                    <th>Venta real</th>
+                    <th>Predicción</th>
+                    <th>Tu estimación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let mes of [1,2,3,4,5,6,7,8,9,10,11,12]; let i2 = index">
+                    <td>{{ meses[i2] }}</td>
+                    <td>{{ obtenerCantidadReal(producto, mes) }}</td>
+                    <td>{{ obtenerPrediccion(producto, i2) }}</td>
+                    <td>
+                      <ion-input
+                        type="number"
+                        [(ngModel)]="estimacionUsuario[producto][i2]"
+                        (ionChange)="actualizarGrafico(producto, i)"
+                        placeholder="Estimación"
+                        class="estimacion-input"
+                      ></ion-input>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <canvas class="chart-container" #chartCanvas></canvas>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </ng-container>
+    <div *ngIf="!cargando && productos.length === 0" class="no-datos">
+      No hay datos de ventas.
+    </div>
+  </ion-content>
+</app-navegacion>
