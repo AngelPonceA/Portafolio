@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { PrediccionVentasPageRoutingModule } from './prediccion-ventas-routing.module';
 
 import { PrediccionVentasPage } from './prediccion-ventas.page';
+import { NavegacionComponent } from "../../components/navegacion/navegacion.component";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    PrediccionVentasPageRoutingModule
+    PrediccionVentasPageRoutingModule,
+    NavegacionComponent,
   ],
   declarations: [PrediccionVentasPage]
 })

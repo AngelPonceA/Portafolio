@@ -2,6 +2,30 @@
   <ion-content *ngIf="hayProductos | async; else sinProductos">
       <div class="productos-grid-container">
         <h2 class="categoria-titulo">{{ busqueda | titlecase }}</h2>
+        <!-- Coloca esto donde quieras mostrar los botones de orden -->
+        <div class="ordenar-bar">
+          <button 
+            class="ordenar-btn" 
+            [class.active]="ordenActual === 'asc'" 
+            (click)="ordenarPorPrecio('asc')">
+            <ion-icon name="arrow-up-outline"></ion-icon>
+            Menor precio
+          </button>
+          <button 
+            class="ordenar-btn" 
+            [class.active]="ordenActual === 'desc'" 
+            (click)="ordenarPorPrecio('desc')">
+            <ion-icon name="arrow-down-outline"></ion-icon>
+            Mayor precio
+          </button>
+          <button 
+            class="ordenar-btn" 
+            [class.active]="ordenActual === 'oferta'" 
+            (click)="ordenarPorOferta()">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            Ofertas
+          </button>
+        </div>
       <div class="productos-grid">
         <ion-card *ngFor="let producto of productos | async" (click)="verDetalle(producto.producto_id)" class="producto-card">
           <img [src]="producto.imagen[0]" />
@@ -20,8 +44,8 @@
   <ng-template #sinProductos>
     <div class="vacio-container">
       <ion-icon name="sad-outline"></ion-icon>
-      <h2>Categoría vacía</h2>
-      <p>Agrega productos a la categoría o espera que se publiquen algunos.</p>
+      <h2>No se han encontrado productos</h2>
+      <p>Agrega productos o espera que se publiquen algunos.</p>
     </div>
   </ng-template>
 </app-navegacion>
