@@ -68,6 +68,19 @@
     </div>
     <div id="paypal-button-container"></div>
   </div>
+
+  <div class="boton-webpay" style="display: block">
+    <div class="pagar">
+      <div class="total-desglose">
+        <div>Subtotal productos: ${{ subtotalProductos | number }} CLP</div>
+        <div>Total envíos: ${{ subtotalEnvios | number }} CLP</div>
+        <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
+      </div>
+    <button id="webpay-button-container" (click)="iniciarPagoWebpay()">
+      Pago con WebPay
+    </button>
+    </div>
+  </div>
   
   <ng-template #vacio>
     <div class="vacio-container">

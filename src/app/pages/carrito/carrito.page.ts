@@ -4,6 +4,11 @@ import { Router } from '@angular/router';
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { timeInterval } from 'rxjs';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
+import { WebpayService } from 'src/app/services/webpay/webpay.service';
+import { HttpClient } from '@angular/common/http';
+import { ModalBoletaComponent } from 'src/app/components/modal-boleta/modal-boleta.component';
+import { ModalController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 
 type Comuna = 'STGO' | 'MAIPU' | 'LA_FLORIDA' | 'PROVIDENCIA' | 'LAS_CONDES';
 
@@ -24,7 +29,15 @@ export class CarritoPage implements OnInit {
   subtotalProductos: number = 0;
   subtotalEnvios: number = 0;
   
-  constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
+  constructor(private router: Router, 
+                private crudService: CrudService, 
+                private authService: AuthService, 
+                private cartService: CarritoService,
+                private webpayService: WebpayService,
+                private route: ActivatedRoute,
+                private http: HttpClient,
+                private modalCtrl: ModalController
+              ) {}
   
   async ngOnInit() {
     await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
@@ -32,6 +45,12 @@ export class CarritoPage implements OnInit {
     await this.calculateTotalAmount();
     await this.calcularCostosEnvio();
     this.iniciarBotonPaypal(); 
+
+    //NgOnIniT necesarios webpay
+    const token = this.route.snapshot.queryParamMap.get('token_ws');
+    if (token) {
+    this.confirmarTransaccion(token);
+    }
   }
 
   verDetalle(producto_id: string) {
@@ -153,6 +172,59 @@ export class CarritoPage implements OnInit {
     }).render('#paypal-button-container');
   }
 
+  iniciarPagoWebpay() {
+    const data = {
+      amount: this.totalAmount,
+      session_id: 'sesion-' + Date.now(), 
+      buy_order: 'orden-' + Date.now()   
+    };
+
+    this.webpayService.crearTransaccion(data).subscribe((res: any) => {
+      if (res.url && res.token) {
+        this.redirigirAWebpay(res.url, res.token);
+      }
+    });
+  }
+
+  redirigirAWebpay(url: string, token: string) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'token_ws';
+    input.value = token;
+
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+confirmarTransaccion(token: string) {
+  this.http.post('/api/webpay/confirm', { token }).subscribe((respuesta: any) => {
+    const productosStr = sessionStorage.getItem('productos');
+    const productos = productosStr ? JSON.parse(productosStr) : [];
+
+    this.limpiarCarrito();
+    this.mostrarBoletaModal({
+      fecha: new Date(),
+      productos: productos,
+      monto: respuesta.amount,
+      autorizacion: respuesta.authorization_code,
+      ordenCompra: respuesta.buy_order,
+      transaccion: respuesta
+    });
+  });}
+
+  async mostrarBoletaModal(detalleBoleta: any) {
+    const modal = await this.modalCtrl.create({
+      component: ModalBoletaComponent,
+      componentProps: { detalleBoleta },
+      cssClass: 'modal-boleta-clase'
+    });
+    await modal.present();
+}
 
   limpiarCarrito() {
     this.productos = []; 
