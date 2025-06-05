@@ -76,10 +76,8 @@
         <div>Total envíos: ${{ subtotalEnvios | number }} CLP</div>
         <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
       </div>
-    <button id="webpay-button-container" (click)="iniciarPagoWebpay()">
-      Pago con WebPay
-    </button>
     </div>
+    <button id="webpay-button-container" (click)="iniciarPagoWebpay()"></button>
   </div>
   
   <ng-template #vacio>
