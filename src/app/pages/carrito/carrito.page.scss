@@ -119,10 +119,7 @@ ion-content {
   background-color: white;
   padding: 16px;
   margin-bottom: 16px;
-<<<<<<< HEAD
-=======
   border-radius: 1.2rem; 
->>>>>>> eb444d832ec0c301e157d937ee82983e8095c0d0
 }
 
 .total-desglose {
@@ -194,15 +191,18 @@ ion-button:hover {
   border-radius: 1.2rem; 
   padding: 5%; 
   margin: 0 5% 5% 5%;
-<<<<<<< HEAD
-}
-=======
 }
 
 .boton-webpay {
   display: flex;
+  flex-direction: column;
+  text-align: center;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 1.2rem;
+  padding: 5%;
   margin: 0 5% 5% 5%;
 }
 
@@ -225,4 +225,3 @@ ion-button:hover {
 }
 
 
->>>>>>> eb444d832ec0c301e157d937ee82983e8095c0d0

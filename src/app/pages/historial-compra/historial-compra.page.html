@@ -66,8 +66,8 @@
             <span class="detalle-value">${{ detalleSeleccionado.valor_unitario | number }}</span>
           </div>
           <div class="detalle-row">
-            <span class="detalle-label">Subtotal:</span>
-            <span class="detalle-value">${{ detalleSeleccionado.subtotal | number }}</span>
+            <span class="detalle-label">Valor envío:</span>
+            <span class="detalle-value">${{ detalleSeleccionado.costo_envio | number }}</span>
           </div>
           <div class="detalle-row">
             <span class="detalle-label">Estado envío:</span>
@@ -75,9 +75,17 @@
               {{ detalleSeleccionado.estado_envio | titlecase }}
             </span>
           </div>
-          <div class="detalle-row" *ngIf="detalleSeleccionado.numero_seguimiento">
+          <div class="detalle-row">
             <span class="detalle-label">N° Seguimiento:</span>
-            <span class="detalle-value">{{ detalleSeleccionado.numero_seguimiento }}</span>
+            <span class="detalle-value">{{ detalleSeleccionado.numero_seguimiento ? detalleSeleccionado.numero_seguimiento : 'No establecido aún' }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Fecha recepción:</span>
+            <span class="detalle-value">{{ detalleSeleccionado.fecha_recepcion ? detalleSeleccionado.fecha_recepcion : 'No recibido aún' }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Total:</span>
+            <span class="detalle-value">${{ detalleSeleccionado.valor_total | number }}</span>
           </div>
         </div>
         <ion-button expand="block" color="medium" (click)="detalleSeleccionado = null" class="detalle-modal-btn">
