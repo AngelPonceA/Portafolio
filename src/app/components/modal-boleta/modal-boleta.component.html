@@ -1,0 +1,30 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="boleta-title">Boleta</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="boleta-content">
+  <ion-card class="boleta-card">
+    <ion-card-header>
+      <ion-card-title class="boleta-exito">Pago exitoso</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Fecha:</strong> {{ detalleBoleta?.fecha | date : "short" }}</p>
+      <p><strong>Orden de compra:</strong> {{ detalleBoleta?.ordenCompra }}</p>
+      <p><strong>Código de autorización:</strong> {{ detalleBoleta?.autorizacion }}</p>
+      <p><strong>Monto:</strong> ${{ detalleBoleta?.monto }}</p>
+
+      <ion-list>
+        <ion-item *ngFor="let item of detalleBoleta?.productos" lines="none">
+          <ion-label>
+            {{ item.nombre }} - ${{ item.precio }} x {{ item.cantidad }}
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

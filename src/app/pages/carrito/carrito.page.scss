@@ -119,6 +119,10 @@ ion-content {
   background-color: white;
   padding: 16px;
   margin-bottom: 16px;
+<<<<<<< HEAD
+=======
+  border-radius: 1.2rem; 
+>>>>>>> eb444d832ec0c301e157d937ee82983e8095c0d0
 }
 
 .total-desglose {
@@ -190,4 +194,35 @@ ion-button:hover {
   border-radius: 1.2rem; 
   padding: 5%; 
   margin: 0 5% 5% 5%;
+<<<<<<< HEAD
 }
+=======
+}
+
+.boton-webpay {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 5% 5% 5%;
+}
+
+#webpay-button-container {
+  width: 100%;
+  height: 70px;
+  background-image: url('../../../assets/img/webpaylogo.png');
+  background-size: cover; /* ← para que la imagen cubra todo */
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 1px solid #000; /* borde negro */
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  /* para quitar estilos por defecto del botón */
+  outline: none;
+  border: none;
+  padding: 0;
+}
+
+
+>>>>>>> eb444d832ec0c301e157d937ee82983e8095c0d0

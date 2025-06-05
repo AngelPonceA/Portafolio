@@ -4,13 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { CarritoPage } from './carrito.page';
 import { CarritoPageRoutingModule } from './carrito-routing.module';
+import { ModalBoletaComponent } from 'src/app/components/modal-boleta/modal-boleta.component';
+
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    CarritoPageRoutingModule
+    CarritoPageRoutingModule,
+    ModalBoletaComponent
   ],
 declarations: [CarritoPage],
 })

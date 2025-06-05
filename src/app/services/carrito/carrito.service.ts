@@ -178,7 +178,8 @@ export class CarritoService {
       total_pagado: this.calcularTotal(lista),
       total_comision: this.calcularComision(lista),
       estado_pago: detallesPago.status,
-      medio_pago: detallesPago.purchase_units[0].soft_descriptor,
+      medio_pago: detallesPago.payment_type_code
+,
     });
     console.log('Funcion crearPedido Exito');
     return pedidoRef;

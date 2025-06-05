@@ -1,17 +1,28 @@
 import { Categoria } from './../../models/categoria.models';
-import { Injectable } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc, orderBy } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, from, map, Observable, of, switchMap } from 'rxjs';
 import { Producto } from '../../models/producto.models';
 import { Oferta } from 'src/app/models/oferta.models';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { IonicService } from "src/app/services/ionic/ionic.service";
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CrudService {
-  constructor(private firestore: Firestore, private nativeStorage: NativeStorage, private ionicService: IonicService) {}
+  constructor( private firestore: Firestore, private nativeStorage: NativeStorage, private ionicService: IonicService ) {}
+
+  private injector = inject(Injector);
+  private _authService?: AuthService;
+
+  get authService(): AuthService {
+    if (!this._authService) {
+      this._authService = this.injector.get(AuthService);
+    }
+    return this._authService;
+  }
 
   obtenerProductos(): Observable<Producto[]> {
     const productosRef = collection(this.firestore, 'productos');
@@ -155,6 +166,7 @@ export class CrudService {
   }
 
   obtenerFavoritosConDetalles() {
+    // const uid = this.authService.obtenerSesion().then(sesion => sesion.id);
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const favoritosRef = collection(this.firestore, 'favoritos');
     const q = query(favoritosRef, where('usuario_id', '==', uid));
@@ -198,6 +210,7 @@ export class CrudService {
 
   async obtenerFavoritoId(producto_id: string) {
     try {
+      // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const favoritosRef = collection(this.firestore, 'favoritos');
       const q = query(
@@ -229,6 +242,7 @@ export class CrudService {
   }
 
   async agregarFavorito(producto_id: string) {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const favoritosRef = collection(this.firestore, 'favoritos');
     // Verifica si ya existe el favorito antes de agregarlo
@@ -250,6 +264,7 @@ export class CrudService {
 
   async esFavorito(producto_id: string) {
     try {
+      // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const favoritosRef = collection(this.firestore, 'favoritos');
       const q = query(favoritosRef, where('usuario_id', '==', uid), where('producto_id', '==', producto_id));
@@ -264,6 +279,7 @@ export class CrudService {
 
   async obtenerHistorialCompra() {
     try {
+      // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const historialCompraRef = collection(this.firestore, 'pedidos');
       const q = query(historialCompraRef, where('usuario_id', '==', uid), orderBy('fecha_creacion', 'desc'));
@@ -297,6 +313,7 @@ export class CrudService {
   }
 
   async obtenerVentasHistoricas() {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const ventasRef = collection(this.firestore, `ventas/${uid}/detalle`);
     const ventasSnapshot = await getDocs(ventasRef);
@@ -355,6 +372,7 @@ export class CrudService {
   }
 
 async obtenerEstimacionUsuario(producto_id: string) {
+  // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
   const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
   const anio = new Date().getFullYear();
   const estimacionesRef = collection(this.firestore, 'estimaciones');
@@ -391,6 +409,7 @@ async obtenerEstimacionUsuario(producto_id: string) {
 }
 
   async actualizarEstimacionUsuario(producto_id: string, estimacion: number[]) {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const anio = new Date().getFullYear();
     const estimacionesRef = collection(this.firestore, 'estimaciones');
@@ -417,6 +436,7 @@ async obtenerEstimacionUsuario(producto_id: string) {
   // ======================== MIS PRODUCTOS PAGE =========================
   // Métodos de clase producto
 obtenerMisProductos(): Observable<Producto[]> {
+  // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
   const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
   const productosRef = collection(this.firestore, 'productos');
   const q = query(productosRef, where('usuario_id', '==', uid), where('esta_eliminado', '==', false));
@@ -437,6 +457,7 @@ async eliminarProducto(producto_id: string) {
 
 
   async guardarProducto(producto: Producto) {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const productosRef = collection(this.firestore, 'productos');
     const nuevoProductoRef = doc(productosRef);
@@ -517,6 +538,7 @@ async eliminarProducto(producto_id: string) {
   }
 
   async guardarOferta(oferta: Oferta, producto: Producto) {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const ofertasRef = collection(this.firestore, 'ofertas');
     const nuevaOfertaRef = doc(ofertasRef);
@@ -540,6 +562,7 @@ async eliminarProducto(producto_id: string) {
   }
 
   async guardarCategoria(categoria: Categoria) {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
     const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const categoriasRef = collection(this.firestore, 'categorias');
     const nuevaCategoriaRef = doc(categoriasRef);

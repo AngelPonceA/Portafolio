@@ -22,11 +22,11 @@ export class BusquedaPage implements OnInit {
     const state = this.router.getCurrentNavigation()?.extras?.state;
     if (state?.['categoria']) {
       this.productos = this.crudService.obtenerProductosCategoria(state['categoria']);
-      this.busqueda = state['categoria'];
+      this.busqueda = `Categoría: ${state['categoria']}`;
       this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
     } else if (state?.['busqueda']) {
       this.productos = this.crudService.buscarProductosPorNombre(state['busqueda']);
-      this.busqueda = state['busqueda'];
+      this.busqueda = `Busqueda: ${state['busqueda']}`;
       this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
     } else if (state?.['productos']) {
       if (state['productos'] == 'sinOferta') {
@@ -43,7 +43,7 @@ export class BusquedaPage implements OnInit {
     window.addEventListener('actualizarBusqueda', (event: any) => {
       const nuevaBusqueda = event.detail;
       this.productos = this.crudService.buscarProductosPorNombre(nuevaBusqueda);
-      this.busqueda = nuevaBusqueda;
+      this.busqueda = `Busqueda: ${nuevaBusqueda}`;
       this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
       this.ordenActual = null;
     });

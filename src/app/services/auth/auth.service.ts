@@ -21,7 +21,7 @@ export class AuthService {
   auth: Auth = inject(Auth);
 
   constructor(private nativeStorage: NativeStorage, private router: Router, private ionicService: IonicService,
-    private crudService: CrudService, ) { }
+    private crudService: CrudService, private ionicServe: IonicService) { }
 
   async comprobarSesion() {
     try {
@@ -47,7 +47,7 @@ export class AuthService {
 
   async obtenerPerfil() {
     try {
-      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
       const snap = await getDoc(usuarioRef);
@@ -83,7 +83,7 @@ export class AuthService {
   
   obtenerNotificacionesNav(): Observable<number> {
     return new Observable<number>((observer) => {
-      // this.nativeStorage.getItem(this.usuarioStorage).then(({ id: uid }) => {
+      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
         const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
         const q = query(
           collection(this.firestore, 'alertas'),
@@ -98,7 +98,7 @@ export class AuthService {
 
   async obtenerNotificaciones() {
     try {
-      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const alertasRef = collection(this.firestore, 'alertas');
       const q = query(
@@ -107,7 +107,7 @@ export class AuthService {
         orderBy('fecha_creacion', 'desc')
       );
       const querySnapshot = await getDocs(q);
-
+      
       const notificaciones: any[] = [];
       querySnapshot.forEach((doc) => {
         notificaciones.push({ id: doc.id, ...doc.data() });
@@ -131,7 +131,7 @@ export class AuthService {
 
   async actualizarNombre(nuevoNombre: string) {
     try {
-      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
       await updateDoc(usuarioRef, { nombre: nuevoNombre });
@@ -143,7 +143,7 @@ export class AuthService {
 
     async actualizarMembresia(nuevoEstado: boolean) {
     try {
-      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
       const fechaActual = new Date();
@@ -170,8 +170,7 @@ export class AuthService {
 
       console.log('Credenciales ingresadas:', uid);
       const { rol } = snap.data()!;
-      const { membresia } = snap.data()!;
-      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol, membresia: membresia });
+      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol });
       // this.router.navigate(['/home']);
     } catch (error) {
       if (error instanceof FirebaseError) {
@@ -204,7 +203,7 @@ export class AuthService {
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
-      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: nuevoUsuario.rol, membresia: nuevoUsuario.membresia });
+      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: nuevoUsuario.rol });
       this.router.navigate(['/home']);
       console.log('Usuario registrado y guardado en Firestore:', nuevoUsuario);
     } catch (error) {
@@ -258,7 +257,7 @@ export class AuthService {
 
   async actualizarRecomendadosUsuario(productos: any[]) {
     try {
-      // const { id: uid } = await this.nativeStorage.getItem(this.usuarioStorage);
+      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const userRef = doc(this.firestore, `usuarios/${uid}`);
       const userSnap = await this.crudService.obtenerDocumentoPorId('usuarios', uid);

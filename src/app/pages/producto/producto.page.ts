@@ -22,7 +22,6 @@ export class ProductoPage implements OnInit {
   esFavorito?: any;
   cantidadOpciones: number[] = [];
   opcionStock: number = 1;
-  mostrarPaypal: boolean = false;
 
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
     
@@ -61,41 +60,6 @@ export class ProductoPage implements OnInit {
     } catch (error) {
       console.error('Error al agregar favorito:', error);
     }
-  }
-
-  iniciarBotonPaypal() {
-
-    if (this.mostrarPaypal == false) {
-      this.mostrarPaypal = true;
-    } else return
-
-    this.producto.cantidad = this.opcionStock;
-
-    const total = (this.producto.precio_oferta || this.producto.precio) * this.opcionStock;
-
-    paypal.Buttons({
-      createOrder: (data: any, actions: any) => {
-        return actions.order.create({
-          purchase_units: [
-            { amount: {
-                value: (total / 1000).toFixed(2),
-                currency_code: 'USD',
-              },
-            },
-          ],
-        });
-      },
-      onApprove: (data: any, actions: any) => {
-        return actions.order.capture().then((details: any) => {
-          this.cartService.registrarCompra(this.producto, details);
-          console.log('Pago exitoso:', details);
-        });
-      },
-      onError: (err: any) => {
-        console.error('Error durante el pago:', err);
-        alert('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
-      },
-    }).render('#paypal-button-container');
   }
 
   agregarAlCarrito(producto_id: string) {

@@ -21,6 +21,7 @@
           <ion-card-content>
             <ion-card-title class="nombre">{{ producto.titulo }}</ion-card-title>
             <ion-card-subtitle class="descripcion">{{ producto.descripcion }}</ion-card-subtitle>
+            <ion-card-subtitle class="descripcion">Stock: {{ producto.stock }}</ion-card-subtitle>
             <ion-card-subtitle class="precio-original">{{ producto.precio | number }} CLP</ion-card-subtitle>
           </ion-card-content>
         </ion-card>
@@ -38,6 +39,7 @@
           <ion-card-content>
             <ion-card-title class="nombre">{{ producto.titulo }}</ion-card-title>
             <ion-card-subtitle class="descripcion">{{ producto.descripcion }}</ion-card-subtitle>
+            <ion-card-subtitle class="descripcion">Stock: {{ producto.stock }}</ion-card-subtitle>
             <ion-card-subtitle class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
             <ion-card-subtitle class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>
           </ion-card-content>
