@@ -12,16 +12,32 @@ ion-content {
   --color: white;
 }
 
-.comuna-selector {
+
+/* carrito.page.scss */
+.ubicacion-selector {
   background-color: white;
+  margin: 15px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   padding: 16px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
+  
   ion-item {
     --background: transparent;
+    --border-radius: 0;
+    
+    &:first-child {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+    
+    &:last-child {
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
   }
-
+  
   ion-select {
     width: 100%;
     max-width: 100%;

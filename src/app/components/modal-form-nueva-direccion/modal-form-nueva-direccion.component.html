@@ -1,0 +1,151 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancelar()">Cancelar</ion-button>
+    </ion-buttons>
+    <ion-title>Nueva Dirección</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="onSubmit()" [strong]="true" [disabled]="direccionForm.invalid || isLoading">
+        <ion-spinner *ngIf="isLoading"></ion-spinner>
+        <span *ngIf="!isLoading">Guardar</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="direccionForm" (ngSubmit)="onSubmit()">
+    <ion-list>
+      <!-- Nombres -->
+      <ion-item>
+        <ion-input 
+          label="Nombres" 
+          labelPlacement="floating" 
+          formControlName="nombres"
+          placeholder="Ej: Juan"
+        ></ion-input>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('nombres')?.touched && direccionForm.get('nombres')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('nombres')?.hasError('required')">Este campo es requerido</span>
+        <span *ngIf="direccionForm.get('nombres')?.hasError('minlength')">Mínimo 3 caracteres</span>
+      </ion-note>
+
+      <!-- Apellidos -->
+      <ion-item>
+        <ion-input 
+          label="Apellidos" 
+          labelPlacement="floating" 
+          formControlName="apellidos"
+          placeholder="Ej: Pérez González"
+        ></ion-input>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('apellidos')?.touched && direccionForm.get('apellidos')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('apellidos')?.hasError('required')">Este campo es requerido</span>
+        <span *ngIf="direccionForm.get('apellidos')?.hasError('minlength')">Mínimo 3 caracteres</span>
+      </ion-note>
+
+      <!-- Teléfono -->
+      <ion-item>
+        <ion-input 
+          label="Teléfono" 
+          labelPlacement="floating" 
+          formControlName="telefono"
+          type="tel"
+          placeholder="Ej: +56912345678"
+        ></ion-input>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('telefono')?.touched && direccionForm.get('telefono')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('telefono')?.hasError('required')">Este campo es requerido</span>
+        <span *ngIf="direccionForm.get('telefono')?.hasError('pattern')">Formato inválido (9-15 dígitos)</span>
+      </ion-note>
+
+      <!-- Calle -->
+      <ion-item>
+        <ion-input 
+          label="Calle" 
+          labelPlacement="floating" 
+          formControlName="calle"
+          placeholder="Ej: Av. Principal"
+        ></ion-input>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('calle')?.touched && direccionForm.get('calle')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('calle')?.hasError('required')">Este campo es requerido</span>
+        <span *ngIf="direccionForm.get('calle')?.hasError('minlength')">Mínimo 3 caracteres</span>
+      </ion-note>
+
+      <!-- Número -->
+      <ion-item>
+        <ion-input 
+          label="Número" 
+          labelPlacement="floating" 
+          formControlName="numero"
+          placeholder="Ej: 1234"
+        ></ion-input>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('numero')?.touched && direccionForm.get('numero')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('numero')?.hasError('required')">Este campo es requerido</span>
+        <span *ngIf="direccionForm.get('numero')?.hasError('minlength')">Mínimo 1 carácter</span>
+      </ion-note>
+
+      <!-- Departamento (Opcional) -->
+      <ion-item>
+        <ion-input 
+          label="Departamento (Opcional)" 
+          labelPlacement="floating" 
+          formControlName="departamento"
+          placeholder="Ej: Depto 45, Block C"
+        ></ion-input>
+      </ion-item>
+
+      <!-- Descripción -->
+      <ion-item>
+        <ion-textarea 
+          label="Descripción adicional" 
+          labelPlacement="floating" 
+          formControlName="descripcion"
+          placeholder="Ej: Casa con reja verde, portón eléctrico"
+          rows="3"
+        ></ion-textarea>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('descripcion')?.touched && direccionForm.get('descripcion')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('descripcion')?.hasError('minlength')">Mínimo 10 caracteres</span>
+      </ion-note>
+
+      <!-- Región -->
+      <ion-item>
+        <ion-select 
+          label="Región" 
+          labelPlacement="floating" 
+          formControlName="region"
+          interface="action-sheet"
+          (ionChange)="onRegionChange($event)"
+        >
+          <ion-select-option *ngFor="let region of regiones" [value]="region.id">
+            {{ region.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('region')?.touched && direccionForm.get('region')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('region')?.hasError('required')">Selecciona una región</span>
+      </ion-note>
+
+      <!-- Comuna -->
+      <ion-item>
+        <ion-select 
+          label="Comuna" 
+          labelPlacement="floating" 
+          formControlName="comuna"
+          interface="action-sheet"
+          [disabled]="!direccionForm.get('region')?.value"
+        >
+          <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">
+            {{ comuna }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-note *ngIf="direccionForm.get('comuna')?.touched && direccionForm.get('comuna')?.errors" color="danger">
+        <span *ngIf="direccionForm.get('comuna')?.hasError('required')">Selecciona una comuna</span>
+      </ion-note>
+    </ion-list>
+  </form>
+</ion-content>

@@ -4,8 +4,7 @@ import { addDoc, collection, doc, Firestore, setDoc } from '@angular/fire/firest
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { IonicService } from "src/app/services/ionic/ionic.service";
 import { AuthService } from '../auth/auth.service';
-
-type Comuna = 'STGO' | 'MAIPU' | 'LA_FLORIDA' | 'PROVIDENCIA' | 'LAS_CONDES';
+import { UbicacionService } from '../ubicacion/ubicacion.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,10 +12,13 @@ type Comuna = 'STGO' | 'MAIPU' | 'LA_FLORIDA' | 'PROVIDENCIA' | 'LAS_CONDES';
 export class CarritoService {
 
   private carritoStorage = 'carrito';
-  private comunaDestino: Comuna = 'STGO';
 
-  constructor( private nativeStorage: NativeStorage, private crudService: CrudService, private firestore: Firestore,
-    private ionicService: IonicService, private authService: AuthService) { }
+  constructor(  private nativeStorage: NativeStorage, 
+                private crudService: CrudService, 
+                private firestore: Firestore,
+                private ionicService: IonicService, 
+                private authService: AuthService,
+                private ubicacionService: UbicacionService) { }
 
   async agregarProductoAlCarrito(producto_id: string, cantidad: number) {
     try {
@@ -267,26 +269,54 @@ export class CarritoService {
   }
   
   async calcularCostoEnvioProducto(producto: any): Promise<number> {
-    // Costos base por comuna (en pesos chilenos)
-    const costosPorComuna: Record<Comuna, number> = {
-      'STGO': 3000,
-      'MAIPU': 3500,
-      'LA_FLORIDA': 4000,
-      'PROVIDENCIA': 3000,
-      'LAS_CONDES': 3500
-    };
+    const ubicacionActual = this.ubicacionService.getRegionComunaActual();
+    
+    if (!ubicacionActual) {
+      return 5000; // Costo por defecto si no hay ubicación seleccionada
+    }
 
-    // Costo base según la comuna seleccionada
-    const costoBase = costosPorComuna[this.comunaDestino as Comuna] || 5000;
+    // Costo base según la región
+    let costoBase = 3000; // RM
+    switch(ubicacionActual.region) {
+      case 'Valparaíso':
+      case 'O\'Higgins':
+        costoBase = 3500;
+        break;
+      case 'Maule':
+      case 'Ñuble':
+      case 'Biobío':
+        costoBase = 4000;
+        break;
+      case 'La Araucanía':
+      case 'Los Ríos':
+      case 'Los Lagos':
+        costoBase = 4500;
+        break;
+      case 'Aysén':
+      case 'Magallanes':
+        costoBase = 6000;
+        break;
+      // Regiones del norte
+      case 'Arica y Parinacota':
+      case 'Tarapacá':
+      case 'Antofagasta':
+      case 'Atacama':
+      case 'Coquimbo':
+        costoBase = 5000;
+        break;
+    }
 
-    // Factor de peso/tamaño (simulado, en la realidad esto vendría de los atributos del producto)
+    // Ajustes por comuna específica
+    if (ubicacionActual.comuna.includes('Santiago') || 
+        ubicacionActual.comuna.includes('Providencia') ||
+        ubicacionActual.comuna.includes('Las Condes')) {
+      costoBase += 500; // Zonas céntricas pueden tener recargo
+    }
+
+    // Factor de peso/tamaño (simulado)
     const factorPeso = 1.0;
 
-    // Cálculo final considerando cantidad de productos
     return costoBase * factorPeso * producto.cantidad;
   }
-
-  setComunaDestino(comuna: Comuna): void {
-    this.comunaDestino = comuna;
-  }
+  
 }

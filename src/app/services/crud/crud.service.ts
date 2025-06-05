@@ -578,5 +578,39 @@ async eliminarProducto(producto_id: string) {
     const categoriaRef = doc(this.firestore, 'categorias', categoria_id);
     await setDoc(categoriaRef, categoria, { merge: true });
   }
+
+  // ======================== DIRECCIONES =========================
+  async obtenerDireccionesUsuario(): Promise<any[]> {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
+    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+    const direccionesRef = collection(this.firestore, 'direcciones');
+    const q = query(direccionesRef, where('usuario_id', '==', uid));
+    const querySnapshot = await getDocs(q);
+    const direcciones: any[] = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      direcciones.push({
+        id: doc.id,
+        ...data,
+      });
+    }
+    );
+    return direcciones;
+  }
+
+  async guardarDireccion(direccion: any) {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
+    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+    const direccionesRef = collection(this.firestore, 'direcciones');
+    const nuevaDireccionRef = doc(direccionesRef);
+    const nuevaDireccion = {
+      ...direccion,
+      usuario_id: uid,
+      id: nuevaDireccionRef.id,
+      fecha_creacion: new Date().toISOString(),
+    };
+    await setDoc(nuevaDireccionRef, nuevaDireccion);
+    return nuevaDireccion;
+  }
 }
 

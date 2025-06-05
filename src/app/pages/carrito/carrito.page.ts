@@ -7,11 +7,11 @@ import { CarritoService } from 'src/app/services/carrito/carrito.service';
 import { WebpayService } from 'src/app/services/webpay/webpay.service';
 import { HttpClient } from '@angular/common/http';
 import { ModalBoletaComponent } from 'src/app/components/modal-boleta/modal-boleta.component';
+import { ModalFormNuevaDireccionComponent } from 'src/app/components/modal-form-nueva-direccion/modal-form-nueva-direccion.component';
 import { ModalController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
-
-type Comuna = 'STGO' | 'MAIPU' | 'LA_FLORIDA' | 'PROVIDENCIA' | 'LAS_CONDES';
-
+import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
+import { Region } from 'src/app/models/region.models';
 // declare const paypal: any; 
 
 @Component({
@@ -25,9 +25,13 @@ export class CarritoPage implements OnInit {
   productos: any[] = [];
   totalAmount: number = 0;
   costosEnvio: { [key: string]: number } = {};
-  comunaDestino: Comuna = 'STGO';
   subtotalProductos: number = 0;
   subtotalEnvios: number = 0;
+
+  regiones: Region[] = [];
+  comunas: string[] = [];
+  regionSeleccionada: number | null = null;
+  comunaSeleccionada: string | null = null;
   
   constructor(private router: Router, 
                 private crudService: CrudService, 
@@ -36,7 +40,8 @@ export class CarritoPage implements OnInit {
                 private webpayService: WebpayService,
                 private route: ActivatedRoute,
                 private http: HttpClient,
-                private modalCtrl: ModalController
+                private modalCtrl: ModalController,
+                private ubicacionService: UbicacionService
               ) {}
   
   async ngOnInit() {
@@ -44,6 +49,7 @@ export class CarritoPage implements OnInit {
     await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
     await this.calculateTotalAmount();
     await this.calcularCostosEnvio();
+    this.regiones = this.ubicacionService.getRegiones();
     // this.iniciarBotonPaypal(); 
 
     //NgOnIniT necesarios webpay
@@ -51,6 +57,28 @@ export class CarritoPage implements OnInit {
     if (token) {
     this.confirmarTransaccion(token);
     }
+  }
+
+  onRegionChange(event: any) {
+    const regionId = event.detail.value;
+    this.regionSeleccionada = regionId;
+    const region = this.regiones.find(r => r.id === regionId);
+    if (region) {
+      this.ubicacionService.setRegionSeleccionada(region);
+      this.comunas = region.comunas;
+    } else {
+      this.comunas = [];
+    }
+    this.comunaSeleccionada = null;
+    this.calcularCostosEnvio();
+  }
+
+  onComunaChange(event: any) {
+    this.comunaSeleccionada = event.detail.value;
+    if (this.comunaSeleccionada !== null) {
+      this.ubicacionService.setComunaSeleccionada(this.comunaSeleccionada);
+    }
+    this.calcularCostosEnvio();
   }
 
   verDetalle(producto_id: string) {
@@ -235,10 +263,21 @@ export class CarritoPage implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  async actualizarComuna(comuna: Comuna) {
-    this.comunaDestino = comuna;
-    this.cartService.setComunaDestino(comuna);
-    await this.calcularCostosEnvio();
-    await this.calculateTotalAmount();
+  //PENDIENTE DE IMPLEMENTAR
+  async mostrarModalNuevaDireccion() {
+    const modal = await this.modalCtrl.create({
+      component: ModalFormNuevaDireccionComponent,
+      breakpoints: [0, 0.8, 1],
+      initialBreakpoint: 0.8
+    });
+
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+    
+    if (role === 'confirm') {
+      console.log('Nueva dirección guardada:', data);
+    }
   }
+
 }

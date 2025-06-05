@@ -10,15 +10,31 @@
 </ion-header>
 
 <ion-content>
-  <div class="comuna-selector">
+  <div class="ubicacion-selector">
     <ion-item>
-      <ion-label>Comuna de envío</ion-label>
-      <ion-select [(ngModel)]="comunaDestino" (ionChange)="actualizarComuna($event.detail.value)">
-        <ion-select-option value="STGO">Santiago</ion-select-option>
-        <ion-select-option value="MAIPU">Maipú</ion-select-option>
-        <ion-select-option value="LA_FLORIDA">La Florida</ion-select-option>
-        <ion-select-option value="PROVIDENCIA">Providencia</ion-select-option>
-        <ion-select-option value="LAS_CONDES">Las Condes</ion-select-option>
+      <ion-label>Región</ion-label>
+      <ion-select 
+        [(ngModel)]="regionSeleccionada" 
+        (ionChange)="onRegionChange($event)"
+        interface="action-sheet"
+      >
+        <ion-select-option *ngFor="let region of regiones" [value]="region.id">
+          {{ region.nombre }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Comuna</ion-label>
+      <ion-select 
+        [(ngModel)]="comunaSeleccionada" 
+        (ionChange)="onComunaChange($event)"
+        [disabled]="!regionSeleccionada"
+        interface="action-sheet"
+      >
+        <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">
+          {{ comuna }}
+        </ion-select-option>
       </ion-select>
     </ion-item>
   </div>

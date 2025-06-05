@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { CarritoPage } from './carrito.page';
 import { CarritoPageRoutingModule } from './carrito-routing.module';
 import { ModalBoletaComponent } from 'src/app/components/modal-boleta/modal-boleta.component';
+import { ModalFormNuevaDireccionComponent } from 'src/app/components/modal-form-nueva-direccion/modal-form-nueva-direccion.component';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { ModalBoletaComponent } from 'src/app/components/modal-boleta/modal-bole
     FormsModule,
     IonicModule,
     CarritoPageRoutingModule,
-    ModalBoletaComponent
+    ModalBoletaComponent,
+    ModalFormNuevaDireccionComponent
   ],
 declarations: [CarritoPage],
 })
