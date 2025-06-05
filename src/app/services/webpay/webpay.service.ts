@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class WebpayService {
 
-  private apiUrl = 'http://localhost:3000/api/webpay'; 
+  private apiUrl = 'https://webpay-api.onrender.com/api/webpay'; 
 
   constructor(private http: HttpClient) {}
 
@@ -15,6 +15,6 @@ export class WebpayService {
   }
 
   confirmarTransaccion(token: string) {
-    return this.http.put(`${this.apiUrl}/commit/${token}`, {});
+    return this.http.post(`${this.apiUrl}/commit`, {token_ws: token});
   }
 }

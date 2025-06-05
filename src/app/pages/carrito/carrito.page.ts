@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 
 type Comuna = 'STGO' | 'MAIPU' | 'LA_FLORIDA' | 'PROVIDENCIA' | 'LAS_CONDES';
 
-declare const paypal: any; 
+// declare const paypal: any; 
 
 @Component({
   selector: 'app-carrito',
@@ -44,7 +44,7 @@ export class CarritoPage implements OnInit {
     await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
     await this.calculateTotalAmount();
     await this.calcularCostosEnvio();
-    this.iniciarBotonPaypal(); 
+    // this.iniciarBotonPaypal(); 
 
     //NgOnIniT necesarios webpay
     const token = this.route.snapshot.queryParamMap.get('token_ws');
@@ -141,36 +141,36 @@ export class CarritoPage implements OnInit {
     return this.totalAmount;
   }
 
-  iniciarBotonPaypal() {
-    paypal.Buttons({
-      createOrder: (data: any, actions: any) => {
-        return actions.order.create({
-          purchase_units: [
-            { amount: {
-                value: (this.totalAmount / 1000).toFixed(2),
-                currency_code: 'USD',
-              },
-            },
-          ],
-        });
-      },
-      onApprove: (data: any, actions: any) => {
-        return actions.order.capture().then((details: any) => {
-          this.cartService.registrarCompra(this.productos, details);
-          console.log('Pago exitoso:', details);
-          this.limpiarCarrito(); 
-          const paypalBtn = document.getElementById('paypal-button-container');
-          if (paypalBtn) {
-            paypalBtn.innerHTML = '';
-          }
-        });
-      },
-      onError: (err: any) => {
-        console.log('Error durante el pago:', err);
-        console.log('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
-      },
-    }).render('#paypal-button-container');
-  }
+  // iniciarBotonPaypal() {
+  //   paypal.Buttons({
+  //     createOrder: (data: any, actions: any) => {
+  //       return actions.order.create({
+  //         purchase_units: [
+  //           { amount: {
+  //               value: (this.totalAmount / 1000).toFixed(2),
+  //               currency_code: 'USD',
+  //             },
+  //           },
+  //         ],
+  //       });
+  //     },
+  //     onApprove: (data: any, actions: any) => {
+  //       return actions.order.capture().then((details: any) => {
+  //         this.cartService.registrarCompra(this.productos, details);
+  //         console.log('Pago exitoso:', details);
+  //         this.limpiarCarrito(); 
+  //         const paypalBtn = document.getElementById('paypal-button-container');
+  //         if (paypalBtn) {
+  //           paypalBtn.innerHTML = '';
+  //         }
+  //       });
+  //     },
+  //     onError: (err: any) => {
+  //       console.log('Error durante el pago:', err);
+  //       console.log('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
+  //     },
+  //   }).render('#paypal-button-container');
+  // }
 
   iniciarPagoWebpay() {
     const data = {
@@ -201,21 +201,21 @@ export class CarritoPage implements OnInit {
     form.submit();
   }
 
-confirmarTransaccion(token: string) {
-  this.http.post('/api/webpay/confirm', { token }).subscribe((respuesta: any) => {
-    const productosStr = sessionStorage.getItem('productos');
-    const productos = productosStr ? JSON.parse(productosStr) : [];
-
-    this.limpiarCarrito();
-    this.mostrarBoletaModal({
-      fecha: new Date(),
-      productos: productos,
-      monto: respuesta.amount,
-      autorizacion: respuesta.authorization_code,
-      ordenCompra: respuesta.buy_order,
-      transaccion: respuesta
+  confirmarTransaccion(token: string) {
+    this.webpayService.confirmarTransaccion(token).subscribe((respuesta: any) => {
+      this.cartService.registrarCompra(this.productos, respuesta);
+      this.limpiarCarrito();
+      this.mostrarBoletaModal({
+        fecha: new Date(),
+        productos: this.productos,
+        monto: respuesta.amount,
+        autorizacion: respuesta.authorization_code,
+        ordenCompra: respuesta.buy_order,
+        transaccion: respuesta
+      });
     });
-  });}
+  }
+
 
   async mostrarBoletaModal(detalleBoleta: any) {
     const modal = await this.modalCtrl.create({
