@@ -33,4 +33,11 @@ export class HistorialCompraPage implements OnInit {
     this.detalleSeleccionado = pedido;
   }
   
+  verProducto(producto_id: string){
+    this.detalleSeleccionado = null;
+    setTimeout(() => {
+      this.router.navigate(['/producto'], { state: { producto_id } });
+    }, 100);
+  }
+
 }

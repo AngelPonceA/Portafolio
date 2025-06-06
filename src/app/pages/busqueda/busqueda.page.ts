@@ -15,6 +15,7 @@ export class BusquedaPage implements OnInit {
   hayProductos!: Observable<boolean>;
   busqueda!: string;
   ordenActual: 'asc' | 'desc' | 'oferta' | null = null;
+  botonOferta: boolean = true;
 
   constructor(private router: Router, private crudService: CrudService) { }
 
@@ -36,6 +37,7 @@ export class BusquedaPage implements OnInit {
       } else if (state['productos'] == 'conOferta') {
         this.productos = this.crudService.obtenerProductosConOferta();
         this.busqueda = 'Productos con oferta';
+        this.botonOferta = false;
         this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
       }
     }
@@ -46,6 +48,7 @@ export class BusquedaPage implements OnInit {
       this.busqueda = `Busqueda: ${nuevaBusqueda}`;
       this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
       this.ordenActual = null;
+      this.botonOferta = true;
     });
   }
 

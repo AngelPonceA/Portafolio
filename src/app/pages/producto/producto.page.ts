@@ -17,7 +17,7 @@ declare const paypal: any;
 
 export class ProductoPage implements OnInit {
 
-  producto?: any;
+  producto: any ;
   favoritos: any[] = [];
   esFavorito?: any;
   cantidadOpciones: number[] = [];

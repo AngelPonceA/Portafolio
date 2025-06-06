@@ -2,28 +2,15 @@
   <ion-content *ngIf="hayProductos | async; else sinProductos">
       <div class="productos-grid-container">
         <h2 class="categoria-titulo">{{ busqueda | titlecase }}</h2>
-        <!-- Coloca esto donde quieras mostrar los botones de orden -->
         <div class="ordenar-bar">
-          <button 
-            class="ordenar-btn" 
-            [class.active]="ordenActual === 'asc'" 
-            (click)="ordenarPorPrecio('asc')">
-            <ion-icon name="arrow-up-outline"></ion-icon>
-            Menor precio
+          <button class="ordenar-btn" [class.active]="ordenActual === 'asc'" (click)="ordenarPorPrecio('asc')">
+            <ion-icon name="arrow-up-outline"></ion-icon> Menor precio
           </button>
-          <button 
-            class="ordenar-btn" 
-            [class.active]="ordenActual === 'desc'" 
-            (click)="ordenarPorPrecio('desc')">
-            <ion-icon name="arrow-down-outline"></ion-icon>
-            Mayor precio
+          <button class="ordenar-btn" [class.active]="ordenActual === 'desc'" (click)="ordenarPorPrecio('desc')">
+            <ion-icon name="arrow-down-outline"></ion-icon> Mayor precio
           </button>
-          <button 
-            class="ordenar-btn" 
-            [class.active]="ordenActual === 'oferta'" 
-            (click)="ordenarPorOferta()">
-            <ion-icon name="pricetag-outline"></ion-icon>
-            Ofertas
+          <button *ngIf="botonOferta" class="ordenar-btn" [class.active]="ordenActual === 'oferta'" (click)="ordenarPorOferta()">
+            <ion-icon name="pricetag-outline"></ion-icon> Ofertas
           </button>
         </div>
       <div class="productos-grid">

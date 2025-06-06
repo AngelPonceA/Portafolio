@@ -10,14 +10,14 @@
 </ion-header>
 
 <ion-content>
-  <div class="historial-lista">
+  <div class="historial-lista" *ngIf="historialCompra && historialCompra.length > 0; else sinCompras">
     <div class="pedido-card" *ngFor="let pedido of historialCompra">
       <div class="pedido-header">
         <span class="fecha">
           {{ pedido.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}
         </span>
-        <span class="estado-pago" [ngClass]="pedido.estado_pago === 'COMPLETED' ? 'pagado' : 'pendiente'">
-          {{ pedido.estado_pago === 'COMPLETED' ? 'Pagado' : pedido.estado_pago }}
+        <span class="estado-pago" [ngClass]="pedido.estado_pago === 'COMPLETED' || pedido.estado_pago === 'AUTHORIZED' ? 'pagado' : 'pendiente'">
+          {{ pedido.estado_pago === 'COMPLETED' || pedido.estado_pago === 'AUTHORIZED' ? 'Pagado' : pedido.estado_pago }}
         </span>
       </div>
       <div class="productos-lista">
@@ -31,24 +31,34 @@
             Estado envío: {{ detalle.estado_envio | titlecase }}
             <span *ngIf="detalle.numero_seguimiento">| Seguimiento: {{ detalle.numero_seguimiento }}</span>
           </div>
-
         </div>
       </div>
       <div class="pedido-footer">
-        <span *ngIf="pedido.direccion">Dirección: {{ pedido.direccion | titlecase }}</span>
-        <div class="pedido-total">
-          <span>Total pagado:</span>
-          <span class="monto">${{ pedido.total_pagado | number }}</span>
+        <div class="pedido-direccion" *ngIf="pedido.direccion">
+          <span class="label">Dirección: </span>
+          <span class="valor">{{ pedido.direccion | titlecase }}</span>
         </div>
         <div class="pedido-medio">
-          <span>Método de pago: </span>
-          <span>{{ pedido.medio_pago }}</span>
+          <span class="label">Método de pago: </span>
+          <span class="valor">{{ pedido.medio_pago }}</span>
+        </div>
+        <div class="pedido-total">
+          <span class="label">Total pagado: </span>
+          <span class="valor">${{ pedido.total_pagado | number }}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Modal de detalles del producto -->
+  <ng-template #sinCompras>
+    <div class="vacio-container">
+      <ion-icon name="cart-outline"></ion-icon>
+      <h2>No tienes compras aún</h2>
+      <p>Cuando compres, aparecerán aquí tus pedidos.</p>
+    </div>
+  </ng-template>
+
+  <!-- Modal de detalles -->
   <ion-modal [isOpen]="detalleSeleccionado !== null" (didDismiss)="detalleSeleccionado = null" class="detalle-modal-ml">
     <ng-template>
       <div class="detalle-modal" *ngIf="detalleSeleccionado">
@@ -88,9 +98,9 @@
             <span class="detalle-value">${{ detalleSeleccionado.valor_total | number }}</span>
           </div>
         </div>
-        <ion-button expand="block" color="medium" (click)="detalleSeleccionado = null" class="detalle-modal-btn">
-          Cerrar
-        </ion-button>
+        <ion-button expand="block" color="medium" (click)="detalleSeleccionado = null" class="detalle-modal-btn">Cerrar</ion-button>
+        <ion-button expand="block" color="tertiary" (click)="verProducto(detalleSeleccionado.producto_id)" (click)="detalleSeleccionado = null" class="detalle-modal-btn">Ver Producto</ion-button>
+
       </div>
     </ng-template>
   </ion-modal>
