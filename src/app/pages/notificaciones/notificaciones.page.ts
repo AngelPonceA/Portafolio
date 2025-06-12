@@ -9,13 +9,19 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 })
 export class NotificacionesPage implements OnInit {
 
+  usuario?: any;
   notificaciones?: any[] = [];
   notificacionExpandida: string | null = null;
 
   constructor( private authService : AuthService) { }
 
   async ngOnInit() {
+    this.usuario = await this.authService.obtenerPerfil();
+
+    if (this.usuario) {
       this.notificaciones = await this.authService.obtenerNotificaciones();      
+    }
+
   }
 
   async abrirNotificacion(id: string) {

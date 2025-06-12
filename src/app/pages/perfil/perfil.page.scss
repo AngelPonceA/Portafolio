@@ -157,51 +157,43 @@ ion-content {
 
 /* Vista para invitados */
 .invitado-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: absolute; /* Posiciona el contenedor en el centro de la pantalla */
+  position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%); /* Centra el contenedor */
-  width: 90%; /* Ajusta el ancho del contenedor */
-  max-width: 400px; /* Ancho máximo para pantallas grandes */
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
   padding: 2rem;
+  background: #fff8e1;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.2);
   text-align: center;
-  background-color: #ffffff;
-  border-radius: 16px; /* Bordes redondeados */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  color: #333; /* Color general */
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #b45309;
+    margin-bottom: 1.3rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: #78350f;
+    margin-bottom: 1.5rem;
+  }
+
+  ion-button {
+    width: 100%;
+    max-width: 260px;
+    height: 42px;
+    font-size: 0.9rem;
+    --background: linear-gradient(45deg, #f6ae2d, #d9802d);
+    --color: white;
+    --border-radius: 10px;
+    margin: 8px 0;
+  }
 }
 
-.invitado-container h2 {
-  margin-bottom: 1rem;
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #0070f3; /* Color destacado */
-}
-
-.invitado-container p {
-  margin-bottom: 1.5rem;
-  font-size: 1rem;
-  color: #666;
-}
-
-.invitado-container ion-button {
-  margin-top: 10px;
-  width: 100%;
-  max-width: 280px;
-  height: 40px;
-  font-size: 0.9rem;
-  --background: #D1A15A; /* Color general */
-  --color: white;
-  --border-radius: 8px;
-}
-
-.invitado-container ion-button:last-child {
-  --background: #D1A15A; /* Color secundario */
-}
 
 .boton-paypal {
   display: flex;

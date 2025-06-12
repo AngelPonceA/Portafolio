@@ -1,52 +1,68 @@
 <app-navegacion>
-  <ion-content>
-    <div *ngIf="notificaciones && notificaciones.length > 0; else sinNotificaciones">
-      <div class="notificaciones-container">
-        <div *ngFor="let notificacion of notificaciones" (click)="abrirNotificacion(notificacion.id)" class="notificacion-card" 
-          [class.no-leido]="notificacion.estado === 'no vista'" 
-          [class.leido]="notificacion.estado === 'vista'">
-          <div class="notificacion-icon">
-            <ion-icon name="notifications-outline"></ion-icon>
-          </div>
-          <div class="notificacion-content">
-            <!-- Título -->
-            <h3 class="notificacion-titulo">
-              <!-- Muestra el título completo si está expandido, de lo contrario, lo trunca -->
-              {{ notificacionExpandida === notificacion.id ? notificacion.titulo : (notificacion.titulo | slice:0:30) + '...' }}
-            </h3>
-            <!-- Descripción -->
-            <p class="notificacion-descripcion">
-              <!-- Muestra la descripción completa si está expandida, de lo contrario, la trunca -->
-              {{ notificacionExpandida === notificacion.id ? notificacion.descripcion : (notificacion.descripcion | slice:0:50) + '...' }}
-            </p>
-            <span class="notificacion-fecha">{{ notificacion.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}</span>
-          </div>
-
-          <div *ngIf="notificacionExpandida === notificacion.id && notificacion.imagen" class="notificacion-detalle">
-            <div *ngIf="notificacion.imagen.length === 1" class="imagen-container">
-              <img [src]="notificacion.imagen[0]" alt="Imagen de notificación" />
-            </div>
-          
-            <div *ngIf="notificacion.imagen.length > 1" class="imagenes-grid">
-              <div *ngFor="let imagen of notificacion.imagen" class="imagen-container">
-                <img [src]="imagen" alt="Imagen de notificación" />
+  <ng-container *ngIf="usuario && usuario != 'invitado'; else invitado">
+    <ion-content>
+      <div *ngIf="notificaciones && notificaciones.length > 0; else sinNotificaciones">
+        <div class="notificaciones-container">
+          <ng-container *ngFor="let notificacion of notificaciones">
+            <div *ngIf="notificacion.estado == 'vista' || notificacion.estado == 'no vista'" (click)="abrirNotificacion(notificacion.id)" class="notificacion-card" 
+              [class.no-leido]="notificacion.estado === 'no vista'" 
+              [class.leido]="notificacion.estado === 'vista'">
+              <div class="notificacion-icon">
+                <ion-icon name="notifications-outline"></ion-icon>
               </div>
+              <div class="notificacion-content">
+                <!-- Título -->
+                <h3 class="notificacion-titulo">
+                  {{ notificacionExpandida === notificacion.id ? notificacion.titulo : (notificacion.titulo | slice:0:30) + '...' }}
+                </h3>
+                <!-- Descripción -->
+                <p class="notificacion-descripcion">
+                  {{ notificacionExpandida === notificacion.id ? notificacion.descripcion : (notificacion.descripcion | slice:0:50) + '...' }}
+                </p>
+                <span class="notificacion-fecha">{{ notificacion.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}</span>
+              </div>
+              <div *ngIf="notificacionExpandida === notificacion.id && notificacion.imagen" class="notificacion-detalle">
+                <div *ngIf="notificacion.imagen.length === 1" class="imagen-container">
+                  <img [src]="notificacion.imagen[0]" alt="Imagen de notificación" />
+                </div>
+                <div *ngIf="notificacion.imagen.length > 1" class="imagenes-grid">
+                  <div *ngFor="let imagen of notificacion.imagen" class="imagen-container">
+                    <img [src]="imagen" alt="Imagen de notificación" />
+                  </div>
+                </div>
+              </div>
+              <ion-button fill="clear" color="danger" class="boton-eliminar" (click)="eliminarNotificacion(notificacion.id); $event.stopPropagation()">
+                <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
             </div>
-          </div>
-
-          <ion-button fill="clear" color="danger" class="boton-eliminar" (click)="eliminarNotificacion(notificacion.id); $event.stopPropagation()">
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-button>
+          </ng-container>
         </div>
       </div>
-    </div>
 
-    <ng-template #sinNotificaciones>
-      <div class="vacio-container">
-        <ion-icon name="notifications-off-outline"></ion-icon>
-        <h2>No tienes notificaciones</h2>
-        <p>Cuando tengas notificaciones, aparecerán aquí.</p>
-      </div>
-    </ng-template>
-  </ion-content>
+      <ng-template #sinNotificaciones>
+        <div class="vacio-container">
+          <ion-icon name="notifications-off-outline"></ion-icon>
+          <h2>No tienes notificaciones</h2>
+          <p>Cuando tengas notificaciones, aparecerán aquí.</p>
+        </div>
+      </ng-template>
+      
+    </ion-content>
+  </ng-container>
+
+  <ng-template #invitado>
+    <div class="invitado-container">
+      <h2>¡Bienvenido!</h2>
+      <p>¿Aún no tienes cuenta o ya tienes una? Elige una opción:</p>
+      <ion-button expand="block" fill="solid" [routerLink]="['/registro']">
+        <ion-icon name="person-add" slot="start"></ion-icon>
+        Registrarse
+      </ion-button>
+      <ion-button expand="block" fill="solid" [routerLink]="['/ingreso']">
+        <ion-icon name="log-in" slot="start"></ion-icon>
+        Ingresar
+      </ion-button>
+    </div>
+  </ng-template>
+
 </app-navegacion>

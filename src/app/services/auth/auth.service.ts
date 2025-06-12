@@ -107,12 +107,16 @@ export class AuthService {
         orderBy('fecha_creacion', 'desc')
       );
       const querySnapshot = await getDocs(q);
-      
+
       const notificaciones: any[] = [];
       querySnapshot.forEach((doc) => {
-        notificaciones.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        if (data['estado'] === 'vista' || data['estado'] === 'no vista') {
+          notificaciones.push({ id: doc.id, ...data });
+        }
       });
       return notificaciones;
+
     } catch (error) {
       console.error('Error al obtener notificaciones:', error);
       return [];

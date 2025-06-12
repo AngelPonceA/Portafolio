@@ -11,7 +11,6 @@ import { AuthService } from './../../services/auth/auth.service';
 })
 export class PerfilPage implements OnInit {
 
-  estado: number = 0;
   usuario?: any;
   mostrarPaypal: boolean = false;
   costoMembresia: number = 50000;

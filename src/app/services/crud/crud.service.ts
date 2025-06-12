@@ -1,6 +1,6 @@
 import { Categoria } from './../../models/categoria.models';
 import { inject, Injectable, Injector } from '@angular/core';
-import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc, orderBy } from '@angular/fire/firestore';
+import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc, orderBy, onSnapshot, addDoc, serverTimestamp } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, from, map, Observable, of, switchMap } from 'rxjs';
 import { Producto } from '../../models/producto.models';
 import { Oferta } from 'src/app/models/oferta.models';
@@ -197,6 +197,7 @@ export class CrudService {
             producto_id: favorito['producto_id'],
             precio: producto['precio'],
             precio_oferta,
+            stock: producto['stock'],
             imagen: producto['imagen'],
             producto_titulo: producto['titulo'],
             favorito_id: favorito['id'],
@@ -339,7 +340,6 @@ export class CrudService {
       agrupadas[key].cantidad += cantidad;
     });
 
-    // Obtiene título e imagen principal de cada producto
     const detalles: { [producto_id: string]: { titulo: string, imagen: any } } = {};
     await Promise.all(Array.from(productos).map(async producto_id => {
       const detalle = await this.obtenerDetalleProducto(producto_id);
@@ -349,7 +349,6 @@ export class CrudService {
       };
     }));
 
-    // Asegura los 12 meses para cada producto y año, agregando título e imagen
     const ventas: { producto_id: string, titulo: string, anio: number, mes: number, cantidad: number, imagen: any }[] = [];
     productos.forEach(producto_id => {
       anios.forEach(anio => {
@@ -361,7 +360,6 @@ export class CrudService {
       });
     });
 
-    // Ordena por producto, año y mes
     ventas.sort((a, b) =>
       a.producto_id.localeCompare(b.producto_id) ||
       a.anio - b.anio ||
@@ -431,6 +429,53 @@ async obtenerEstimacionUsuario(producto_id: string) {
       const docRef = doc(estimacionesRef);
       await setDoc(docRef, nuevaEstimacion);
     }
+  }
+
+  escucharCambiosPedidos() {
+    const pedidosRef = collection(this.firestore, 'pedidos');
+
+    onSnapshot(pedidosRef, async (snapshot) => {
+      for (const change of snapshot.docChanges()) {
+        if (change.type === 'modified') {
+          const pedido = change.doc.data();
+          const pedido_id = change.doc.id;
+          const estadoActual = pedido['estado_envio'];
+          const usuario_id = pedido['usuario_id'];
+
+          const estadosNotificables = ['En despacho', 'Recibido', 'En proceso', 'Cancelado'];
+
+          if (estadosNotificables.includes(estadoActual)) {
+            const notificacionId = `${pedido_id}_${estadoActual}`;
+            const notificacionRef = doc(this.firestore, 'alertas', notificacionId);
+
+            const existingSnap = await getDoc(notificacionRef);
+
+            let descripcion;
+
+            if (estadoActual == 'En despacho') {
+              descripcion = `Tu pedido ${pedido_id} está ${estadoActual}.`
+            } else if (estadoActual == 'Recibido') {
+              descripcion = `Tu pedido ${pedido_id} ha sido ${estadoActual}.`
+            } else if (estadoActual == 'En proceso') {
+              descripcion = `Tu pedido ${pedido_id} está ${estadoActual}.`
+            } else if (estadoActual == 'Cancelado') {
+              descripcion = `Tu pedido ${pedido_id} ha sido ${estadoActual}.`
+            }
+
+            if (!existingSnap.exists()) {
+              await setDoc(notificacionRef, {
+                titulo: 'Estado de tu pedido actualizado',
+                descripcion: descripcion,
+                estado: 'no vista',
+                fecha_creacion: new Date(),
+                usuario_id: usuario_id,
+                pedido_id: pedido_id,
+              });
+            }
+          }
+        }
+      }
+    });
   }
 
   // ======================== MIS PRODUCTOS PAGE =========================

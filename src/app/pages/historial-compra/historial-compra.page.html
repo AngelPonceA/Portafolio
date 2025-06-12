@@ -20,6 +20,9 @@
           {{ pedido.estado_pago === 'COMPLETED' || pedido.estado_pago === 'AUTHORIZED' ? 'Pagado' : pedido.estado_pago }}
         </span>
       </div>
+      <span class="pedido-id">
+        Pedido: {{ pedido.pedido_id }}
+      </span>
       <div class="productos-lista">
         <div class="producto-item" *ngFor="let detalle of pedido.detalles" (click)="verDetalle(detalle)">
           <div class="producto-info">

@@ -1,39 +1,58 @@
 <app-navegacion>
+  <ng-container *ngIf="usuario && usuario != 'invitado'; else invitado">
+    <ion-content *ngIf="favoritos && favoritos.length > 0; else vacio" class="ion-padding">
+      <ion-list lines="none">
+        <ion-item *ngFor="let item of favoritos" class="favorito-item" (click)="verDetalle(item.producto_id)">
+          <ion-thumbnail slot="start" class="favorito-thumb">
+            <img [src]="item.imagen[0]" />
+          </ion-thumbnail>
+          <ion-label class="favorito-info">
+            <div class="favorito-header">
+              <h2>{{ item.producto_titulo | titlecase }}</h2>
+              <ion-button fill="clear" size="small" class="btn-heart" (click)="eliminarFavorito(item.favorito_id, $event)">
+                <ion-icon name="heart" color="danger"></ion-icon>
+              </ion-button>
+            </div>
+            <div class="favorito-stock">
+              <ion-icon name="cube-outline"></ion-icon>
+              <span>Stock: {{ item.stock }}</span>
+            </div>
+            <div class="favorito-precios">
+              <ng-container *ngIf="item.precio_oferta && item.precio_oferta < item.precio; else precioNormal">
+                <span class="precio-tachado">{{ item.precio | number }} CLP</span>
+                <span class="precio-oferta">{{ item.precio_oferta | number }} CLP</span>
+              </ng-container>
+              <ng-template #precioNormal>
+                <span class="precio-normal">{{ item.precio | number }} CLP</span>
+              </ng-template>
+            </div>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+    
+    <ng-template #vacio>
+      <div class="vacio-container">
+        <ion-icon name="heart-dislike-outline"></ion-icon>
+        <h2>No tienes favoritos</h2>
+        <p>Agrega productos a favoritos para verlos aquí.</p>
+      </div>
+    </ng-template>
+  </ng-container>
 
-  <ion-content *ngIf="favoritos && favoritos.length > 0; else vacio" class="ion-padding">
-    <ion-list lines="none">
-      <ion-item *ngFor="let item of favoritos" class="favorito-item" (click)="verDetalle(item.producto_id)">
-        
-        <ion-thumbnail slot="start">
-          <img [src]="item.imagen[0]" />
-        </ion-thumbnail>
-
-        <ion-label class="favorito-info">
-          <h2>{{ item.producto_titulo | titlecase }}</h2>
-
-          <div class="display" *ngIf="item.precio_oferta && item.precio_oferta < item.precio; else precioNormal">
-              <span class="precio-tachado"> {{ item.precio | number }} CLP</span>
-              <span class="precio-oferta"> {{ item.precio_oferta | number }} CLP</span>
-          </div>
-          <ng-template #precioNormal>
-            <span class="precio-normal"> {{ item.precio | number }} CLP</span>
-          </ng-template>
-        </ion-label>
-
-        <ion-button fill="clear" size="small" (click)="eliminarFavorito(item.favorito_id, $event)">
-          <ion-icon name="heart" color="danger"></ion-icon>
-        </ion-button>
-
-      </ion-item>
-    </ion-list>
-  </ion-content>
-
-  <ng-template #vacio>
-    <div class="vacio-container">
-      <ion-icon name="heart-dislike-outline"></ion-icon>
-      <h2>No tienes favoritos</h2>
-      <p>Agrega productos a favoritos para verlos aquí.</p>
+  <ng-template #invitado>
+    <div class="invitado-container">
+      <h2>¡Bienvenido!</h2>
+      <p>¿Aún no tienes cuenta o ya tienes una? Elige una opción:</p>
+      <ion-button expand="block" fill="solid" [routerLink]="['/registro']">
+        <ion-icon name="person-add" slot="start"></ion-icon>
+        Registrarse
+      </ion-button>
+      <ion-button expand="block" fill="solid" [routerLink]="['/ingreso']">
+        <ion-icon name="log-in" slot="start"></ion-icon>
+        Ingresar
+      </ion-button>
     </div>
   </ng-template>
-
+  
 </app-navegacion>

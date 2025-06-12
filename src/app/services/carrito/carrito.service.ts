@@ -201,10 +201,9 @@ export class CarritoService {
         cantidad: producto.cantidad,
         valor_unitario: precio,
         valor_total: total,
-        // Nuevo
         subtotal: total - comision,
         valor_comision: comision,
-        // Nuevo
+        // Esto debe generarlo en base a la ubicación del comprador con un servicio
         estado_envio: 'pendiente',
         costo_envio: 0,
         fecha_recepcion: null,
