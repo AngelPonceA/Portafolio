@@ -105,8 +105,8 @@ ion-button {
 .categorias-titulo {
   font-size: 1.2rem;
   font-weight: bold;
-  margin-bottom: 0.8rem;
-  color: #333;
+  margin-bottom: 1.2rem;
+  color: #000000;
   text-align: center;
 }
 
@@ -116,7 +116,6 @@ ion-button {
   gap: 0.5rem;
   overflow-x: auto;
   padding-bottom: 0.5rem;
-  /* Opcional: oculta la barra de scroll en navegadores modernos */
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none;  /* IE 10+ */
 }
@@ -145,6 +144,7 @@ ion-button {
   height: 60px; /* Tamaño fijo del círculo */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra suave */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid #f0a500;
 }
 
 .categoria-icon {
@@ -153,9 +153,9 @@ ion-button {
 }
 
 .categoria-nombre {
-  font-size: 0.7rem; /* Tamaño reducido del texto */
-  font-weight: 500;
-  color: #333;
+  font-size: 0.8rem; /* Tamaño reducido del texto */
+  font-weight: 250;
+  color: #000000;
   margin-top: 0.5rem; /* Espaciado entre el círculo y el texto */
   white-space: nowrap; /* Evita que el texto se divida en varias líneas */
   overflow: hidden; /* Oculta el texto que exceda el ancho */

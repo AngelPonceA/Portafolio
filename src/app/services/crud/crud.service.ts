@@ -86,14 +86,41 @@ export class CrudService {
     );
   }
 
+  obtenerProductosRecomendados(): Observable<Producto[]> {
+    // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);
+    const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+    const usuarioRef = doc(this.firestore, 'usuarios', uid);
+
+    return from(getDoc(usuarioRef)).pipe(
+      switchMap(usuarioSnap => {
+        if (!usuarioSnap.exists()){
+          return of([]);
+        }
+        const usuario = usuarioSnap.data();
+        const etiquetas = (usuario['recomendacion'] || []).map((e: string) => e.toLowerCase());
+        if (!etiquetas.length) {
+          return of([]);
+        }
+        return this.obtenerProductosYOferta().pipe(
+          map(productos =>
+            productos.filter(
+              producto =>
+                Array.isArray(producto.etiquetas) && producto.etiquetas.some((e: string) => etiquetas.includes(e.toLowerCase()))
+            )
+          )
+        );
+      })
+    );
+  }
+
   obtenerProductosSinOferta(): Observable<Producto[]> {
     return this.obtenerProductosYOferta().pipe(
       map((productos) => {
-        const now = new Date();
+        const ahora = new Date();
         return productos.filter(item =>
           !item.oferta ||
-          now < item.oferta.fecha_inicio.toDate() ||
-          now > item.oferta.fecha_fin.toDate()
+          ahora < item.oferta.fecha_inicio.toDate() ||
+          ahora > item.oferta.fecha_fin.toDate()
         );
       })
     );
@@ -102,11 +129,11 @@ export class CrudService {
   obtenerProductosConOferta(): Observable<Producto[]> {
     return this.obtenerProductosYOferta().pipe(
       map((productos) => {
-        const now = new Date();
+        const ahora = new Date();
         return productos.filter(item =>
           item.oferta &&
-          now >= item.oferta.fecha_inicio.toDate() &&
-          now <= item.oferta.fecha_fin.toDate()
+          ahora >= item.oferta.fecha_inicio.toDate() &&
+          ahora <= item.oferta.fecha_fin.toDate()
         );
       })
     );
@@ -135,9 +162,9 @@ export class CrudService {
       if (!ofertaSnap.empty) {
         ofertaSnap.forEach((doc) => {
           const oferta = doc.data();
-          const now = new Date();
+          const ahora = new Date();
 
-          if (now >= oferta['fecha_inicio'].toDate() && now <= oferta['fecha_fin'].toDate()) {
+          if (ahora >= oferta['fecha_inicio'].toDate() && ahora <= oferta['fecha_fin'].toDate()) {
             precio_oferta = oferta['precio_oferta'];
           }
         });

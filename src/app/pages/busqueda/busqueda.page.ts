@@ -12,6 +12,7 @@ import { CrudService } from 'src/app/services/crud/crud.service';
 export class BusquedaPage implements OnInit {
 
   productos!: Observable<any[]>;
+  productosRespaldo!: Observable<any[]>;
   hayProductos!: Observable<boolean>;
   busqueda!: string;
   ordenActual: 'asc' | 'desc' | 'oferta' | null = null;
@@ -24,22 +25,23 @@ export class BusquedaPage implements OnInit {
     if (state?.['categoria']) {
       this.productos = this.crudService.obtenerProductosCategoria(state['categoria']);
       this.busqueda = `Categoría: ${state['categoria']}`;
-      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
     } else if (state?.['busqueda']) {
       this.productos = this.crudService.buscarProductosPorNombre(state['busqueda']);
       this.busqueda = `Busqueda: ${state['busqueda']}`;
-      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
     } else if (state?.['productos']) {
       if (state['productos'] == 'sinOferta') {
         this.productos = this.crudService.obtenerProductosYOferta();
         this.busqueda = 'Todos los productos';
-        this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
       } else if (state['productos'] == 'conOferta') {
         this.productos = this.crudService.obtenerProductosConOferta();
         this.busqueda = 'Productos con oferta';
         this.botonOferta = false;
-        this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+      } else if (state['productos'] == 'recomendados') {
+        this.productos = this.crudService.obtenerProductosRecomendados();
+        this.busqueda = 'Productos recomendados';
       }
+      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+      this.productosRespaldo = this.productos;      
     }
 
     window.addEventListener('actualizarBusqueda', (event: any) => {
@@ -57,8 +59,13 @@ export class BusquedaPage implements OnInit {
   }
 
   ordenarPorPrecio(orden: 'asc' | 'desc') {
+    if (this.ordenActual === orden) {
+      this.ordenActual = null;
+      this.productos = this.productosRespaldo; // <--- Restaura el original
+      return;
+    }
     this.ordenActual = orden;
-    this.productos = this.productos.pipe(
+    this.productos = this.productosRespaldo.pipe( // <--- Ordena desde el original
       map(productos => {
         return [...productos].sort((a, b) =>
           orden === 'asc'
@@ -70,9 +77,13 @@ export class BusquedaPage implements OnInit {
   }
 
   ordenarPorOferta() {
-    if (this.ordenActual === 'oferta') return; 
+    if (this.ordenActual === 'oferta') {
+      this.ordenActual = null;
+      this.productos = this.productosRespaldo; // <--- Restaura el original
+      return;
+    }
     this.ordenActual = 'oferta';
-    this.productos = this.productos.pipe(
+    this.productos = this.productosRespaldo.pipe( // <--- Ordena desde el original
       map(productos => {
         return [...productos].sort((a, b) => {
           if (a.oferta && !b.oferta) return -1;

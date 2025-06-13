@@ -47,19 +47,19 @@
         </ion-button>
         
       </div>
-    </ion-card>
-
-    <div class="producto-detalles">
-      <h3>Descripción del producto</h3>
-      <p class="producto-descripcion">{{ producto.producto_descripcion }}</p>
-
-      <h3>Imágenes del producto</h3>
-      <div class="imagenes-relacionadas">
-        <div *ngFor="let img of producto.imagen" class="imagen-relacionada">
-          <img [src]="img"/>
+      
+      <div class="producto-detalles">
+        <h3>Descripción del producto</h3>
+        <p class="producto-descripcion">{{ producto.producto_descripcion }}</p>
+        
+        <h3>Imágenes del producto</h3>
+        <div class="imagenes-relacionadas">
+          <div *ngFor="let img of producto.imagen" class="imagen-relacionada">
+            <img [src]="img"/>
+          </div>
         </div>
       </div>
-    </div>
+    </ion-card>
   </div>
 
   <ng-template #eliminado>

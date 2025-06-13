@@ -3,7 +3,8 @@
   overflow: hidden;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease;
-  
+  border: 2px solid #f0a500;
+
   &:hover {
     box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
   }
