@@ -1,54 +1,112 @@
 <ion-header [translucent]="true">
-  <ion-toolbar class="header-toolbar">
+  <ion-toolbar class="ventas-header-toolbar">
     <ion-buttons slot="start">
       <ion-button fill="clear" (click)="volverAtras()">
         <ion-icon name="arrow-back-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Historial de Ventas</ion-title>
+    <ion-title>Mis ventas</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="historial-grid">
+<ion-content>
+  <div class="ventas-lista" *ngIf="historialVentas && historialVentas.length > 0; else sinVentas">
     <div class="venta-card" *ngFor="let venta of historialVentas">
-      <ion-card-content>
-        <div class="detalle">
-          <div class="fecha-hora">
-            <span class="fecha">{{ venta.fecha }}</span>
-            <span class="hora">{{ venta.hora }}</span>
+      <div class="venta-header">
+        <span class="venta-fecha">
+          {{ venta.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}
+        </span>
+      </div>
+      <div class="venta-productos-lista">
+        <div class="venta-producto-item" *ngFor="let detalle of venta.detalles" (click)="verDetalle(detalle)">
+          <div class="venta-producto-info">
+            <div class="venta-producto-titulo">{{ detalle.producto_titulo }}</div>
+            <div class="venta-producto-cantidad">Cantidad: {{ detalle.cantidad }}</div>
+            <div class="venta-producto-subtotal">Valor unitario: ${{ detalle.valor_unitario | number }}</div>
+            <div class="venta-producto-subtotal">Subtotal: ${{ detalle.subtotal | number }}</div>
           </div>
-          <!-- Información del comprador -->
-          <div class="cliente-detalle">
-            <div class="nombre">Nombre: {{ venta.cliente.nombre }}</div>
-            <div class="correo">Correo: {{ venta.cliente.correo }}</div>
-          </div>
-          <!-- Si hay un solo producto, se muestra solo ese producto -->
-          <div *ngIf="venta.productos.length === 1" class="producto-unico">
-            <div class="producto-nombre">{{ venta.productos[0].nombre }}</div>
-            <div class="id">ID: {{ venta.productos[0].id }}</div>
-            <div class="precio">Precio: ${{ venta.productos[0].precio }}</div>
-          </div>
-          <!-- Si hay varios productos, se genera una lista -->
-          <div *ngIf="venta.productos.length > 1">
-            <div *ngFor="let producto of venta.productos" class="producto-detalle">
-              <div class="producto-nombre">{{ producto.nombre }}</div>
-              <div class="id">ID: {{ producto.id }}</div>
-              <div class="precio">Precio: ${{ producto.precio }}</div>
-            </div>
-          </div>
-          <div class="direccion">
-            Dirección: {{ venta.direccion }}
-          </div>
-          <div class="comuna-region">
-            Comuna: {{ venta.comuna }}, Región: {{ venta.region }}
-          </div>
-          <div class="sexo">
-            Comprador: {{ venta.sexo }}
+          <div class="venta-estado-envio" [ngClass]="detalle.estado_envio">
+            Estado envío: {{ detalle.estado_envio | titlecase }}
+            <span *ngIf="detalle.numero_seguimiento">| Seguimiento: {{ detalle.numero_seguimiento }}</span>
           </div>
         </div>
-      </ion-card-content>
+      </div>
+      <div class="venta-footer">
+        <div *ngIf="venta.region" class="venta-medio">
+          <span class="label">Región: </span>
+          <span class="valor">{{ venta.region | titlecase }}</span>
+        </div>
+        <div *ngIf="venta.comuna" class="venta-medio">
+          <span class="label">Comúna: </span>
+          <span class="valor">{{ venta.comuna | titlecase }}</span>
+        </div>
+        <div *ngIf="venta.direccion" class="venta-direccion">
+          <span class="label">Dirección: </span>
+          <span class="valor">{{ venta.direccion | titlecase }}</span>
+        </div>
+        <div *ngIf="venta.destinatario" class="venta-direccion">
+          <span class="label">Destinatario: </span>
+          <span class="valor">{{ venta.destinatario | titlecase }}</span>
+        </div>
+        <div class="venta-total">
+          <span class="label">Ganancia total: </span>
+          <span class="venta-monto">${{ calcularTotalVenta(venta) | number }}</span>
+        </div>
+      </div>
     </div>
   </div>
-</ion-content>
 
+  <ng-template #sinVentas>
+    <div class="ventas-vacio-container">
+      <ion-icon name="cash-outline"></ion-icon>
+      <h2>No tienes ventas aún</h2>
+      <p>Cuando vendas, aparecerán aquí tus ventas realizadas.</p>
+    </div>
+  </ng-template>
+
+  <!-- Modal de detalles -->
+  <ion-modal [isOpen]="detalleSeleccionado !== null" (didDismiss)="detalleSeleccionado = null" class="venta-detalle-modal-ml">
+    <ng-template>
+      <div class="venta-detalle-modal" *ngIf="detalleSeleccionado">
+        <div class="venta-detalle-modal-header">
+          <ion-icon name="cube-outline" class="venta-detalle-modal-icon"></ion-icon>
+          <h2>{{ detalleSeleccionado.producto_titulo }}</h2>
+        </div>
+        <div class="venta-detalle-modal-body">
+          <div class="venta-detalle-row">
+            <span class="venta-detalle-label">Cantidad:</span>
+            <span class="venta-detalle-value">{{ detalleSeleccionado.cantidad }}</span>
+          </div>
+          <div class="venta-detalle-row">
+            <span class="venta-detalle-label">Valor unitario:</span>
+            <span class="venta-detalle-value">${{ detalleSeleccionado.valor_unitario | number }}</span>
+          </div>
+          <div class="venta-detalle-row">
+            <span class="venta-detalle-label">Valor envío:</span>
+            <span class="venta-detalle-value">${{ detalleSeleccionado.costo_envio | number }}</span>
+          </div>
+          <div class="venta-detalle-row">
+            <span class="venta-detalle-label">Estado envío:</span>
+            <span class="venta-detalle-value venta-estado-envio-modal" [ngClass]="detalleSeleccionado.estado_envio">
+              {{ detalleSeleccionado.estado_envio | titlecase }}
+            </span>
+          </div>
+          <div class="venta-detalle-row">
+            <span class="venta-detalle-label">N° Seguimiento:</span>
+            <span class="venta-detalle-value">{{ detalleSeleccionado.numero_seguimiento ? detalleSeleccionado.numero_seguimiento : 'No establecido aún' }}</span>
+          </div>
+          <div class="venta-detalle-row">
+            <span class="venta-detalle-label">Fecha recepción:</span>
+            <span class="venta-detalle-value">{{ detalleSeleccionado.fecha_recepcion ? detalleSeleccionado.fecha_recepcion : 'No recibido aún' }}</span>
+          </div>
+          <div class="venta-detalle-row">
+            <span class="venta-detalle-label">Ganancia:</span>
+            <span class="venta-detalle-value">${{ detalleSeleccionado.subtotal | number }}</span>
+          </div>
+        </div>
+        <ion-button expand="block" color="medium" (click)="detalleSeleccionado = null" class="venta-detalle-modal-btn">Cerrar</ion-button>
+        <ion-button expand="block" color="tertiary" (click)="verProducto(detalleSeleccionado.producto_id); detalleSeleccionado = null" class="venta-detalle-modal-btn">Ver Producto</ion-button>
+      </div>
+    </ng-template>
+  </ion-modal>
+</ion-content>

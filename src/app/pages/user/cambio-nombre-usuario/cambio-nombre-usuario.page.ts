@@ -20,7 +20,7 @@ export class CambioNombreUsuarioPage {
     private authService: AuthService 
   ) {
     this.usernameForm = this.fb.group({
-      newUsername: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(15), Validators.pattern('^[a-zA-ZÀ-ÿ]+$')]],
+      newUsername: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(25), Validators.pattern('^[a-zA-ZÀ-ÿ]+$')]],
     });
   }
 
@@ -28,7 +28,6 @@ export class CambioNombreUsuarioPage {
     if (this.usernameForm.valid) {
       const newUsername = this.usernameForm.value.newUsername;
       
-      // Simular actualización exitosa
       const alert = await this.alertController.create({
         header: 'Éxito',
         message: `Su nombre se estableció como: ${newUsername}`,

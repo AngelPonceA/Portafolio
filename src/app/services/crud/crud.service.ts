@@ -322,7 +322,6 @@ export class CrudService {
         const pedidoData = pedidoDoc.data();
         const pedido_id = pedidoDoc.id;
 
-        // Accede a la subcolección 'detalle' de este pedido
         const detalleRef = collection(this.firestore, `pedidos/${pedido_id}/detalle`);
         const detalleSnapshot = await getDocs(detalleRef);
 
@@ -330,12 +329,46 @@ export class CrudService {
 
         historial.push({ pedido_id, ...pedidoData, detalles });
       }
-
-      console.log('historial', historial);
       
       return historial;
     } catch (error) {
       this.ionicService.mostrarAlerta('Error al obtener el historial de compra', 'error');
+      return [];
+    }
+  }
+
+  async obtenerHistorialVentas() {
+    try {
+      // const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);
+      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const pedidosRef = collection(this.firestore, 'pedidos');
+      const q = query(pedidosRef, orderBy('fecha_creacion', 'desc'));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return [];
+      }
+
+      const historial = [];
+      for (const pedidoDoc of querySnapshot.docs) {
+        const pedidoData = pedidoDoc.data();
+        const pedido_id = pedidoDoc.id;
+
+        const detalleRef = collection(this.firestore, `pedidos/${pedido_id}/detalle`);
+        const detalleSnapshot = await getDocs(detalleRef);
+
+        const detalles = detalleSnapshot.docs
+          .map(doc => doc.data())
+          .filter(detalle => detalle['vendedor_id'] === uid);
+
+        if (detalles.length > 0) {
+          historial.push({ pedido_id, ...pedidoData, detalles });
+        }
+      }
+      
+      return historial;
+    } catch (error) {
+      this.ionicService.mostrarAlerta('Error al obtener el historial de ventas', 'error');
       return [];
     }
   }
@@ -456,53 +489,6 @@ async obtenerEstimacionUsuario(producto_id: string) {
       const docRef = doc(estimacionesRef);
       await setDoc(docRef, nuevaEstimacion);
     }
-  }
-
-  escucharCambiosPedidos() {
-    const pedidosRef = collection(this.firestore, 'pedidos');
-
-    onSnapshot(pedidosRef, async (snapshot) => {
-      for (const change of snapshot.docChanges()) {
-        if (change.type === 'modified') {
-          const pedido = change.doc.data();
-          const pedido_id = change.doc.id;
-          const estadoActual = pedido['estado_envio'];
-          const usuario_id = pedido['usuario_id'];
-
-          const estadosNotificables = ['En despacho', 'Recibido', 'En proceso', 'Cancelado'];
-
-          if (estadosNotificables.includes(estadoActual)) {
-            const notificacionId = `${pedido_id}_${estadoActual}`;
-            const notificacionRef = doc(this.firestore, 'alertas', notificacionId);
-
-            const existingSnap = await getDoc(notificacionRef);
-
-            let descripcion;
-
-            if (estadoActual == 'En despacho') {
-              descripcion = `Tu pedido ${pedido_id} está ${estadoActual}.`
-            } else if (estadoActual == 'Recibido') {
-              descripcion = `Tu pedido ${pedido_id} ha sido ${estadoActual}.`
-            } else if (estadoActual == 'En proceso') {
-              descripcion = `Tu pedido ${pedido_id} está ${estadoActual}.`
-            } else if (estadoActual == 'Cancelado') {
-              descripcion = `Tu pedido ${pedido_id} ha sido ${estadoActual}.`
-            }
-
-            if (!existingSnap.exists()) {
-              await setDoc(notificacionRef, {
-                titulo: 'Estado de tu pedido actualizado',
-                descripcion: descripcion,
-                estado: 'no vista',
-                fecha_creacion: new Date(),
-                usuario_id: usuario_id,
-                pedido_id: pedido_id,
-              });
-            }
-          }
-        }
-      }
-    });
   }
 
   // ======================== MIS PRODUCTOS PAGE =========================

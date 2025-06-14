@@ -53,8 +53,8 @@ export class AuthService {
       const snap = await getDoc(usuarioRef);
 
       if (snap.exists()) {
-        const { nombre, email, rol, membresia } = snap.data() as { nombre: string; email: string; rol: string, membresia: boolean };
-        return { nombre, email, rol, membresia };
+        const { nombre, email, rol, membresia, imagen } = snap.data() as { nombre: string; email: string; rol: string, membresia: boolean, imagen: string };
+        return { nombre, email, rol, membresia, imagen: imagen ? imagen : null };
       } else {
         console.error('Usuario no encontrado en Firestore.');
         return null;
@@ -145,7 +145,7 @@ export class AuthService {
     }
   }
 
-    async actualizarMembresia(nuevoEstado: boolean) {
+  async actualizarMembresia(nuevoEstado: boolean) {
     try {
       // const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
@@ -172,14 +172,13 @@ export class AuthService {
         throw new Error('No se encontraron datos del usuario en Firestore.');
       }
 
-      console.log('Credenciales ingresadas:', uid);
       const { rol } = snap.data()!;
       // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol });
       // this.router.navigate(['/home']);
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/invalid-credential') {
-          console.error('Credenciales no validas.');
+          this.ionicService.mostrarToastAbajo('Credenciales no validas.');
         } else {
           console.error('Error en login:', error.message);
         }
@@ -248,7 +247,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/wrong-password') {
-          console.error('La contraseña actual es incorrecta.');
+          this.ionicService.mostrarToastAbajo('La contraseña actual es incorrecta.');
         } else {
           console.error('Error al cambiar la contraseña:', error.message);
         }

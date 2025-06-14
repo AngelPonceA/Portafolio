@@ -52,14 +52,15 @@
 
   <ng-template #invitado>
     <div class="invitado-container">
-      <h2>¡Bienvenido!</h2>
-      <p>¿Aún no tienes cuenta o ya tienes una? Elige una opción:</p>
+      <h2>¡Hola!</h2>
+      <p>Disfruta de esta y más funciones registrandote o ingresando</p>
       <ion-button expand="block" fill="solid" [routerLink]="['/registro']">
-        <ion-icon name="person-add" slot="start"></ion-icon>
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
         Registrarse
       </ion-button>
+  
       <ion-button expand="block" fill="solid" [routerLink]="['/ingreso']">
-        <ion-icon name="log-in" slot="start"></ion-icon>
+        <ion-icon name="log-in-outline" slot="start"></ion-icon>
         Ingresar
       </ion-button>
     </div>

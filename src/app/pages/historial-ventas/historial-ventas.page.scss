@@ -3,112 +3,391 @@
 }
 
 ion-content {
-  --background: #f5f2ef;
-  height: 100%;
+  --background: #f5f6fa;
+  padding-bottom: 0 !important;
+  overflow-y: auto;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
-.header-toolbar {
+.ventas-header-toolbar {
   --background: #D2B48C;
-  --color: white;
+  color: white;
 }
 
-.historial-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  padding: 5%;
+.ventas-lista {
+  gap: 18px;
+  margin: 3% 2%;
+  width: 100%;
+  margin: 2% auto;
+  box-sizing: border-box;
+  padding: 0 2%;
 }
 
 .venta-card {
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background-color: white;
-  padding: 15px;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(25, 118, 210, 0.06);
+  margin: 2% 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid #e3e8ee;
+  width: 100%;
+  transition: box-shadow 0.3s ease;
+  animation: fadeSlideIn 0.4s ease;
+  border: 2px solid #f0a500;
 
-  ion-card-content {
-    padding: 8px;
-
-    .detalle {
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 5px;
-
-      .fecha-hora {
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-        color: #555;
-
-        .fecha, .hora {
-          font-weight: bold;
-        }
-      }
-
-      .cliente-detalle {
-        margin-top: 10px;
-        .nombre {
-          font-size: 14px;
-          font-weight: bold;
-          color: #333;
-        }
-        .correo {
-          font-size: 14px;
-          color: #888;
-        }
-      }
-
-      .producto-unico {
-        margin-top: 10px;
-
-        .producto-nombre {
-          font-size: 16px;
-          font-weight: bold;
-          color: #703c3c;
-        }
-        .id {
-          font-size: 14px;
-          color: #888;
-        }
-        .precio {
-          font-size: 14px;
-          color: #4caf50;
-        }
-      }
-
-      .producto-detalle {
-        margin-top: 10px;
-
-        .producto-nombre {
-          font-size: 16px;
-          font-weight: bold;
-          color: #703c3c;
-        }
-        .id {
-          font-size: 14px;
-          color: #888;
-        }
-        .precio {
-          font-size: 14px;
-          color: #4caf50;
-        }
-      }
-
-      .direccion, .comuna-region, .sexo {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #333;
-      }
-    }
+  &:hover {
+    box-shadow: 0 4px 12px rgba(25, 118, 210, 0.12);
   }
 }
 
-@media (max-width: 768px) {
-  .historial-grid {
-    grid-template-columns: 1fr;
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
-  .venta-card {
-    padding: 10px;
-    font-size: 14px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.venta-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.95rem;
+  padding: 12px 3% 8px;
+  margin: 0 5px;
+}
+
+.venta-fecha {
+  color: #1976d2;
+  font-weight: 500;
+  font-size: 20px;
+}
+
+.venta-productos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0 3%;
+}
+
+.venta-producto-item {
+  display: flex;
+  flex-direction: column;
+  background: #f7fafd;
+  border-radius: 8px;
+  padding: 5% 1%;
+  border: 1px solid #e3e8ee;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.2s;
+  gap: 8px;
+
+  &:hover {
+    background: #e3e8ee;
+  }
+}
+
+.venta-producto-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: center;
+  font-size: 15px;
+  width: 100%;
+
+  .venta-producto-titulo {
+    font-weight: 600;
+    color: #222;
+    min-width: 120px;
+    max-width: 60%;
+    flex: 1 1 60%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+    margin: 0 2%;
+  }
+
+  .venta-producto-cantidad,
+  .venta-producto-subtotal {
+    color: #555;
+    font-size: 0.9rem;
+    margin: 0 2%;
+  }
+}
+
+.venta-estado-envio {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #1976d2;
+  position: relative;
+  padding-left: 20px;
+  margin: 0 2%;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.8;
+  }
+
+  &.pendiente {
+    color: #ff9800;
+  }
+
+  &.enviado {
+    color: #2196f3;
+  }
+
+  &.entregado {
+    color: #388e3c;
+  }
+
+  &.recibido {
+    color: #388e3c;
+  }
+
+  &.reembolsado {
+    color: red;
+  }
+
+  &.cancelado {
+    color: red;
+  }
+}
+
+.venta-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 28px;
+  margin-top: 10px;
+  font-size: 15px;
+  width: 100%;
+  padding: 12px 3%;
+  background: #fafbfc;
+  border-radius: 0 0 12px 12px;
+
+  .venta-monto {
+    font-weight: bold;
+    color: #1976d2;
+    margin-left: 4px;
+  }
+}
+
+.venta-footer {
+  background: #f9f9fb;
+  border-top: 1px solid #e2e6ea;
+  border-radius: 0 0 12px 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.venta-footer > span {
+  font-weight: 500;
+  color: #555;
+}
+
+.venta-total,
+.venta-medio,
+.venta-direccion {
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e0e4e8;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  transition: box-shadow 0.2s ease;
+}
+
+.venta-total:hover,
+.venta-direccion:hover,
+.venta-medio:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.venta-total {
+  font-weight: 600;
+  color: #222;
+
+  .venta-monto {
+    color: #1976d2;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+}
+
+.venta-medio,
+.venta-direccion {
+  font-weight: 500;
+
+  span:last-child {
+    color: #666;
+    font-weight: 600;
+  }
+}
+
+.venta-detalle-modal-ml::part(backdrop) {
+  background-color: rgba(0, 0, 0, 0.35); // más oscuro y suave
+  backdrop-filter: blur(2px);
+}
+
+.venta-detalle-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999;
+  padding: 32px 22px 24px 22px;
+  border-radius: 22px;
+  background: #fff;
+  min-width: 280px;
+  max-width: 92vw;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.venta-detalle-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 22px;
+  width: 100%;
+}
+
+.venta-detalle-modal-icon {
+  font-size: 2.8rem;
+  color: #D2B48C;
+  margin-bottom: 8px;
+}
+
+.venta-detalle-modal h2 {
+  font-size: 1.3rem;
+  color: #222;
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+}
+
+.venta-detalle-modal-body {
+  width: 100%;
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.venta-detalle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  border-bottom: 1px solid #f0f0f0;
+  padding: 8px 0;
+  min-height: 32px;
+}
+
+.venta-detalle-label {
+  color: #666;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.venta-detalle-value {
+  color: #222;
+  font-weight: 600;
+  font-size: 1rem;
+  text-align: right;
+}
+
+.venta-estado-envio-modal {
+  font-weight: bold;
+
+  &.pendiente {
+    color: #ff9800;
+  }
+
+  &.enviado {
+    color: #2196f3;
+  }
+
+  &.entregado {
+    color: #388e3c;
+  }
+
+  &.reembolsado {
+    color: red;
+  }
+}
+
+.venta-detalle-modal-btn {
+  margin-top: 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  --background: #D2B48C;
+  --color: #fff;
+  --box-shadow: none;
+}
+
+.ventas-vacio-container {
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  ion-icon {
+    font-size: 3.5rem;
+    color: #fbbf24;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+    color: #374151;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 0.95rem;
+    max-width: 300px;
   }
 }

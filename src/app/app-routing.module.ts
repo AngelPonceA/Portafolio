@@ -55,10 +55,6 @@ const routes: Routes = [
     path: 'recuperar-clave',
     loadChildren: () => import('./pages/auth/recuperar-clave/recuperar-clave.module').then( m => m.RecuperarClavePageModule)
   },
-  {
-    path: 'usuario-vendedor',
-    loadChildren: () => import('./pages/usuario-vendedor/usuario-vendedor.module').then( m => m.UsuarioVendedorPageModule)
-  },
    {
      path: 'mis-productos',
      loadChildren: () => import('./pages/mis-productos/mis-productos.module').then( m => m.MisProductosPageModule)

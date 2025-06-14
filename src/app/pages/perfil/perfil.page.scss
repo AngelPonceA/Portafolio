@@ -4,12 +4,13 @@
 }
 
 ion-content {
-  --background: #f9f9f9; /* Fondo general */
+  --background: #f9f9f9;
   padding: 15px;
 }
 
-/* Contenedor principal */
-.perfil-container {
+/* Contenedor principal para ambos perfiles */
+.perfil-container,
+.perfil-vendedor-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -19,6 +20,37 @@ ion-content {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 1rem;
   gap: 1.5rem;
+  border: 2px solid #f0a500;
+}
+
+/* Header de perfil */
+.perfil-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.perfil-header h2 {
+  margin-top: 10px;
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.perfil-header p {
+  margin-top: 5px;
+  color: gray;
+  font-size: 1rem;
+}
+
+.perfil-header .avatar {
+  width: 120px;
+  height: 120px;
+  border: 2px solid #d1a15a;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  object-fit: cover;
 }
 
 /* Información del usuario */
@@ -61,6 +93,7 @@ ion-content {
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #f0a500;
 }
 
 .info-icon {
@@ -69,93 +102,76 @@ ion-content {
   margin-right: 10px;
 }
 
-
-/* Botones de acciones */
+/* Opciones y acciones */
+.perfil-opciones,
 .acciones {
   width: 100%;
-  max-width: 350px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+ion-button,
 .accion-btn {
-    --border-radius: 1rem;
-    --background: #D1A15A;
-    --color: #ffffff;
-    --border-color: #9a73399e;
-    font-weight: bold;
-  }
-
-.accion-btn:hover {
-  transform: scale(1.02);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  --border-radius: 1rem;
+  --background: #d1a15a;
+  --color: #ffffff;
+  --border-color: #9a73399e;
+  font-weight: bold;
 }
 
+ion-button[color="danger"],
 .cerrar-sesion-btn {
   --background: #ff3b30;
   --color: white;
 }
 
-/* Media Queries */
-@media (max-width: 768px) {
-  .perfil-container {
-    padding: 10px;
-  }
-
-  .avatar {
-    width: 80px; /* Reducir el tamaño del avatar en pantallas pequeñas */
-    height: 80px;
-  }
-
-  .info-usuario {
-    width: 90%; /* Ajustar el tamaño de la caja de información */
-  }
-
-  .acciones {
-    width: 90%; /* Ajustar el tamaño de los botones */
-  }
-
-  .accion-btn {
-    font-size: 12px; /* Reducir el tamaño de fuente de los botones */
-  }
-
-  ion-label {
-    font-size: 14px; /* Reducir el tamaño de la fuente de los labels */
-  }
-
-  ion-input {
-    font-size: 14px; /* Reducir el tamaño de la fuente de los inputs */
-  }
+/* Paypal y membresía */
+.boton-paypal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 400px;
 }
 
-@media (min-width: 1024px) {
-  .perfil-container {
-    padding: 20px;
-  }
-
-  .info-usuario {
-    width: 60%; /* Aumentar el tamaño de la caja de información en pantallas grandes */
-  }
-
-  .acciones {
-    width: 60%; /* Aumentar el tamaño de los botones en pantallas grandes */
-  }
-
-  .accion-btn {
-    font-size: 16px; /* Aumentar el tamaño de fuente de los botones */
-  }
-
-  ion-label {
-    font-size: 16px; /* Aumentar el tamaño de la fuente de los labels */
-  }
-
-  ion-input {
-    font-size: 16px; /* Aumentar el tamaño de la fuente de los inputs */
-  }
+.pagar {
+  width: 100%;
+  text-align: center;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 1rem;
 }
 
-/* Vista para invitados */
+.total-desglose {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  padding: 0;
+}
+
+.total-desglose .total-final {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000;
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+}
+
+#paypal-button-container {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .invitado-container {
   position: absolute;
   top: 50%;
@@ -192,49 +208,4 @@ ion-content {
     --border-radius: 10px;
     margin: 8px 0;
   }
-}
-
-
-.boton-paypal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  border-radius: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 400px;
-}
-
-.pagar {
-  width: 100%;
-  text-align: center;
-  background: transparent;
-  padding: 0;
-  margin-bottom: 1rem;
-}
-
-.total-desglose {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  text-align: center;
-  padding: 0;
-
-  .total-final {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #000;
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-  }
-}
-
-#paypal-button-container {
-  margin-top: 1rem;
-  width: 100%;
-  display: flex;
-  justify-content: center;
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CrudService } from './services/crud/crud.service';
+import { TriggersService } from './services/triggers/triggers.service';
 
 @Component({
   selector: 'app-root',
@@ -8,9 +8,10 @@ import { CrudService } from './services/crud/crud.service';
   standalone: false,
 })
 export class AppComponent implements OnInit {
-  constructor(private crudService: CrudService) {}
+  constructor(private triggersService: TriggersService) {}
 
   ngOnInit() {
-    this.crudService.escucharCambiosPedidos();
+    this.triggersService.escucharCambiosPedidos();
   }
+  
 }

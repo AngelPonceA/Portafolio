@@ -40,9 +40,10 @@ export class BusquedaPage implements OnInit {
         this.productos = this.crudService.obtenerProductosRecomendados();
         this.busqueda = 'Productos recomendados';
       }
-      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
-      this.productosRespaldo = this.productos;      
     }
+    
+    this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
+    this.productosRespaldo = this.productos;      
 
     window.addEventListener('actualizarBusqueda', (event: any) => {
       const nuevaBusqueda = event.detail;

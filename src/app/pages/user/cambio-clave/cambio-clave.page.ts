@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { IonicService } from 'src/app/services/ionic/ionic.service';
 
 @Component({
   selector: 'app-cambioclave',
@@ -22,7 +23,8 @@ export class CambioClavePage implements OnInit {
     private fb: FormBuilder,
     private alertController: AlertController,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private ionicService: IonicService
 
   ) {
     this.passwordForm = this.fb.group({
@@ -57,13 +59,8 @@ export class CambioClavePage implements OnInit {
 
   async onSubmit(group: any) {
     if (this.passwordForm.valid) {
-      const alert = await this.alertController.create({
-        header: 'Éxito',
-        message: 'Contraseña cambiada correctamente (simulación)',
-        buttons: ['OK']
-      });
+      this.ionicService.mostrarAlerta('Exito', 'Contraseña cambiada correctamente');
       await this.authService.cambiarClave(group.currentPassword, group.newPassword);      
-      await alert.present();
       this.passwordForm.reset();
     }
   }
