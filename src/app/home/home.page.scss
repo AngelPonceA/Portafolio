@@ -161,3 +161,20 @@ ion-button {
   overflow: hidden; /* Oculta el texto que exceda el ancho */
   text-overflow: ellipsis; /* Agrega "..." al final del texto largo */
 }
+
+.estrellas-general {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.estrellas-general ion-icon {
+  color: #FFD700;
+  font-size: 1rem;
+}
+
+.estrellas-general {
+  font-size: 1rem;
+  color: #000000;
+  margin: 5px;
+}

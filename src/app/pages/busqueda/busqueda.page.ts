@@ -59,6 +59,10 @@ export class BusquedaPage implements OnInit {
     this.router.navigate(['/producto'], { state: { producto_id } });
   }
 
+  entero(calificacion: number){
+    return Math.floor(calificacion || 0);
+  }
+
   ordenarPorPrecio(orden: 'asc' | 'desc') {
     if (this.ordenActual === orden) {
       this.ordenActual = null;

@@ -1,3 +1,4 @@
+import { Usuario } from './../../models/usuario.models';
 import { reload } from '@angular/fire/auth';
 import { Producto } from './../../models/producto.models';
 import { Component, OnInit } from '@angular/core';
@@ -5,6 +6,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
+import { IonicService } from 'src/app/services/ionic/ionic.service';
 
 declare const paypal: any;
 
@@ -17,21 +19,36 @@ declare const paypal: any;
 
 export class ProductoPage implements OnInit {
 
-  producto: any ;
+  usuario?: any;
+  producto: any;
+  miCalificacion?: number;
+  comprado? : boolean;
   favoritos: any[] = [];
   esFavorito?: any;
   cantidadOpciones: number[] = [];
   opcionStock: number = 1;
 
-  constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService) {}
+  constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService, 
+    private ionicService: IonicService) {}
     
   async ngOnInit() {
-    const producto_id = await this.router.getCurrentNavigation()?.extras?.state?.['producto_id'];
+    const producto_id = this.router.getCurrentNavigation()?.extras?.state?.['producto_id'];
+    
     if (producto_id) {
+      this.usuario = await this.authService.obtenerPerfil();
+
+      if (this.usuario) {
+        this.miCalificacion = await this.crudService.obtenerMiCalificacionProducto(producto_id);
+        if (!this.miCalificacion) {
+          this.comprado = await this.crudService.esComprado(producto_id)
+        }
+      }
+
       this.crudService.obtenerDetalleProducto(producto_id).then(data => {
-        this.producto = data;    
+        this.producto = data;
         this.cantidadOpciones = Array.from({ length: this.producto.stock }, (_, i) => i + 1);
       });
+
       this.esFavorito = await this.crudService.esFavorito(producto_id);
     }
   }
@@ -60,6 +77,21 @@ export class ProductoPage implements OnInit {
     } catch (error) {
       console.error('Error al agregar favorito:', error);
     }
+  }
+
+  async actualizarCalificacion(nuevaCalificacion: number) {
+    if (!this.producto?.producto_id) return;
+    try {
+      await this.crudService.actualizarCalificacionProducto(this.producto.producto_id, nuevaCalificacion);
+      this.producto.calificacion = await this.crudService.obtenerPromedioCalificacionProducto(this.producto.producto_id)
+      this.miCalificacion = nuevaCalificacion;
+    } catch (error) {
+      this.ionicService.mostrarAlerta('Error al actualizar la calificación', 'error');
+    }
+  }
+
+  entero(calificacion: number){
+    return Math.floor(calificacion || 0);
   }
 
   agregarAlCarrito(producto_id: string) {

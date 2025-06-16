@@ -7,6 +7,24 @@
           <span class="etiqueta"> {{ producto.categoria | titlecase }} </span>
           <span *ngFor="let etiqueta of producto.etiquetas" class="etiqueta">{{ etiqueta | titlecase }}</span>
         </div>
+
+        <div class="estrellas-general">
+          <span *ngFor="let contador of [1,2,3,4,5]">
+            <ion-icon [name]="contador <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
+          </span>
+          <span class="estrellas-numero">({{ entero(producto.calificacion) || 0 }})</span>
+          <span>Calificación promedio</span>
+        </div>
+
+        <div *ngIf="miCalificacion || !miCalificacion && comprado" class="estrellas-usuario">
+          <span *ngFor="let contador of [1,2,3,4,5]">
+            <ion-icon *ngIf="miCalificacion" [name]="contador <= miCalificacion ? 'star' : 'star-outline' " (click)="actualizarCalificacion(contador)"></ion-icon>
+            <ion-icon *ngIf="!miCalificacion && comprado" [name]="contador <= 0 ? 'star' : 'star-outline' " (click)="actualizarCalificacion(contador)"></ion-icon>
+          </span>
+          <span class="estrellas-numero">({{ miCalificacion || 0 }})</span>
+          <span>Tu calificación</span>
+        </div>
+
         <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }}</ion-card-title>
 
         <ion-card-subtitle *ngIf="!producto.precio_oferta" class="producto-precio-original">
@@ -36,7 +54,7 @@
           WhatsApp
         </ion-button>
 
-        <ion-button expand="block" color="danger" (click)="manejarFavorito(producto)">
+        <ion-button *ngIf="usuario && usuario != 'invitado'" expand="block" color="danger" (click)="manejarFavorito(producto)">
           <ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
           {{ esFavorito ? 'Quitar favorito' : 'Favorito' }}
         </ion-button>
@@ -89,3 +107,9 @@
       </div>
   </ng-template>
 </app-navegacion>
+
+  <!-- Calificación del usuario -->
+
+
+  <!-- ...resto del contenido de la página... -->
+

@@ -1,3 +1,4 @@
+import { Calificacion } from './calificacion.models';
 import { Oferta } from './oferta.models';
 
 export interface Producto {
@@ -14,5 +15,6 @@ export interface Producto {
     auto_stock: boolean;
     imagen: string[];
     oferta?: Oferta;
+    calificacion?: Calificacion[] | number;
     esta_eliminado?: boolean;
 }

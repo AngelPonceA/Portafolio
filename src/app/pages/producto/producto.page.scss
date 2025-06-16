@@ -243,3 +243,26 @@ ion-button ion-icon {
   flex-direction: column;
   align-items: center;
 }
+
+.estrellas-general, .estrellas-usuario {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.estrellas-general ion-icon {
+  color: #FFD700;
+  font-size: 1.2rem;
+}
+
+.estrellas-usuario ion-icon {
+  color: #FFD700;
+  font-size: 1.2rem;
+}
+
+.estrellas-general .estrellas-numero,
+.estrellas-usuario .estrellas-numero {
+  font-size: 1rem;
+  color: #000000;
+  margin: 5px;
+}

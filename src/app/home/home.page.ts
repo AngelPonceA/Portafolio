@@ -41,6 +41,10 @@ export class HomePage {
     // this.productosConOferta = this.productosConOferta.slice(0, 6);
   }
 
+  entero(calificacion: number){
+    return Math.floor(calificacion || 0);
+  }
+
   verCategoria(categoria: string){
     this.router.navigate(['/busqueda'], { state: { categoria : categoria } });
   }
