@@ -1,0 +1,37 @@
+:host {
+  position: fixed;
+  top: 84%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  cursor: grab;
+  display: block;
+}
+
+#fab-soporte {
+  position: fixed;
+  top: 90%;
+  left: 90%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  cursor: grab;
+}
+
+:host(.dragging) {
+  cursor: grabbing;
+}
+
+ion-fab-button {
+  --background: #d1a15a;
+  --color: white;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  border: 3px solid rgb(161, 57, 57);
+}
+
+ion-icon {
+  font-size: 55px;
+  color: white;
+}
