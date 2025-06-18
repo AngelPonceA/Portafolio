@@ -19,11 +19,12 @@ import localeEsCl from '@angular/common/locales/es-CL';
 import { registerLocaleData } from '@angular/common';
 import { register } from 'swiper/element/bundle';
 import { HttpClientModule } from '@angular/common/http';
+import { BotonSoporteComponent } from './components/boton-soporte/boton-soporte.component';
 
 register();
 registerLocaleData(localeEsCl);
 @NgModule({
-  declarations: [AppComponent,],
+  declarations: [AppComponent, BotonSoporteComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, CommonModule, HttpClientModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, NativeStorage, 
     provideFirebaseApp(() => initializeApp(environment.firebase)), 

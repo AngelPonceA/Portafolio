@@ -103,6 +103,10 @@ const routes: Routes = [
     path: 'solicitudes-de-soporte',
     loadChildren: () => import('./pages/admin/solicitudes-de-soporte/solicitudes-de-soporte.module').then( m => m.SolicitudesDeSoportePageModule)
   },
+  {
+    path: 'mis-solucitudes-de-soporte',
+    loadChildren: () => import('./pages/mis-solucitudes-de-soporte/mis-solucitudes-de-soporte.module').then( m => m.MisSolucitudesDeSoportePageModule)
+  },
 
 
 ];

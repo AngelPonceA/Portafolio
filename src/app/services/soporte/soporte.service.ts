@@ -113,7 +113,14 @@ export class SoporteService {
     const ref = collection(this.firestore, 'solicitudes');
     const q = query(ref, where('usuarioId', '==', usuarioId), orderBy('fechaCreacion', 'desc'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => doc.data() as solicitudSoporte);
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+      ...(data as solicitudSoporte),
+      id: doc.id,
+      fechaCreacion: data['fechaCreacion']?.toDate ? data['fechaCreacion'].toDate() : data['fechaCreacion'],
+      };
+    });
   }
 
   // Obtener reportes de un usuario

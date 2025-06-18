@@ -1,0 +1,42 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="solicitudes-header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="volverAtras()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Mis Solicitudes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div
+    class="solicitudes-lista"
+    *ngIf="solicitudes.length > 0; else sinSolicitudes"
+  >
+    <div class="solicitud-card" *ngFor="let s of solicitudes">
+      <div class="solicitud-header">
+        <h3>{{ s.titulo }}</h3>
+        <p class="fecha">{{ s.fechaCreacion | date: 'dd MMM yyyy, HH:mm' }}</p>
+      </div>
+
+      <div class="solicitud-body">
+        <p><strong>Motivo:</strong> {{ s.motivo | titlecase }}</p>
+        <p><strong>Descripción:</strong> {{ s.descripcion }}</p>
+        <p class="estado" [ngClass]="s.estado">{{ s.estado | titlecase }}</p>
+
+        <div class="imagenes" *ngIf="s.imagenes && s.imagenes.length > 0">
+          <ion-img *ngFor="let img of s.imagenes" [src]="img"></ion-img>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #sinSolicitudes>
+    <div class="vacio-container">
+      <ion-icon name="help-circle-outline"></ion-icon>
+      <h2>No tienes solicitudes de soporte</h2>
+      <p>Cuando envíes una solicitud, aparecerá aquí.</p>
+    </div>
+  </ng-template>
+</ion-content>
