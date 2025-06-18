@@ -11,7 +11,13 @@ export class AppComponent implements OnInit {
   constructor(private triggersService: TriggersService) {}
 
   ngOnInit() {
-    this.triggersService.escucharCambiosPedidos();
+    this.triggersService.escucharCambiosPedido();
+
+    this.triggersService.escucharCambiosDetallePedido();
+
+    this.triggersService.escucharCambiosStock();
+
+    this.triggersService.escucharCreacionPedido();
   }
   
 }

@@ -130,7 +130,7 @@ export class CarritoService {
     let total: number = 0;
     for (const producto of productosArray) {
       const precioUnitario = producto.precio_oferta || producto.precio;
-      total += precioUnitario * producto.cantidad;
+      total += (precioUnitario * producto.cantidad) + producto.costo_envio;
     }
     return total;
   }
@@ -143,7 +143,7 @@ export class CarritoService {
   
     for (const producto of productosArray) {
       const precio = producto.precio_oferta || producto.precio;
-      comision += (precio * producto.cantidad) * valor_comision;
+      comision += ((precio * producto.cantidad) + producto.costo_envio) * valor_comision;
     }
     return comision;
   }
@@ -190,7 +190,7 @@ export class CarritoService {
   async insertarDetallesYActualizarStock(pedidoId: string, lista: any[]) {
     for (const producto of lista) {
       const precio = producto.precio_oferta || producto.precio;
-      const total = precio * producto.cantidad;
+      const total = (precio * producto.cantidad) + producto.costo_envio;
       const comision = total * 0.1;
 
       await addDoc(collection(this.firestore, `pedidos/${pedidoId}/detalle`), {
@@ -205,7 +205,7 @@ export class CarritoService {
         valor_comision: comision,
         // Esto debe generarlo en base a la ubicación del comprador con un servicio
         estado_envio: 'pendiente',
-        costo_envio: 0,
+        costo_envio: producto.costo_envio,
         fecha_recepcion: null,
         numero_seguimiento: null,
       });

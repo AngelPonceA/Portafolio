@@ -142,10 +142,15 @@ export class CarritoPage implements OnInit {
 
   async calcularCostosEnvio() {
     for (const producto of this.productos) {
-      this.costosEnvio[producto.producto_id] = await this.cartService.calcularCostoEnvioProducto(producto);
+      if (producto.stock && producto.stock > 0) {
+        const costoEnvio = await this.cartService.calcularCostoEnvioProducto(producto);
+        producto.costo_envio = costoEnvio;
+        this.costosEnvio[producto.producto_id] = costoEnvio;
+      }
     }
     this.calcularSubtotales();
   }
+
 
   obtenerCostoEnvio(producto_id: string): number {
     return this.costosEnvio[producto_id] || 0;

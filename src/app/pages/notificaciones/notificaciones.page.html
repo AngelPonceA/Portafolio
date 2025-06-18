@@ -21,13 +21,13 @@
                 </p>
                 <span class="notificacion-fecha">{{ notificacion.fecha_creacion.toDate() | date: 'dd MMM yyyy, HH:mm' }}</span>
               </div>
-              <div *ngIf="notificacionExpandida === notificacion.id && notificacion.imagen" class="notificacion-detalle">
+              <div *ngIf="notificacionExpandida === notificacion.id && notificacion.imagen?.length" class="notificacion-detalle">
                 <div *ngIf="notificacion.imagen.length === 1" class="imagen-container">
-                  <img [src]="notificacion.imagen[0]" alt="Imagen de notificación" />
+                  <img [src]="notificacion.imagen[0]" />
                 </div>
                 <div *ngIf="notificacion.imagen.length > 1" class="imagenes-grid">
                   <div *ngFor="let imagen of notificacion.imagen" class="imagen-container">
-                    <img [src]="imagen" alt="Imagen de notificación" />
+                    <img [src]="imagen"/>
                   </div>
                 </div>
               </div>

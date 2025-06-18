@@ -603,6 +603,51 @@ export class CrudService {
     }
   }
 
+  async cancelarPedido(pedido_id: string, producto_id: string) {
+    try {
+      const detallesRef = collection(this.firestore, `pedidos/${pedido_id}/detalle`);
+      const q = query(detallesRef, where('producto_id', '==', producto_id));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        this.ionicService.mostrarAlerta('Error', 'No se encontró el producto en el pedido.');
+        return;
+      }
+
+      const detalleDoc = querySnapshot.docs[0];
+      const detalleRef = detalleDoc.ref;
+
+      await updateDoc(detalleRef, {
+        estado_envio: 'cancelado',
+        fecha_cancelacion: new Date(),
+      });
+
+      this.ionicService.mostrarAlerta('Éxito', 'Pedido cancelado correctamente.');
+    } catch (error) {
+      this.ionicService.mostrarAlerta('Error', 'No se pudo cancelar el pedido. Intenta nuevamente.');
+    }
+  }
+
+  async solicitarDevolucionProducto(pedido_id: string, producto_id: string, tipo: string) {
+    try {
+      const detallesRef = collection(this.firestore, `pedidos/${pedido_id}/detalle`);
+      const q = query(detallesRef, where('producto_id', '==', producto_id));
+      const querySnapshot = await getDocs(q);
+      
+      const detalleDoc = querySnapshot.docs[0];
+      const detalleRef = detalleDoc.ref;
+      
+      await updateDoc(detalleRef, {
+      estado_reembolso: 'pendiente',
+      tipo_reembolso: tipo,
+      fecha_solicitud_reembolso: new Date(),
+    });
+  } catch (error: any) {
+    console.log(error);
+    }
+  }
+ 
+
   // ======================== MIS PRODUCTOS PAGE =========================
   // Métodos de clase producto
 obtenerMisProductos(): Observable<Producto[]> {

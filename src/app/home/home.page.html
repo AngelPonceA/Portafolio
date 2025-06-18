@@ -26,8 +26,8 @@
             <ion-card-subtitle *ngIf="producto.oferta" class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
             <ion-card-subtitle *ngIf="producto.oferta" class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>
             <div class="estrellas-general">
-              <span *ngFor="let star of [1,2,3,4,5]">
-                <ion-icon [name]="star <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
+              <span *ngFor="let contador of [1,2,3,4,5]">
+                <ion-icon [name]="contador <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
               </span>
               <span class="descripcion">({{ entero(producto.calificacion) || 0 }})</span>
             </div>
@@ -52,8 +52,8 @@
             <ion-card-subtitle *ngIf="producto.oferta" class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
             <ion-card-subtitle *ngIf="producto.oferta" class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>          
             <div class="estrellas-general">
-              <span *ngFor="let star of [1,2,3,4,5]">
-                <ion-icon [name]="star <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
+              <span *ngFor="let contador of [1,2,3,4,5]">
+                <ion-icon [name]="contador <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
               </span>
               <span class="descripcion">({{ entero(producto.calificacion) || 0 }})</span>
             </div>
@@ -77,8 +77,8 @@
             <ion-card-subtitle class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
             <ion-card-subtitle class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>
             <div class="estrellas-general">
-              <span *ngFor="let star of [1,2,3,4,5]">
-                <ion-icon [name]="star <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
+              <span *ngFor="let contador of [1,2,3,4,5]">
+                <ion-icon [name]="contador <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
               </span>
               <span class="descripcion">({{ entero(producto.calificacion) || 0 }})</span>
             </div>

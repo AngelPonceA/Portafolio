@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { CrudService } from 'src/app/services/crud/crud.service';
+import { IonicService } from 'src/app/services/ionic/ionic.service';
 
 @Component({
   selector: 'app-historial-ventas',
@@ -15,9 +16,9 @@ export class HistorialVentasPage implements OnInit {
 
   detalleSeleccionado: any = null;
 
-  subtotal? : number;
 
-  constructor(private router: Router, private crudService: CrudService, private navCtrl: NavController) {}
+  constructor(private router: Router, private crudService: CrudService, private navCtrl: NavController,
+    private ionicService: IonicService ) {}
 
   async ngOnInit() {
 
@@ -26,14 +27,20 @@ export class HistorialVentasPage implements OnInit {
 
    }
 
-  calcularTotalVenta(venta: any): number {
-    if (!venta.detalles || !Array.isArray(venta.detalles)) { 
+  calcularTotal(venta: any): number {
+    if (!venta.detalles || !Array.isArray(venta.detalles)) {
       return 0;
     }
-    return venta.detalles.reduce((total: number, detalle: any) => {
-      // Suma cantidad * valor_unitario de cada detalle
+
+  return venta.detalles.filter((item: any) => item.estado_envio.toLowerCase() !== 'cancelado' && item.estado_envio.toLowerCase() !== 'reembolsado')
+    .reduce((total: number, detalle: any) => {
       return total + (detalle.cantidad * detalle.subtotal);
     }, 0);
+  }
+
+  cancelarVenta(detalle: any) {
+    this.ionicService.mostrarAlertaConfirmacion('Cancelar producto', '¿Estás seguro que deseas cancelar este producto del pedido?',
+    () => this.crudService.cancelarPedido(detalle.pedido_id, detalle.producto_id) );    
   }
 
   verDetalle(pedido: any) {

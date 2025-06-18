@@ -19,9 +19,13 @@ export class NotificacionesPage implements OnInit {
     this.usuario = await this.authService.obtenerPerfil();
 
     if (this.usuario) {
-      this.notificaciones = await this.authService.obtenerNotificaciones();      
+      this.notificaciones = await this.authService.obtenerNotificaciones();
+      this.notificaciones.forEach((n) => {
+      if (n.imagen && typeof n.imagen === 'string') {
+        n.imagen = [n.imagen];
+      }
+      });
     }
-
   }
 
   async abrirNotificacion(id: string) {

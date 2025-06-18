@@ -27,7 +27,6 @@
           </div>
           <div class="venta-estado-envio" [ngClass]="detalle.estado_envio">
             Estado envío: {{ detalle.estado_envio | titlecase }}
-            <span *ngIf="detalle.numero_seguimiento">| Seguimiento: {{ detalle.numero_seguimiento }}</span>
           </div>
         </div>
       </div>
@@ -50,7 +49,7 @@
         </div>
         <div class="venta-total">
           <span class="label">Ganancia total: </span>
-          <span class="venta-monto">${{ calcularTotalVenta(venta) | number }}</span>
+          <span class="venta-monto">${{ calcularTotal(venta) | number }}</span>
         </div>
       </div>
     </div>
@@ -64,7 +63,6 @@
     </div>
   </ng-template>
 
-  <!-- Modal de detalles -->
   <ion-modal [isOpen]="detalleSeleccionado !== null" (didDismiss)="detalleSeleccionado = null" class="venta-detalle-modal-ml">
     <ng-template>
       <div class="venta-detalle-modal" *ngIf="detalleSeleccionado">
@@ -92,12 +90,8 @@
             </span>
           </div>
           <div class="venta-detalle-row">
-            <span class="venta-detalle-label">N° Seguimiento:</span>
-            <span class="venta-detalle-value">{{ detalleSeleccionado.numero_seguimiento ? detalleSeleccionado.numero_seguimiento : 'No establecido aún' }}</span>
-          </div>
-          <div class="venta-detalle-row">
             <span class="venta-detalle-label">Fecha recepción:</span>
-            <span class="venta-detalle-value">{{ detalleSeleccionado.fecha_recepcion ? detalleSeleccionado.fecha_recepcion : 'No recibido aún' }}</span>
+            <span class="venta-detalle-value">{{ detalleSeleccionado.fecha_recepcion ? (detalleSeleccionado.fecha_recepcion.toDate() | date: 'dd MMM yyyy') : 'No recibido aún' }}</span>
           </div>
           <div class="venta-detalle-row">
             <span class="venta-detalle-label">Ganancia:</span>
@@ -105,7 +99,10 @@
           </div>
         </div>
         <ion-button expand="block" color="medium" (click)="detalleSeleccionado = null" class="venta-detalle-modal-btn">Cerrar</ion-button>
-        <ion-button expand="block" color="tertiary" (click)="verProducto(detalleSeleccionado.producto_id); detalleSeleccionado = null" class="venta-detalle-modal-btn">Ver Producto</ion-button>
+        <ion-button expand="block" color="tertiary" (click)="verProducto(detalleSeleccionado.producto_id); detalleSeleccionado = null" 
+          class="venta-detalle-modal-btn">Ver Producto</ion-button>
+        <ion-button *ngIf="detalleSeleccionado.estado_envio.toLowerCase() === 'pendiente'" expand="block" color="danger" 
+          (click)="cancelarVenta(detalleSeleccionado)" class="detalle-modal-btn">Cancelar Venta</ion-button>
       </div>
     </ng-template>
   </ion-modal>

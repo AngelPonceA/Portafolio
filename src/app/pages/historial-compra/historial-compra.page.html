@@ -32,7 +32,6 @@
           </div>
           <div class="estado-envio" [ngClass]="detalle.estado_envio">
             Estado envío: {{ detalle.estado_envio | titlecase }}
-            <span *ngIf="detalle.numero_seguimiento">| Seguimiento: {{ detalle.numero_seguimiento }}</span>
           </div>
         </div>
       </div>
@@ -61,7 +60,6 @@
     </div>
   </ng-template>
 
-  <!-- Modal de detalles -->
   <ion-modal [isOpen]="detalleSeleccionado !== null" (didDismiss)="detalleSeleccionado = null" class="detalle-modal-ml">
     <ng-template>
       <div class="detalle-modal" *ngIf="detalleSeleccionado">
@@ -89,12 +87,8 @@
             </span>
           </div>
           <div class="detalle-row">
-            <span class="detalle-label">N° Seguimiento:</span>
-            <span class="detalle-value">{{ detalleSeleccionado.numero_seguimiento ? detalleSeleccionado.numero_seguimiento : 'No establecido aún' }}</span>
-          </div>
-          <div class="detalle-row">
             <span class="detalle-label">Fecha recepción:</span>
-            <span class="detalle-value">{{ detalleSeleccionado.fecha_recepcion ? detalleSeleccionado.fecha_recepcion : 'No recibido aún' }}</span>
+            <span class="detalle-value">{{ detalleSeleccionado.fecha_recepcion ? (detalleSeleccionado.fecha_recepcion.toDate() | date: 'dd MMM yyyy') : 'No recibido aún' }}</span>
           </div>
           <div class="detalle-row">
             <span class="detalle-label">Total:</span>
@@ -102,8 +96,20 @@
           </div>
         </div>
         <ion-button expand="block" color="medium" (click)="detalleSeleccionado = null" class="detalle-modal-btn">Cerrar</ion-button>
-        <ion-button expand="block" color="tertiary" (click)="verProducto(detalleSeleccionado.producto_id)" (click)="detalleSeleccionado = null" class="detalle-modal-btn">Ver Producto</ion-button>
-
+        <ion-button expand="block" color="tertiary" (click)="verProducto(detalleSeleccionado.producto_id)" (click)="detalleSeleccionado = null" 
+          class="detalle-modal-btn">Ver Producto</ion-button>
+        <ion-button *ngIf="detalleSeleccionado.estado_envio.toLowerCase() === 'pendiente'" expand="block" color="danger" (click)="cancelarCompra(detalleSeleccionado)" 
+          class="detalle-modal-btn">Cancelar Pedido</ion-button>
+        <ion-button *ngIf="CalcularDiasDiferencia() <= 10 && detalleSeleccionado.estado_envio.toLowerCase() == 'recibido'" 
+          (click)="solicitarDevolucion(detalleSeleccionado, 'arrepentimiento')" 
+          expand="block" color="danger" class="detalle-modal-btn">
+          Dev. por arrepentimiento
+        </ion-button>
+        <ion-button *ngIf="CalcularDiasDiferencia() <= 180 && detalleSeleccionado.estado_envio.toLowerCase() == 'recibido'" 
+          (click)="solicitarDevolucion(detalleSeleccionado, 'defectuoso')" 
+          expand="block" color="danger" class="detalle-modal-btn">
+          Dev. por fallo
+        </ion-button>
       </div>
     </ng-template>
   </ion-modal>
