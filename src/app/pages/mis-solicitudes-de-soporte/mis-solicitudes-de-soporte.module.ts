@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { MisSolucitudesDeSoportePageRoutingModule } from './mis-solucitudes-de-soporte-routing.module';
+import { MisSolicitudesDeSoportePageRoutingModule } from './mis-solicitudes-de-soporte-routing.module';
 
-import { MisSolucitudesDeSoportePage } from './mis-solucitudes-de-soporte.page';
+import { MisSolicitudesDeSoportePage } from './mis-solicitudes-de-soporte.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    MisSolucitudesDeSoportePageRoutingModule
+    MisSolicitudesDeSoportePageRoutingModule
   ],
-  declarations: [MisSolucitudesDeSoportePage]
+  declarations: [MisSolicitudesDeSoportePage]
 })
 export class MisSolucitudesDeSoportePageModule {}

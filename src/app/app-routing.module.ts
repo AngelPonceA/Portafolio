@@ -104,8 +104,8 @@ const routes: Routes = [
     loadChildren: () => import('./pages/admin/solicitudes-de-soporte/solicitudes-de-soporte.module').then( m => m.SolicitudesDeSoportePageModule)
   },
   {
-    path: 'mis-solucitudes-de-soporte',
-    loadChildren: () => import('./pages/mis-solucitudes-de-soporte/mis-solucitudes-de-soporte.module').then( m => m.MisSolucitudesDeSoportePageModule)
+    path: 'mis-solicitudes-de-soporte',
+    loadChildren: () => import('./pages/mis-solicitudes-de-soporte/mis-solicitudes-de-soporte.module').then( m => m.MisSolucitudesDeSoportePageModule)
   },
 
 

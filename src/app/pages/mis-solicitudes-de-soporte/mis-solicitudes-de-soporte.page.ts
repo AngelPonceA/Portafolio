@@ -2,15 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { SoporteService } from 'src/app/services/soporte/soporte.service';
-import { solicitudSoporte } from '../../../app/models/soporte/soporte.models';
+import { solicitudSoporte } from '../../models/soporte/soporte.models';
 
 @Component({
-  selector: 'app-mis-solucitudes-de-soporte',
-  templateUrl: './mis-solucitudes-de-soporte.page.html',
-  styleUrls: ['./mis-solucitudes-de-soporte.page.scss'],
+  selector: 'app-mis-solicitudes-de-soporte',
+  templateUrl: './mis-solicitudes-de-soporte.page.html',
+  styleUrls: ['./mis-solicitudes-de-soporte.page.scss'],
   standalone: false,
 })
-export class MisSolucitudesDeSoportePage implements OnInit {
+export class MisSolicitudesDeSoportePage implements OnInit {
 
   solicitudes: solicitudSoporte[] = [];
 
