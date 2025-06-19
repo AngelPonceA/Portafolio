@@ -35,13 +35,14 @@ export class AppComponent implements OnInit {
     this.triggersService.escucharCambiosStock();
 
     this.triggersService.escucharCreacionPedido();
-     this.authService.obtenerSesion().then(sesion => {
-    if (sesion && sesion.id !== 0) {
-      this.MostrarBotonSoporte = true;
-    } else {
-      this.MostrarBotonSoporte = false;
-    }
-  });
+
+    this.authService.obtenerSesion().then(sesion => {
+      if (sesion && sesion.id !== 0) {
+        this.MostrarBotonSoporte = true;
+      } else {
+        this.MostrarBotonSoporte = false;
+      }
+    });
 
   }
 }

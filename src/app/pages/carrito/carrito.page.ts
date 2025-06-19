@@ -12,6 +12,7 @@ import { ModalController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
 import { Region } from 'src/app/models/region.models';
+import { IonicService } from 'src/app/services/ionic/ionic.service';
 
 @Component({
   selector: 'app-carrito',
@@ -40,20 +41,41 @@ export class CarritoPage implements OnInit {
                 private route: ActivatedRoute,
                 private http: HttpClient,
                 private modalCtrl: ModalController,
-                private ubicacionService: UbicacionService
+                private ubicacionService: UbicacionService,
+                private ionicService: IonicService
               ) {}
   
   async ngOnInit() {
-    await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
-    await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
+    const carrito = await this.cartService.obtenerCarrito();
+
+    for (const item of carrito) {
+      const producto = await this.crudService.obtenerDetalleProducto(item.producto_id);
+
+      if (producto) {
+        const cantidadDeseada = item.cantidad;
+        const stockDisponible = producto.stock;
+
+        const cantidadFinal = Math.min(cantidadDeseada, stockDisponible);
+
+        if (cantidadFinal < cantidadDeseada) {
+          console.warn(`Cantidad ajustada: querías ${cantidadDeseada}, pero solo hay ${stockDisponible}.`);
+          this.ionicService.mostrarAlerta('Stock ajustado', `Solo quedan ${stockDisponible} unidades de "${producto.producto_titulo}"`);
+        }
+
+        this.productos.push({
+          ...producto,
+          cantidad: cantidadFinal,
+        });
+      }
+    }
+
     await this.calculateTotalAmount();
     await this.calcularCostosEnvio();
     this.regiones = this.ubicacionService.getRegiones();
 
-    //NgOnIniT necesarios webpay
     const token = this.route.snapshot.queryParamMap.get('token_ws');
     if (token) {
-    this.confirmarTransaccion(token);
+      this.confirmarTransaccion(token);
     }
   }
 
@@ -122,7 +144,7 @@ export class CarritoPage implements OnInit {
       await this.calcularCostosEnvio();
 
     } else {
-      console.error('No se pudo obtener el producto.');
+      this.ionicService.mostrarToastAbajo(`No se pudo obtener el producto: $detalleProducto`);
     }
   }
 
@@ -236,7 +258,7 @@ export class CarritoPage implements OnInit {
       cssClass: 'modal-boleta-clase'
     });
     await modal.present();
-}
+  }
 
   limpiarCarrito() {
     this.productos = []; 

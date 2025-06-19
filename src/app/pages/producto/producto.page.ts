@@ -94,7 +94,8 @@ export class ProductoPage implements OnInit {
     return Math.floor(calificacion || 0);
   }
 
-  agregarAlCarrito(producto_id: string) {
+  agregarAlCarrito(producto: any) {
+    this.cartService.agregarProductoAlCarrito(producto.producto_id, this.producto.cantidad)
   }
 
   async eliminarFavorito(producto_id: string) {
