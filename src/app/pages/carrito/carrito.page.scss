@@ -12,6 +12,10 @@ ion-content {
   --color: white;
 }
 
+.back-button {
+  --color: #5d3e2c;
+  font-size: 1.2rem;
+}
 
 /* carrito.page.scss */
 .ubicacion-selector {
@@ -38,10 +42,24 @@ ion-content {
     }
   }
   
-  ion-select {
-    width: 100%;
-    max-width: 100%;
-  }
+ ion-select {
+    color: #333;
+    --color: #333;
+    --placeholder-color: #999;
+    --placeholder-opacity: 1;
+    --ripple-color: transparent;
+
+    &::part(text) {
+      color: #333 !important;
+    }
+
+    &::part(icon) {
+      color: #666;
+    }
+}}
+
+.action-sheet-button-inner.sc-ion-action-sheet-ios {
+  color: #5d3e2c !important;
 }
 
 .productos-grid {
@@ -276,8 +294,7 @@ ion-button:hover {
 .webpay-button.animar-overlay::after {
   left: -50%;
 }
+
 .webpay-button.animar-overlay {
   color: white;
 }
-
-

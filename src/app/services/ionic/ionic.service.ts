@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
-import { AlertController, ToastController } from '@ionic/angular';
+import { LoadingController, AlertController, ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IonicService {
 
-  constructor(private toast: ToastController, private alerta: AlertController) { }
+  private loading: HTMLIonLoadingElement | null = null;
+
+  constructor(private toast: ToastController, 
+              private alerta: AlertController,
+              private loadingController: LoadingController) { }
 
   async mostrarToastAbajo(mensaje: string) {
     const toast = await this.toast.create({
@@ -45,4 +49,23 @@ export class IonicService {
     await alert.present();
   }
 
+  async mostrarCargando(mensaje: string = 'Cargando...') {
+    if (this.loading) return;
+
+    this.loading = await this.loadingController.create({
+      message: mensaje,
+      spinner: 'crescent',
+      cssClass: 'custom-loading',
+      backdropDismiss: false,
+    });
+
+    await this.loading.present();
+  }
+
+  async ocultarCargando() {
+    if (this.loading) {
+      await this.loading.dismiss();
+      this.loading = null;
+    }
+  }
 }

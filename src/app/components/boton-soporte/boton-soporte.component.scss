@@ -12,14 +12,16 @@
 ion-fab-button {
   --background: #d1a15a;
   --color: white;
-  width: 65px;
-  height: 65px;
+  --background-activated: #694936;
+    --background-hover: #694936;
+  width: 55px;
+  height: 55px;
   border-radius: 50%;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border: 3px solid rgb(161, 57, 57);
 }
 
 ion-icon {
-  font-size: 55px;
+  font-size: 50px;
   color: white;
 }

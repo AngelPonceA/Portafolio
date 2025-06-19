@@ -58,83 +58,83 @@ export class BotonSoporteComponent implements OnInit, AfterViewInit {
     this.navCtrl.navigateForward('/soporte');
   }
 
-  // DRAG START
-  @HostListener('document:touchstart', ['$event'])
-  onTouchStart(event: TouchEvent) {
-    const touch = event.touches[0];
-    this.startDrag(touch.clientX, touch.clientY);
-  }
+  // // DRAG START
+  // @HostListener('document:touchstart', ['$event'])
+  // onTouchStart(event: TouchEvent) {
+  //   const touch = event.touches[0];
+  //   this.startDrag(touch.clientX, touch.clientY);
+  // }
 
-  @HostListener('document:mousedown', ['$event'])
-  onMouseDown(event: MouseEvent) {
-    if (event.button !== 0) return;
-    this.startDrag(event.clientX, event.clientY);
-  }
+  // @HostListener('document:mousedown', ['$event'])
+  // onMouseDown(event: MouseEvent) {
+  //   if (event.button !== 0) return;
+  //   this.startDrag(event.clientX, event.clientY);
+  // }
 
-  // DRAG MOVE
-  @HostListener('document:touchmove', ['$event'])
-  onTouchMove(event: TouchEvent) {
-    if (!this.dragging) return;
-    const touch = event.touches[0];
-    this.dragTo(touch.clientX, touch.clientY);
-  }
+  // // DRAG MOVE
+  // @HostListener('document:touchmove', ['$event'])
+  // onTouchMove(event: TouchEvent) {
+  //   if (!this.dragging) return;
+  //   const touch = event.touches[0];
+  //   this.dragTo(touch.clientX, touch.clientY);
+  // }
 
-  @HostListener('document:mousemove', ['$event'])
-  onMouseMove(event: MouseEvent) {
-    if (!this.dragging) return;
-    this.dragTo(event.clientX, event.clientY);
-  }
+  // @HostListener('document:mousemove', ['$event'])
+  // onMouseMove(event: MouseEvent) {
+  //   if (!this.dragging) return;
+  //   this.dragTo(event.clientX, event.clientY);
+  // }
 
-  // DRAG END
-  @HostListener('document:touchend')
-  @HostListener('document:mouseup')
-  onEndDrag() {
-    this.endDrag();
-  }
+  // // DRAG END
+  // @HostListener('document:touchend')
+  // @HostListener('document:mouseup')
+  // onEndDrag() {
+  //   this.endDrag();
+  // }
 
-  private startDrag(clientX: number, clientY: number) {
-    const rect = this.el.nativeElement.getBoundingClientRect();
-    this.dragging = true;
-    this.offsetX = clientX - rect.left;
-    this.offsetY = clientY - rect.top;
-    this.el.nativeElement.classList.add('dragging');
-  }
+  // private startDrag(clientX: number, clientY: number) {
+  //   const rect = this.el.nativeElement.getBoundingClientRect();
+  //   this.dragging = true;
+  //   this.offsetX = clientX - rect.left;
+  //   this.offsetY = clientY - rect.top;
+  //   this.el.nativeElement.classList.add('dragging');
+  // }
 
-  private dragTo(clientX: number, clientY: number) {
-    const el = this.el.nativeElement;
-    const buttonRect = el.getBoundingClientRect();
-    const buttonWidth = buttonRect.width;
-    const buttonHeight = buttonRect.height;
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
+  // private dragTo(clientX: number, clientY: number) {
+  //   const el = this.el.nativeElement;
+  //   const buttonRect = el.getBoundingClientRect();
+  //   const buttonWidth = buttonRect.width;
+  //   const buttonHeight = buttonRect.height;
+  //   const screenWidth = window.innerWidth;
+  //   const screenHeight = window.innerHeight;
 
-    // Leer altura real de header/footer
-    const header = document.querySelector('ion-header') as HTMLElement;
-    const footer = document.querySelector('ion-footer') as HTMLElement;
+  //   // Leer altura real de header/footer
+  //   const header = document.querySelector('ion-header') as HTMLElement;
+  //   const footer = document.querySelector('ion-footer') as HTMLElement;
 
-    const headerHeight = header?.getBoundingClientRect().height || screenHeight * 0.08;
-    const footerHeight = footer?.getBoundingClientRect().height || screenHeight * 0.08;
+  //   const headerHeight = header?.getBoundingClientRect().height || screenHeight * 0.08;
+  //   const footerHeight = footer?.getBoundingClientRect().height || screenHeight * 0.08;
 
-    const padding = 10;
+  //   const padding = 10;
 
-    let x = clientX - this.offsetX;
-    let y = clientY - this.offsetY;
+  //   let x = clientX - this.offsetX;
+  //   let y = clientY - this.offsetY;
 
-    // Límites desde todos los bordes
-    const minX = padding;
-    const maxX = screenWidth - buttonWidth - padding * 8;
-    const minY = headerHeight + padding;
-    const maxY = screenHeight - footerHeight - buttonHeight - padding * 8;
+  //   // Límites desde todos los bordes
+  //   const minX = padding;
+  //   const maxX = screenWidth - buttonWidth - padding * 8;
+  //   const minY = headerHeight + padding;
+  //   const maxY = screenHeight - footerHeight - buttonHeight - padding * 8;
 
-    x = Math.max(minX, Math.min(x, maxX));
-    y = Math.max(minY, Math.min(y, maxY));
+  //   x = Math.max(minX, Math.min(x, maxX));
+  //   y = Math.max(minY, Math.min(y, maxY));
 
-    this.renderer.setStyle(el, 'left', `${x}px`);
-    this.renderer.setStyle(el, 'top', `${y}px`);
-  }
+  //   this.renderer.setStyle(el, 'left', `${x}px`);
+  //   this.renderer.setStyle(el, 'top', `${y}px`);
+  // }
 
-  private endDrag() {
-    this.dragging = false;
-    this.el.nativeElement.classList.remove('dragging');
-  }
+  // private endDrag() {
+  //   this.dragging = false;
+  //   this.el.nativeElement.classList.remove('dragging');
+  // }
 }

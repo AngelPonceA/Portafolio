@@ -128,18 +128,61 @@ ion-button[color="danger"],
 }
 
 /* Paypal y membresía */
-.boton-paypal {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  border-radius: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+.webpay-button {
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #6d2077;
+  background-color: transparent;
+  color: #6d2077;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+  z-index: 1;
   width: 100%;
-  max-width: 400px;
+  max-width: 300px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &:hover::after,
+  &:focus-visible::after {
+    left: -50%;
+  }
+
+  &:hover,
+  &:focus-visible {
+    color: white;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -150%;
+    width: 200%;
+    height: 300%;
+    background: linear-gradient(45deg, #6d2077, #d00070, #00c7b1);
+    transform: rotate(25deg);
+    transition: 0.5s ease;
+    z-index: 0;
+  }
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
 }
+
+.webpay-button.animar-overlay::after {
+  left: -50%;
+}
+.webpay-button.animar-overlay {
+  color: white;
+}
+
 
 .pagar {
   width: 100%;

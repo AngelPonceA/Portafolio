@@ -12,6 +12,11 @@ ion-content {
   --color: white;
 }
 
+.back-button {
+  --color: #5d3e2c;
+  font-size: 1.2rem;
+}
+
 .usuarios-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
