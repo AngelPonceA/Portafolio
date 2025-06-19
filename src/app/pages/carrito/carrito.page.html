@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content>
-  <div class="ubicacion-selector">
+  <div *ngIf="productos && productos.length > 0" class="ubicacion-selector">
     <ion-item>
       <ion-label>Región</ion-label>
       <ion-select 
@@ -73,19 +73,8 @@
       </ion-card-content>
     </div>
   </div>
-  
-  <!-- <div class="boton-paypal" style="display: block;">
-    <div class="pagar">
-      <div class="total-desglose">
-        <div>Subtotal productos: ${{ subtotalProductos | number }} CLP</div>
-        <div>Total envíos: ${{ subtotalEnvios | number }} CLP</div>
-        <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
-      </div>
-    </div>
-    <div id="paypal-button-container"></div>
-  </div> -->
 
-  <div class="boton-webpay" style="display: block">
+  <div *ngIf="productos && productos.length > 0" class="contenedor-pago">
     <div class="pagar">
       <div class="total-desglose">
         <div>Subtotal productos: ${{ subtotalProductos | number }} CLP</div>
@@ -93,7 +82,10 @@
         <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
       </div>
     </div>
-    <button id="webpay-button-container" (click)="iniciarPagoWebpay()"></button>
+    <button class="webpay-button" (click)="iniciarPagoWebpay()">
+      <span>Pagar con WebPay</span>
+    </button>
+
   </div>
   
   <ng-template #vacio>

@@ -80,12 +80,8 @@ const routes: Routes = [
     loadChildren: () => import('./pages/boleta/boleta.module').then( m => m.BoletaPageModule)
   },
   {
-    path: 'reporte',
-    loadChildren: () => import('./pages/soporte/reporte/reporte.module').then( m => m.ReportePageModule)
-  },
-  {
     path: 'soporte',
-    loadChildren: () => import('./pages/soporte/soporte/soporte.module').then( m => m.SoportePageModule)
+    loadChildren: () => import('./pages/soporte/soporte.module').then( m => m.SoportePageModule)
   },
   {
     path: 'admin-menu',
@@ -94,10 +90,6 @@ const routes: Routes = [
   {
     path: 'usuarios',
     loadChildren: () => import('./pages/admin/usuarios/usuarios.module').then( m => m.UsuariosPageModule)
-  },
-  {
-    path: 'reportes-de-usuarios',
-    loadChildren: () => import('./pages/admin/reportes-de-usuarios/reportes-de-usuarios.module').then( m => m.ReportesDeUsuariosPageModule)
   },
   {
     path: 'solicitudes-de-soporte',

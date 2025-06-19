@@ -12,7 +12,6 @@ import { ModalController } from '@ionic/angular';
 import { ActivatedRoute } from '@angular/router';
 import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
 import { Region } from 'src/app/models/region.models';
-// declare const paypal: any; 
 
 @Component({
   selector: 'app-carrito',
@@ -50,7 +49,6 @@ export class CarritoPage implements OnInit {
     await this.calculateTotalAmount();
     await this.calcularCostosEnvio();
     this.regiones = this.ubicacionService.getRegiones();
-    // this.iniciarBotonPaypal(); 
 
     //NgOnIniT necesarios webpay
     const token = this.route.snapshot.queryParamMap.get('token_ws');
@@ -58,6 +56,18 @@ export class CarritoPage implements OnInit {
     this.confirmarTransaccion(token);
     }
   }
+
+  // Para animar el botón de Webpay al hacer touch (mobile)
+  ngAfterViewInit() {
+    const boton = document.querySelector('.webpay-button');
+    if (boton) {
+      boton.addEventListener('touchstart', () => {
+        boton.classList.add('animar-overlay');
+        setTimeout(() => boton.classList.remove('animar-overlay'), 500);
+      });
+    }
+  }
+
 
   onRegionChange(event: any) {
     const regionId = event.detail.value;
@@ -173,37 +183,6 @@ export class CarritoPage implements OnInit {
   obtenerTotalCarrito() {
     return this.totalAmount;
   }
-
-  // iniciarBotonPaypal() {
-  //   paypal.Buttons({
-  //     createOrder: (data: any, actions: any) => {
-  //       return actions.order.create({
-  //         purchase_units: [
-  //           { amount: {
-  //               value: (this.totalAmount / 1000).toFixed(2),
-  //               currency_code: 'USD',
-  //             },
-  //           },
-  //         ],
-  //       });
-  //     },
-  //     onApprove: (data: any, actions: any) => {
-  //       return actions.order.capture().then((details: any) => {
-  //         this.cartService.registrarCompra(this.productos, details);
-  //         console.log('Pago exitoso:', details);
-  //         this.limpiarCarrito(); 
-  //         const paypalBtn = document.getElementById('paypal-button-container');
-  //         if (paypalBtn) {
-  //           paypalBtn.innerHTML = '';
-  //         }
-  //       });
-  //     },
-  //     onError: (err: any) => {
-  //       console.log('Error durante el pago:', err);
-  //       console.log('Ocurrió un error al procesar el pago. Por favor intenta nuevamente.');
-  //     },
-  //   }).render('#paypal-button-container');
-  // }
 
   iniciarPagoWebpay() {
     const data = {

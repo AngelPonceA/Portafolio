@@ -18,10 +18,6 @@ export class AdminMenuPage implements OnInit {
     this.router.navigate(['/usuarios']);
   }
 
-  goToReportes() {
-    this.router.navigate(['/reportes-de-usuarios']);
-  }
-
   goToSolicitudesDeSoporte() {
     this.router.navigate(['/solicitudes-de-soporte']);
   }
