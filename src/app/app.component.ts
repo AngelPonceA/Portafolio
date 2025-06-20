@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TriggersService } from './services/triggers/triggers.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from './services/auth/auth.service';
 
 @Component({
@@ -11,23 +11,33 @@ import { AuthService } from './services/auth/auth.service';
 })
 export class AppComponent implements OnInit {
   MostrarBotonSoporte = false;
+
+  // Cambiar a false cuando se lleve a producción
+  sesionValida = true;
+
   constructor(
-    private triggersService: TriggersService,
-    private router: Router,
-    private authService: AuthService
-  ) {
-    this.router.events.subscribe(() => {
+  private triggersService: TriggersService,
+  private router: Router,
+  private authService: AuthService
+) {
+  this.router.events.subscribe(event => {
+    if (event instanceof NavigationEnd) {
+      // Al agregarse aquí la ruta se asegura que no se muestre este botón de manera permanente.
       const excludedRoutes = [
         '/ingreso',
-        '/registro'
+        '/registro',
+        '/home',
+        '/soporte',
       ];
-    const currentUrl = this.router.url;
-    
-    this.MostrarBotonSoporte = !excludedRoutes.includes(currentUrl);
-    });
-  }
+      const currentUrl = event.urlAfterRedirects;
+      const rutaExcluida = excludedRoutes.includes(currentUrl);
 
-  ngOnInit() {
+      this.MostrarBotonSoporte = this.sesionValida && !rutaExcluida;
+    }
+  });
+}
+
+  async ngOnInit() {
   //   this.triggersService.escucharCambiosPedido();
 
   //   this.triggersService.escucharCambiosDetallePedido();
@@ -38,13 +48,19 @@ export class AppComponent implements OnInit {
 
   //   this.authService.comprobarSesion();
 
-    this.authService.obtenerSesion().then(sesion => {
-      if (sesion && sesion.id !== 0) {
-        this.MostrarBotonSoporte = true;
-      } else {
-        this.MostrarBotonSoporte = false;
-      }
-    });
-    
+    try {
+      // const sesion = await this.authService.obtenerSesion();
+      // this.sesionValida = !!sesion && sesion.id !== 0;
+      
+      this.sesionValida = true // <=== Eliminar cuando se lleve a producción
+    } catch (error) {
+      this.sesionValida = false;
+    }
+
+    const rutaActual = this.router.url;
+    const rutasExcluidas = ['/ingreso', '/registro', '/soporte', '/home'];
+    const estaExcluida = rutasExcluidas.includes(rutaActual);
+
+    this.MostrarBotonSoporte = this.sesionValida && !estaExcluida;
   }
 }
