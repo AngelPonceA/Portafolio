@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Region } from '../../models/region.models'; 
-
+import { Firestore, query, where, getDocs } from '@angular/fire/firestore';
+import { collection as fsCollection } from 'firebase/firestore';
 @Injectable({
   providedIn: 'root'
 })
@@ -458,7 +459,7 @@ export class UbicacionService {
   private regionSeleccionada: Region | null = null;
   private comunaSeleccionada: string | null = null;
 
-  constructor() { }
+  constructor(private firestore: Firestore) { }
 
     getRegiones(): Region[] {
     return this.regiones;
@@ -517,4 +518,28 @@ export class UbicacionService {
     }
     return null;
   }
+
+async obtenerDireccionesPorUsuario(usuarioId: string): Promise<any[]> {
+  const ref = fsCollection(this.firestore, 'direcciones');
+  const q = query(ref, where('usuario_id', '==', usuarioId));
+  const querySnapshot = await getDocs(q);
+
+  const direcciones = querySnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      apellidos: data['apellidos'] || '',
+      calle: data['calle'] || '',
+      comuna: data['comuna'] || '',
+      departamento: data['departamento'] || '',
+      descripcion: data['descripcion'] || '',
+      nombres: data['nombres'] || '',
+      numero: data['numero']?.toString() || '',
+      region: data['region'] || '',
+      telefono: data['telefono'] || '',
+      usuario_id: data['usuario_id'] || ''
+    };
+  });
+
+  return direcciones;
+}
 }

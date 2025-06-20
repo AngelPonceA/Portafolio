@@ -821,7 +821,6 @@ async eliminarProducto(producto_id: string) {
     const nuevaDireccion = {
       ...direccion,
       usuario_id: uid,
-      id: nuevaDireccionRef.id,
       fecha_creacion: new Date().toISOString(),
     };
     await setDoc(nuevaDireccionRef, nuevaDireccion);

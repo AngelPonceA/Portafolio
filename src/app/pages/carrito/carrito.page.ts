@@ -33,6 +33,10 @@ export class CarritoPage implements OnInit {
   regionSeleccionada: number | null = null;
   comunaSeleccionada: string | null = null;
   
+  // Variables para direcciones
+  direccionPrincipal: any = null;
+  direccionesUsuario: any[] = [];
+
   constructor(private router: Router, 
                 private crudService: CrudService, 
                 private authService: AuthService, 
@@ -46,7 +50,13 @@ export class CarritoPage implements OnInit {
               ) {}
   
   async ngOnInit() {
+    await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
+    await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
+
     const carrito = await this.cartService.obtenerCarrito();
+    await this.obtenerDireccionPrincipal();
+    console.log('Dirección principal:', this.direccionPrincipal);
+
 
     for (const item of carrito) {
       const producto = await this.crudService.obtenerDetalleProducto(item.producto_id);
@@ -269,20 +279,30 @@ export class CarritoPage implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  //PENDIENTE DE IMPLEMENTAR
-  async mostrarModalNuevaDireccion() {
+  async abrirModalDirecciones() {
     const modal = await this.modalCtrl.create({
       component: ModalFormNuevaDireccionComponent,
-      breakpoints: [0, 0.8, 1],
-      initialBreakpoint: 0.8
+      breakpoints: [0, 0.85, 1],
+      initialBreakpoint: 1
     });
 
     await modal.present();
 
     const { data, role } = await modal.onWillDismiss();
-    
-    if (role === 'confirm') {
-      console.log('Nueva dirección guardada:', data);
+
+    if (role === 'confirm' && data) {
+      this.direccionPrincipal = data;
+      this.direccionesUsuario.unshift(data); // opcional, para que quede al principio
+    }
+  }
+
+  //Método para obtener la dirección principal del usuario
+    async obtenerDireccionPrincipal() {
+    const uid = await this.authService.getUserId();
+    const direcciones = await this.ubicacionService.obtenerDireccionesPorUsuario(uid);
+    this.direccionesUsuario = direcciones;
+    if (direcciones.length > 0) {
+      this.direccionPrincipal = direcciones[0];
     }
   }
 

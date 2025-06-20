@@ -17,6 +17,8 @@ export class ModalFormNuevaDireccionComponent implements OnInit {
   regiones: any[] = [];
   comunas: string[] = [];
   isLoading = false;
+  direcciones: any[] = [];
+  mostrarFormulario = false;
 
   constructor(
     private modalCtrl: ModalController,
@@ -40,6 +42,12 @@ export class ModalFormNuevaDireccionComponent implements OnInit {
 
   async ngOnInit() {
     this.regiones = this.ubicacionService.getRegiones();
+    const uid = await this.authService.getUserId();
+    this.direcciones = await this.ubicacionService.obtenerDireccionesPorUsuario(uid);
+  }
+
+  seleccionarDireccion(dir: any) {
+    this.modalCtrl.dismiss(dir, 'confirm');
   }
 
   onRegionChange(event: any) {
@@ -67,7 +75,8 @@ export class ModalFormNuevaDireccionComponent implements OnInit {
         nombres: this.direccionForm.value.nombres,
         apellidos: this.direccionForm.value.apellidos,
         telefono: this.direccionForm.value.telefono,
-        calle_numero: `${this.direccionForm.value.calle} ${this.direccionForm.value.numero}`.trim(),
+        calle: this.direccionForm.value.calle,
+        numero: this.direccionForm.value.numero,
         departamento: this.direccionForm.value.departamento,
         descripcion: this.direccionForm.value.descripcion,
         region: this.regiones.find(r => r.id === this.direccionForm.value.region)?.nombre,
@@ -77,6 +86,9 @@ export class ModalFormNuevaDireccionComponent implements OnInit {
       };
 
       await this.crudService.guardarDireccion(nuevaDireccion);
+      this.mostrarFormulario = false;
+      this.direccionForm.reset();
+      this.cargarDirecciones();     
       await this.modalCtrl.dismiss(nuevaDireccion, 'confirm');
     } catch (error) {
       console.error('Error al guardar dirección:', error);
@@ -97,5 +109,10 @@ export class ModalFormNuevaDireccionComponent implements OnInit {
         this.markFormGroupTouched(control);
       }
     });
+  }
+
+  private async cargarDirecciones() {
+    const uid = await this.authService.getUserId();
+    this.direcciones = await this.ubicacionService.obtenerDireccionesPorUsuario(uid);
   }
 }

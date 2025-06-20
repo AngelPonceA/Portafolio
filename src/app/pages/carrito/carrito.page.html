@@ -10,34 +10,26 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="productos && productos.length > 0" class="ubicacion-selector">
-    <ion-item>
-      <ion-label>Región</ion-label>
-      <ion-select 
-        [(ngModel)]="regionSeleccionada" 
-        (ionChange)="onRegionChange($event)"
-        interface="action-sheet"
+  <div *ngIf="direccionPrincipal" class="direccion-principal">
+    <ion-item lines="none">
+      <ion-label>
+        <h3>Envío a:</h3>
+        <p>
+          {{ direccionPrincipal.calle }}, {{ direccionPrincipal.numero }}
+          , {{ direccionPrincipal.comuna }} , {{ direccionPrincipal.region }}
+        </p>
+      </ion-label>
+      <ion-button
+        size="small"
+        fill="clear"
+        class="cafe-cacao-text"
+        (click)="abrirModalDirecciones()"
       >
-        <ion-select-option *ngFor="let region of regiones" [value]="region.id">
-          {{ region.nombre }}
-        </ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Comuna</ion-label>
-      <ion-select 
-        [(ngModel)]="comunaSeleccionada" 
-        (ionChange)="onComunaChange($event)"
-        [disabled]="!regionSeleccionada"
-        interface="action-sheet"
-      >
-        <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">
-          {{ comuna }}
-        </ion-select-option>
-      </ion-select>
+        Elegir otra dirección
+      </ion-button>
     </ion-item>
   </div>
+
 
   <div *ngIf="productos && productos.length > 0 && productos != undefined; else vacio" class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productos">
