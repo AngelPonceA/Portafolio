@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content>
-  <div *ngIf="direccionPrincipal" class="direccion-principal">
+  <div *ngIf="direccionPrincipal && usuario && usuario.rol != 'invitado'" class="direccion-principal">
     <ion-item lines="none">
       <ion-label>
         <h3>Envío a:</h3>
@@ -19,17 +19,9 @@
           , {{ direccionPrincipal.comuna }} , {{ direccionPrincipal.region }}
         </p>
       </ion-label>
-      <ion-button
-        size="small"
-        fill="clear"
-        class="cafe-cacao-text"
-        (click)="abrirModalDirecciones()"
-      >
-        Elegir otra dirección
-      </ion-button>
+      <ion-button size="small" fill="clear" class="cafe-cacao-text" (click)="abrirModalDirecciones()">Elegir otra dirección</ion-button>
     </ion-item>
   </div>
-
 
   <div *ngIf="productos && productos.length > 0 && productos != undefined; else vacio" class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productos">
@@ -72,9 +64,11 @@
         <div>Subtotal productos: ${{ subtotalProductos | number }} CLP</div>
         <div>Total envíos: ${{ subtotalEnvios | number }} CLP</div>
         <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
+        <div *ngIf="!usuario || usuario.rol == 'invitado'" class="total-final">Inicia sesión para poder realizar la compra</div>
       </div>
     </div>
-    <button class="webpay-button" (click)="iniciarPagoWebpay()">
+
+    <button *ngIf="usuario && usuario.rol != 'invitado'" class="webpay-button" (click)="iniciarPagoWebpay()">
       <span>Pagar con WebPay</span>
     </button>
 

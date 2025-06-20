@@ -17,7 +17,7 @@
         <div class="info-item">
           <label class="info-label">Nombre de Usuario</label>
           <div class="info-card">
-            <ion-icon name="person-circle-outline" class="info-icon"></ion-icon> <!-- más distintivo para perfil -->
+            <ion-icon name="person-circle-outline" class="info-icon"></ion-icon>
             <p class="info-text">{{ usuario.nombre }}</p>
           </div>
         </div>
@@ -25,17 +25,17 @@
 
       <div class="acciones">
         <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/cambio-clave']">
-          <ion-icon name="lock-closed-outline" slot="start"></ion-icon> <!-- icono de candado más común -->
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
           Cambiar Contraseña
         </ion-button>
 
         <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/cambio-nombre-usuario']">
-          <ion-icon name="pencil-outline" slot="start"></ion-icon> <!-- lápiz más usado para editar -->
+          <ion-icon name="pencil-outline" slot="start"></ion-icon> 
           Cambiar Nombre de Usuario
         </ion-button>
 
         <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/historial-compra']">
-          <ion-icon name="receipt-outline" slot="start"></ion-icon> <!-- icono de recibo para historial de compras -->
+          <ion-icon name="receipt-outline" slot="start"></ion-icon>
           Historial de Compras
         </ion-button>
 
@@ -45,12 +45,12 @@
         </ion-button>
 
         <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/usuario-vendedor']">
-          <ion-icon name="storefront-outline" slot="start"></ion-icon> <!-- icono tienda para convertirse en vendedor -->
+          <ion-icon name="storefront-outline" slot="start"></ion-icon> 
           Transformarte en vendedor
         </ion-button>
 
         <ion-button expand="block" class="accion-btn cerrar-sesion-btn" fill="solid" color="danger" (click)="cerrarSesion()">
-          <ion-icon name="log-out-outline" slot="start"></ion-icon> <!-- versión outline para mantener consistencia -->
+          <ion-icon name="log-out-outline" slot="start"></ion-icon>
           Cerrar Sesión
         </ion-button>
       </div>
@@ -80,7 +80,7 @@
           </ion-button>
 
           <ion-button expand="block" fill="outline" routerLink="/historial-ventas">
-            <ion-icon name="bag-check-outline" slot="start"></ion-icon> <!-- icono bolsa para ventas -->
+            <ion-icon name="bag-check-outline" slot="start"></ion-icon>
             Historial de Ventas
           </ion-button>
 
@@ -95,17 +95,20 @@
           </ion-button>
 
           <ion-button *ngIf="usuario.membresia" expand="block" fill="outline" routerLink="/prediccion-ventas">
-            <ion-icon name="trending-up-outline" slot="start"></ion-icon> <!-- gráfico tendencia -->
-            Ver prediccion de ventas
+            <ion-icon name="trending-up-outline" slot="start"></ion-icon>
+            Ver predicción de ventas
           </ion-button>
 
-          <ion-button *ngIf="!usuario.membresia" expand="block" fill="outline" (click)="estadoBotonWebpay()">
+          <ion-button *ngIf="!usuario.membresia" expand="block" fill="outline" (click)="AlertaMembresia()">
             <ion-icon name="trending-up-outline" slot="start"></ion-icon>
-            Ver prediccion de ventas
+            Ver predicción de ventas
           </ion-button>
-          
-          <!-- Mostrar botón de WebPay solo si se activa -->
-          <div *ngIf="mostrarBotonWebpay" class="boton-paypal">
+
+          <ion-button *ngIf="!usuario.membresia && !mostrarBotonWebpay" expand="block" color="tertiary" (click)="estadoBotonWebpay()">
+            Obtener membresía
+          </ion-button>
+
+          <div *ngIf="!usuario.membresia && mostrarBotonWebpay" class="boton-paypal">
             <div class="pagar">
               <div class="total-desglose">
                 <div class="total-final">Miembro 1 año ${{ costoMembresia | number }} CLP</div>
@@ -115,11 +118,6 @@
               </button>
             </div>
           </div>
-
-          <!-- Botón inicial para activar la vista de pago -->
-          <ion-button *ngIf="!mostrarBotonWebpay" expand="block" color="tertiary" (click)="estadoBotonWebpay()">
-            Obtener membresía
-          </ion-button>
           
           <ion-button expand="block" color="danger" (click)="cerrarSesion()">
             <ion-icon name="log-out-outline" slot="start"></ion-icon>

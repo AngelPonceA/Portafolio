@@ -28,13 +28,15 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.triggersService.escucharCambiosPedido();
+  //   this.triggersService.escucharCambiosPedido();
 
-    this.triggersService.escucharCambiosDetallePedido();
+  //   this.triggersService.escucharCambiosDetallePedido();
 
-    this.triggersService.escucharCambiosStock();
+  //   this.triggersService.escucharCambiosStock();
 
-    this.triggersService.escucharCreacionPedido();
+  //   this.triggersService.escucharCreacionPedido();
+
+  //   this.authService.comprobarSesion();
 
     this.authService.obtenerSesion().then(sesion => {
       if (sesion && sesion.id !== 0) {
@@ -43,6 +45,6 @@ export class AppComponent implements OnInit {
         this.MostrarBotonSoporte = false;
       }
     });
-
+    
   }
 }

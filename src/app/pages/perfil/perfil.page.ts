@@ -17,7 +17,9 @@ export class PerfilPage implements OnInit {
   usuario?: any;
   costoMembresia: number = 50000;
   mostrarBotonWebpay: boolean = false;
-  constructor(private router: Router, private authService: AuthService, private ionicService: IonicService, private webpayService: WebpayService, private route: ActivatedRoute) { }
+
+  constructor(private router: Router, private authService: AuthService, private ionicService: IonicService, 
+    private webpayService: WebpayService, private route: ActivatedRoute) { }
 
   async ngOnInit() {
     const token = this.route.snapshot.queryParamMap.get('token_ws');
@@ -30,7 +32,6 @@ export class PerfilPage implements OnInit {
     });
   }
 
-  //Animación del botón de Webpay al hacer touch (mobile)
   ngAfterViewInit() {
     const boton = document.querySelector('.webpay-button');
     if (boton) {
@@ -43,6 +44,9 @@ export class PerfilPage implements OnInit {
 
   estadoBotonWebpay() {
     this.mostrarBotonWebpay = true;
+  }
+
+  AlertaMembresia(){
     this.ionicService.mostrarAlerta(
       '¡Atención!',
       'Para ver las predicciones de venta debes pagar una membresía de $50.000 CLP, válida por un año.'
@@ -89,24 +93,25 @@ export class PerfilPage implements OnInit {
   }
 
   confirmarTransaccion(token: string) {
-  this.ionicService.mostrarCargando('Confirmando membresía...');
+    this.ionicService.mostrarCargando('Confirmando membresía...');
 
-  this.webpayService.confirmarTransaccion(token).subscribe({
-    next: async (respuesta: any) => {
-      await this.authService.actualizarMembresia(true);
-      this.ionicService.ocultarCargando();
-      this.ionicService.mostrarAlerta('¡Membresía activa!', 'Ya puedes ver tus predicciones de venta 🧠');
-      this.mostrarBotonWebpay = false;
-    },
-    error: (err) => {
-      this.ionicService.ocultarCargando();
-      this.ionicService.mostrarAlerta('Error al confirmar', 'La transacción no se pudo validar.');
-      console.error('Error al confirmar transacción:', err);
-    }
-  });
-}
+    this.webpayService.confirmarTransaccion(token).subscribe({
+      next: async (respuesta: any) => {
+        await this.authService.actualizarMembresia(true);
+        this.ionicService.ocultarCargando();
+        this.ionicService.mostrarAlerta('¡Membresía activa!', 'Ya puedes ver tus predicciones de venta 🧠');
+        this.usuario.membresia = true;
+        this.mostrarBotonWebpay = false;
+      },
+      error: (err) => {
+        this.ionicService.ocultarCargando();
+        this.ionicService.mostrarAlerta('Error al confirmar', 'La transacción no se pudo validar.');
+       this.ionicService.mostrarAlerta('Error al confirmar transacción:', err);
+      }
+    });
+  }
 
-    irARegistro() {
+  irARegistro() {
     this.router.navigate(['/registro']);
   }
   

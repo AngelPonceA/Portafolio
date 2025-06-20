@@ -148,7 +148,7 @@ export class CarritoService {
     return comision;
   }
 
-  async registrarCompra(productos: any | any[], detallesPago: any) {
+  async registrarCompra(productos: any | any[], direccion: any, detallesPago: any) {
     try {
       const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
       const lista = (Array.isArray(productos) ? productos : [productos]).filter((p: any) => p.cantidad > 0);
@@ -158,7 +158,7 @@ export class CarritoService {
         return;
       }
 
-      const pedidoRef = await this.crearPedido(uid, lista, detallesPago);
+      const pedidoRef = await this.crearPedido(uid, direccion, lista, detallesPago);
 
       await this.insertarDetallesYActualizarStock(pedidoRef.id, lista);
 
@@ -173,15 +173,23 @@ export class CarritoService {
     }
   }
 
-  async crearPedido(uid: string, lista: any[], detallesPago: any) {
+  async crearPedido(uid: string, direccion: any, lista: any[], detallesPago: any) {
     const pedidoRef = await addDoc(collection(this.firestore, 'pedidos'), {
       usuario_id: uid,
       fecha_creacion: new Date(),
       total_pagado: this.calcularTotal(lista),
       total_comision: this.calcularComision(lista),
+      descripcion: direccion.descripcion,
+      comuna: direccion.comuna,
+      region: direccion.region,
+      departamento: direccion.departamento || null,
+      nombres: direccion.nombres,
+      numero: direccion.numero,
+      apellidos: direccion.apellidos,
+      telefono: direccion.apellidos,
+      calle: direccion.calle,
       estado_pago: detallesPago.status,
       medio_pago: detallesPago.payment_type_code
-,
     });
     console.log('Funcion crearPedido Exito');
     return pedidoRef;

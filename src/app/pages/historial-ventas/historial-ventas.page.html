@@ -31,6 +31,11 @@
         </div>
       </div>
       <div class="venta-footer">
+        <div *ngIf="venta.nombres || venta.apellidos" class="venta-direccion">
+          <span class="label">Destinatario: </span>
+          <span class="valor">{{ venta.nombres? venta.nombres : 'Sin nombre' | titlecase }} 
+            {{ venta.apellidos? venta.apellidos: 'Sin apellido' | titlecase }}</span>
+        </div>
         <div *ngIf="venta.region" class="venta-medio">
           <span class="label">Región: </span>
           <span class="valor">{{ venta.region | titlecase }}</span>
@@ -39,13 +44,25 @@
           <span class="label">Comúna: </span>
           <span class="valor">{{ venta.comuna | titlecase }}</span>
         </div>
-        <div *ngIf="venta.direccion" class="venta-direccion">
-          <span class="label">Dirección: </span>
-          <span class="valor">{{ venta.direccion | titlecase }}</span>
+        <div *ngIf="venta.departamento" class="venta-direccion">
+          <span class="label">Departamento: </span>
+          <span class="valor">{{ venta.departamento | titlecase }}</span>
         </div>
-        <div *ngIf="venta.destinatario" class="venta-direccion">
-          <span class="label">Destinatario: </span>
-          <span class="valor">{{ venta.destinatario | titlecase }}</span>
+        <div *ngIf="venta.calle" class="venta-direccion">
+          <span class="label">Calle: </span>
+          <span class="valor">{{ venta.calle | titlecase }}</span>
+        </div>
+        <div *ngIf="venta.numero" class="venta-direccion">
+          <span class="label">Numero: </span>
+          <span class="valor">{{ venta.numero | titlecase }}</span>
+        </div>
+        <div *ngIf="venta.descripcion" class="venta-direccion">
+          <span class="label">Descripcion: </span>
+          <span class="valor">{{ venta.descripcion | titlecase }}</span>
+        </div>
+        <div *ngIf="venta.telefono" class="venta-direccion">
+          <span class="label">Contacto: </span>
+          <span class="valor">{{ venta.telefono | titlecase }}</span>
         </div>
         <div class="venta-total">
           <span class="label">Ganancia total: </span>
@@ -102,7 +119,7 @@
         <ion-button expand="block" color="tertiary" (click)="verProducto(detalleSeleccionado.producto_id); detalleSeleccionado = null" 
           class="venta-detalle-modal-btn">Ver Producto</ion-button>
         <ion-button *ngIf="detalleSeleccionado.estado_envio.toLowerCase() === 'pendiente'" expand="block" color="danger" 
-          (click)="cancelarVenta(detalleSeleccionado)" class="detalle-modal-btn">Cancelar Venta</ion-button>
+          (click)="cancelarVenta(detalleSeleccionado)" class="venta-detalle-modal-btn">Cancelar Venta</ion-button>
       </div>
     </ng-template>
   </ion-modal>

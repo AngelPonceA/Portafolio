@@ -54,7 +54,7 @@ export class AuthService {
 
       if (snap.exists()) {
         const { nombre, email, rol, membresia, imagen } = snap.data() as { nombre: string; email: string; rol: string, membresia: boolean, imagen: string };
-        return { nombre, email, rol, membresia, imagen: imagen ? imagen : null };
+        return { nombre, email, rol, membresia, imagen: imagen ? imagen : null, id: uid };
       } else {
         console.error('Usuario no encontrado en Firestore.');
         return null;

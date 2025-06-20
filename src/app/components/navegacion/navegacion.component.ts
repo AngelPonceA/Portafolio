@@ -31,7 +31,11 @@ export class NavegacionComponent  implements OnInit {
     });
   }
   
-    onInputChange(event: any) {
+  enHome(): boolean {
+    return this.router.url === '/home';
+  }
+
+  onInputChange(event: any) {
     const valor = event.detail.value;
     if (valor && valor.trim().length > 1) {
       this.crudService.buscarProductosPorNombre(valor.trim()).subscribe(productos => {

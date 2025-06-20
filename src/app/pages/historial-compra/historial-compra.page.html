@@ -36,6 +36,39 @@
         </div>
       </div>
       <div class="pedido-footer">
+        <div *ngIf="pedido.nombres || pedido.apellidos" class="pedido-direccion">
+          <span class="label">Destinatario: </span>
+          <span class="valor">{{ pedido.nombres? pedido.nombres : 'Sin nombre' | titlecase }} 
+            {{ pedido.apellidos? pedido.apellidos: 'Sin apellido' | titlecase }}</span>
+        </div>
+        <div *ngIf="pedido.region" class="pedido-direccion">
+          <span class="label">Región: </span>
+          <span class="valor">{{ pedido.region | titlecase }}</span>
+        </div>
+        <div *ngIf="pedido.comuna" class="pedido-direccion">
+          <span class="label">Comúna: </span>
+          <span class="valor">{{ pedido.comuna | titlecase }}</span>
+        </div>
+        <div *ngIf="pedido.departamento" class="pedido-direccion">
+          <span class="label">Departamento: </span>
+          <span class="valor">{{ pedido.departamento | titlecase }}</span>
+        </div>
+        <div *ngIf="pedido.calle" class="pedido-direccion">
+          <span class="label">Calle: </span>
+          <span class="valor">{{ pedido.calle | titlecase }}</span>
+        </div>
+        <div *ngIf="pedido.numero" class="pedido-direccion">
+          <span class="label">Numero: </span>
+          <span class="valor">{{ pedido.numero | titlecase }}</span>
+        </div>
+        <div *ngIf="pedido.descripcion" class="pedido-direccion">
+          <span class="label">Descripcion: </span>
+          <span class="valor">{{ pedido.descripcion | titlecase }}</span>
+        </div>
+        <div *ngIf="pedido.telefono" class="pedido-direccion">
+          <span class="label">Contacto: </span>
+          <span class="valor">{{ pedido.telefono | titlecase }}</span>
+        </div>
         <div class="pedido-direccion" *ngIf="pedido.direccion">
           <span class="label">Dirección: </span>
           <span class="valor">{{ pedido.direccion | titlecase }}</span>

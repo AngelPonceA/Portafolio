@@ -27,13 +27,12 @@ export class CarritoPage implements OnInit {
   costosEnvio: { [key: string]: number } = {};
   subtotalProductos: number = 0;
   subtotalEnvios: number = 0;
-
+  usuario: any;
   regiones: Region[] = [];
   comunas: string[] = [];
   regionSeleccionada: number | null = null;
   comunaSeleccionada: string | null = null;
   
-  // Variables para direcciones
   direccionPrincipal: any = null;
   direccionesUsuario: any[] = [];
 
@@ -53,34 +52,37 @@ export class CarritoPage implements OnInit {
     await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
     await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
 
-    const carrito = await this.cartService.obtenerCarrito();
-    await this.obtenerDireccionPrincipal();
-    console.log('Dirección principal:', this.direccionPrincipal);
+    this.usuario = await this.authService.obtenerPerfil();
 
-
-    for (const item of carrito) {
-      const producto = await this.crudService.obtenerDetalleProducto(item.producto_id);
-
-      if (producto) {
-        const cantidadDeseada = item.cantidad;
-        const stockDisponible = producto.stock;
-
-        const cantidadFinal = Math.min(cantidadDeseada, stockDisponible);
-
-        if (cantidadFinal < cantidadDeseada) {
-          console.warn(`Cantidad ajustada: querías ${cantidadDeseada}, pero solo hay ${stockDisponible}.`);
-          this.ionicService.mostrarAlerta('Stock ajustado', `Solo quedan ${stockDisponible} unidades de "${producto.producto_titulo}"`);
-        }
-
-        this.productos.push({
-          ...producto,
-          cantidad: cantidadFinal,
-        });
-      }
+    if (this.usuario){
+      await this.obtenerDireccionPrincipal();
     }
 
-    await this.calculateTotalAmount();
+    // const carrito = await this.cartService.obtenerCarrito();
+
+    // for (const item of carrito) {
+    //   const producto = await this.crudService.obtenerDetalleProducto(item.producto_id);
+
+    //   if (producto) {
+    //     const cantidadDeseada = item.cantidad;
+    //     const stockDisponible = producto.stock;
+
+    //     const cantidadFinal = Math.min(cantidadDeseada, stockDisponible);
+
+    //     if (cantidadFinal < cantidadDeseada) {
+    //       this.ionicService.mostrarAlerta('Stock ajustado', `Solo quedan ${stockDisponible} unidades de "${producto.producto_titulo}", 
+    //         del cual querías comprar ${cantidadDeseada}`);
+    //     }
+
+    //     this.productos.push({
+    //       ...producto, cantidad: cantidadFinal,
+    //     });
+    //   }
+    // }
+
     await this.calcularCostosEnvio();
+    await this.calculateTotalAmount();
+
     this.regiones = this.ubicacionService.getRegiones();
 
     const token = this.route.snapshot.queryParamMap.get('token_ws');
@@ -89,7 +91,6 @@ export class CarritoPage implements OnInit {
     }
   }
 
-  // Para animar el botón de Webpay al hacer touch (mobile)
   ngAfterViewInit() {
     const boton = document.querySelector('.webpay-button');
     if (boton) {
@@ -150,11 +151,11 @@ export class CarritoPage implements OnInit {
         cantidad,
       });
   
-      await this.calculateTotalAmount();
       await this.calcularCostosEnvio();
+      await this.calculateTotalAmount();
 
     } else {
-      this.ionicService.mostrarToastAbajo(`No se pudo obtener el producto: $detalleProducto`);
+      this.ionicService.mostrarToastAbajo('No se pudo obtener el producto');
     }
   }
 
@@ -247,7 +248,9 @@ export class CarritoPage implements OnInit {
 
   confirmarTransaccion(token: string) {
     this.webpayService.confirmarTransaccion(token).subscribe((respuesta: any) => {
-      this.cartService.registrarCompra(this.productos, respuesta);
+      this.cartService.registrarCompra(this.productos, this.direccionPrincipal, respuesta);
+      console.log(respuesta);
+      
       this.limpiarCarrito();
       this.mostrarBoletaModal({
         fecha: new Date(),
@@ -259,7 +262,6 @@ export class CarritoPage implements OnInit {
       });
     });
   }
-
 
   async mostrarBoletaModal(detalleBoleta: any) {
     const modal = await this.modalCtrl.create({
@@ -292,13 +294,12 @@ export class CarritoPage implements OnInit {
 
     if (role === 'confirm' && data) {
       this.direccionPrincipal = data;
-      this.direccionesUsuario.unshift(data); // opcional, para que quede al principio
+      this.direccionesUsuario.unshift(data);
     }
   }
 
-  //Método para obtener la dirección principal del usuario
-    async obtenerDireccionPrincipal() {
-    const uid = await this.authService.getUserId();
+  async obtenerDireccionPrincipal() {
+    const uid = this.usuario.id;    
     const direcciones = await this.ubicacionService.obtenerDireccionesPorUsuario(uid);
     this.direccionesUsuario = direcciones;
     if (direcciones.length > 0) {
