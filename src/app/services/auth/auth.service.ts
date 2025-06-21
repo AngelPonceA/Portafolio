@@ -9,6 +9,8 @@ import { catchError, from, Observable, of, switchMap } from 'rxjs';
 import { sendPasswordResetEmail } from '@angular/fire/auth';
 import { IonicService } from "src/app/services/ionic/ionic.service";
 import { CrudService } from '../crud/crud.service';
+import { NavController } from '@ionic/angular';
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -19,18 +21,20 @@ export class AuthService {
 
   firestore: Firestore = inject(Firestore);
   auth: Auth = inject(Auth);
+  storage: Storage = inject(Storage);
+
 
   constructor(private nativeStorage: NativeStorage, private router: Router, private ionicService: IonicService,
-    private crudService: CrudService, private ionicServe: IonicService) { }
+    private crudService: CrudService, private ionicServe: IonicService, private navCtrl: NavController) { }
 
   async comprobarSesion() {
     try {
       const sesion = await this.nativeStorage.getItem(this.usuarioStorage);
-      console.log('Sesión existente:', sesion);
+      // this.ionicService.mostrarAlerta('Sesión existente:', JSON.stringify(sesion));
     } catch {
       const sesion = { id: 0, rol: 'invitado' };
       await this.nativeStorage.setItem(this.usuarioStorage, sesion);
-      console.log('Sesión invitado creada:', sesion);
+      // this.ionicService.mostrarAlerta('Sesión invitado creada:', JSON.stringify(sesion));
     }
   }
 
@@ -47,8 +51,8 @@ export class AuthService {
 
   async obtenerPerfil() {
     try {
-      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
-      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const sesion = await this.obtenerSesion();
+      const uid = sesion?.id;      
       const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
       const snap = await getDoc(usuarioRef);
 
@@ -81,25 +85,21 @@ export class AuthService {
     }
   }
   
-  obtenerNotificacionesNav(): Observable<number> {
+  obtenerNotificacionesNav(usuario_id: string): Observable<number> {
     return new Observable<number>((observer) => {
-      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
-        const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
         const q = query(
           collection(this.firestore, 'alertas'),
-          where('usuario_id', '==', uid),
+          where('usuario_id', '==', usuario_id),
           where('estado', '==', 'no vista')
         );
 
         return onSnapshot(q, (snap) => observer.next(snap.size), (error) => observer.error(error));
-      // }).catch((error) => observer.error(error));
     });
   }
 
   async obtenerNotificaciones() {
     try {
-      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
-      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const alertasRef = collection(this.firestore, 'alertas');
       const q = query(
         alertasRef,
@@ -135,8 +135,7 @@ export class AuthService {
 
   async actualizarNombre(nuevoNombre: string) {
     try {
-      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
-      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
       await updateDoc(usuarioRef, { nombre: nuevoNombre });
     } catch (error) {
@@ -147,8 +146,7 @@ export class AuthService {
 
   async actualizarMembresia(nuevoEstado: boolean) {
     try {
-      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
-      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
       const fechaActual = new Date();
       const nuevaMembresia = new Date(fechaActual);
@@ -173,8 +171,9 @@ export class AuthService {
       }
 
       const { rol } = snap.data()!;
-      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol });
-      // this.router.navigate(['/home']);
+      await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: rol });
+      await this.redirigirAHomeLimpio();
+
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-email' || error.code === 'auth/invalid-credential') {
@@ -206,9 +205,10 @@ export class AuthService {
       };
 
       await setDoc(doc(this.firestore, 'usuarios', uid), nuevoUsuario);
-      // await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: nuevoUsuario.rol });
-      this.router.navigate(['/home']);
-      console.log('Usuario registrado y guardado en Firestore:', nuevoUsuario);
+      await this.nativeStorage.setItem(this.usuarioStorage, { id: uid, rol: nuevoUsuario.rol });
+      await this.redirigirAHomeLimpio();
+      this.ionicServe.mostrarToastAbajo(`Sesión iniciada con: ${email}`);
+      
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/email-already-in-use') {
@@ -260,8 +260,7 @@ export class AuthService {
 
   async actualizarRecomendadosUsuario(productos: any[]) {
     try {
-      // const uid = await this.obtenerSesion().then(sesion => sesion.id);
-      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const uid = await this.obtenerSesion().then(sesion => sesion.id);
       const userRef = doc(this.firestore, `usuarios/${uid}`);
       const userSnap = await this.crudService.obtenerDocumentoPorId('usuarios', uid);
       let etiquetasGuardadas: string[] = userSnap?.recomendacion || [];
@@ -281,7 +280,8 @@ export class AuthService {
   async logout() {
     try {
       await this.nativeStorage.remove(this.usuarioStorage);
-      this.comprobarSesion();
+      await this.comprobarSesion();
+      await this.redirigirAHomeLimpio();
       console.log('Sesión de usuario eliminada');
     } catch (error) {
       console.error('Error al cerrar sesión:', error);
@@ -289,6 +289,12 @@ export class AuthService {
     }
   }
   
+  async redirigirAHomeLimpio() {
+    await this.router.navigateByUrl('/', { skipLocationChange: true });
+    await this.router.navigate(['/home'], { replaceUrl: true });
+    window.location.href = '/home';
+  }
+
   // Obtener el UID del usuario actual
   getUserId(): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -298,6 +304,45 @@ export class AuthService {
       } else {
         reject('No hay un usuario autenticado.');
       }
+    });
+  }
+
+    // Actualizar el rol del usuario
+  async actualizarRol(nuevoRol: string) {
+      try {
+        const uid = await this.getUserId();
+        const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+        await updateDoc(usuarioRef, { rol: nuevoRol });
+        console.log('Rol del usuario actualizado a:', nuevoRol);
+      } catch (error) {
+        console.error('Error al actualizar el rol del usuario:', error);
+        throw error;
+      }
+  }
+
+  async cargarFotoPerfilVendedorComoBase64(uid: string, file: File): Promise<void> {
+    try {
+      const base64String = await this.convertFileToBase64(file);
+
+      // Actualizar documento del usuario en Firestore con base64
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      await updateDoc(usuarioRef, { imagen: base64String });
+
+      console.log('Imagen base64 actualizada en Firestore');
+    } catch (error) {
+      console.error('Error al subir imagen base64:', error);
+      throw error;
+    }
+  }
+
+  convertFileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = error => reject(error);
     });
   }
 

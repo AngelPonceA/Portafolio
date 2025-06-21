@@ -21,12 +21,8 @@
     </ion-item>
   </ion-list>
 
-  <ion-item lines="none">
-    <ion-button
-      expand="block"
-      (click)="mostrarFormulario = !mostrarFormulario"
-      fill="outline"
-    >
+  <ion-item class="boton-sin-fondo" lines="none">
+    <ion-button expand="block" (click)="mostrarFormulario = !mostrarFormulario" fill="outline">
       <ion-icon name="add-outline" slot="start"></ion-icon>
       {{ mostrarFormulario ? "Ocultar formulario" : "Agregar nueva dirección" }}
     </ion-button>

@@ -21,28 +21,76 @@ export class HomePage {
   hayProductos!: Observable<boolean>;
   hayOfertas!: Observable<boolean>;
   categorias!: Observable<any[]>;
+  productosInfinitos: any[] = [];
+  cargando = false;
 
   constructor( private router: Router, private crudService: CrudService, private authService : AuthService ) { }
 
-  async ngOnInit() {
+  async ionViewWillEnter() {
+    this.cargarContenidoHome();
+  }
+
+  async cargarContenidoHome() {
+    this.cargarMasProductos();
     this.usuario = await this.authService.obtenerPerfil();
-    if (this.usuario){
-      this.productosRecomendados = this.crudService.obtenerProductosRecomendados();
-      this.hayRecomendados = this.productosRecomendados.pipe(map((productos) => productos.length > 0));
+    
+    if (this.usuario) {
+      this.productosRecomendados = this.crudService.obtenerProductosRecomendados().pipe(
+        map(productos => productos.slice(0, 8))
+      );
+      this.hayRecomendados = this.productosRecomendados.pipe(
+        map((productos) => productos.length > 0)
+      );
     }
 
-    this.productosGenerales = this.crudService.obtenerProductosYOferta();
-    this.productosConOferta = this.crudService.obtenerProductosConOferta();
-    this.hayProductos = this.productosGenerales.pipe(map((productos) => productos.length > 0));
-    this.hayOfertas = this.productosConOferta.pipe(map((productos) => productos.length > 0));
-    this.categorias = this.crudService.obtenerCategorias();    
+    this.productosConOferta = this.crudService.obtenerProductosConOferta().pipe(
+      map(productos => productos.slice(0, 8))
+    );
+    this.productosGenerales = this.crudService.obtenerProductosYOferta().pipe(
+      map(productos => productos.slice(0, 8))
+    );
 
-    // this.productosSinOferta.slice(0, 6);
-    // this.productosConOferta = this.productosConOferta.slice(0, 6);
+    this.hayProductos = this.productosGenerales.pipe(
+      map((productos) => productos.length > 0)
+    );
+    this.hayOfertas = this.productosConOferta.pipe(
+      map((productos) => productos.length > 0)
+    );
+
+    this.categorias = this.crudService.obtenerCategorias();
+  }
+  
+  async ionViewDidEnter() {
+    this.productosInfinitos = [];
+    await this.cargarMasProductos();
+  }
+
+  async cargarMasProductos() {
+    if (this.cargando) return; // Previene múltiples llamadas
+    this.cargando = true;
+
+    try {
+      const nuevos = await this.crudService.obtenerProductosAleatorios(10);
+      this.productosInfinitos.push(...nuevos);
+    } catch (err) {
+      console.error('Error cargando productos aleatorios:', err);
+    } finally {
+      this.cargando = false; // Asegura que vuelva a estar listo
+    }
   }
 
   entero(calificacion: number){
     return Math.floor(calificacion || 0);
+  }
+
+  async cargarMas(event: any) {
+    try {
+      await this.cargarMasProductos();
+    } catch (error) {
+      console.error('Error al cargar más productos:', error);
+    } finally {
+      event.target.complete();
+    }
   }
 
   verCategoria(categoria: string){

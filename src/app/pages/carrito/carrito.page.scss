@@ -10,10 +10,11 @@ ion-content {
 .header-toolbar {
   --background: #D2B48C;
   --color: white;
+  margin-top: 9%;
 }
 
 .back-button {
-  --color: #5d3e2c;
+  --color: white;
   font-size: 1.2rem;
 }
 
@@ -139,7 +140,7 @@ ion-button.cafe-cacao-text {
       align-items: center;
       gap: 4px;
       margin-top: 8px;
-      font-size: 12px;
+      font-size: 16px;
       color: #2c7a2c;
       
       ion-icon {

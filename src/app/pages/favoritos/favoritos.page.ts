@@ -20,11 +20,10 @@ export class FavoritosPage implements OnInit {
     this.usuario = await this.authService.obtenerPerfil()
 
     if (this.usuario) {
-      this.crudService.obtenerFavoritosConDetalles().subscribe((favoritos) => {
+      this.crudService.obtenerFavoritosConDetalles(this.usuario.id).subscribe((favoritos) => {
         this.favoritos = favoritos;
       });
     }
-      
   }
 
   verDetalle(producto_id: string) {
