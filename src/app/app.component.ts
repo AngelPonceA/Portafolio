@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { TriggersService } from './services/triggers/triggers.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from './services/auth/auth.service';
+import { CarritoService } from './services/carrito/carrito.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,8 @@ export class AppComponent implements OnInit {
   constructor(
   private triggersService: TriggersService,
   private router: Router,
-  private authService: AuthService
+  private authService: AuthService,
+  private cartService: CarritoService
 ) {
   this.router.events.subscribe(event => {
     if (event instanceof NavigationEnd) {
@@ -38,6 +40,10 @@ export class AppComponent implements OnInit {
 }
 
   async ngOnInit() {
+    this.authService.comprobarSesion();
+
+    this.cartService.comprobarCarrito();
+    
   //   this.triggersService.escucharCambiosPedido();
 
   //   this.triggersService.escucharCambiosDetallePedido();

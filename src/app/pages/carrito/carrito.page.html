@@ -25,7 +25,7 @@
 
   <div *ngIf="productos && productos.length > 0 && productos != undefined; else vacio" class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productos">
-      <img src="{{ producto.imagen }}" (click)="verDetalle(producto.producto_id)"/>
+      <img src="{{ producto.imagen[0] }}" (click)="verDetalle(producto.producto_id)"/>
       <ion-card-content>
         <div class="nombre">{{ producto.producto_titulo }}</div>
         <div *ngIf="!producto.precio_oferta ; else oferta" class="precio">${{ producto.precio | number }} CLP</div>
@@ -35,6 +35,9 @@
         </ng-template>
         <div class="descripcion">{{ producto.descripcion }}</div>
         <div class="costo-envio">
+          Stock: {{ producto.stock | number }}
+        </div>
+        <div class="costo-envio">
           <ion-icon name="car-outline"></ion-icon>
           Envío: ${{ obtenerCostoEnvio(producto.producto_id) | number }} CLP
         </div>
@@ -43,7 +46,11 @@
           <ion-button *ngIf="producto.stock > 0" fill="outline" color="medium" (click)="restarProducto(producto.producto_id)">
             <ion-icon name="remove-outline"></ion-icon>
           </ion-button>
-          <span *ngIf="producto.stock > 0; else sinStock" class="cantidad">{{ producto.cantidad }}</span>
+          <span *ngIf="producto.stock > 0; else sinStock" class="cantidad">{{ producto.cantidad }}
+            <ng-container *ngIf="producto.cantidadDeseada && producto.cantidadDeseada > producto.cantidad">
+              <span class="cantidad-deseada">(Querías {{ producto.cantidadDeseada }})</span>
+            </ng-container>
+          </span>
           <ng-template #sinStock>
             <div class="cantidad">Producto sin stock</div>
           </ng-template>

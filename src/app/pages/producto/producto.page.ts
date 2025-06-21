@@ -28,8 +28,8 @@ export class ProductoPage implements OnInit {
   cantidadOpciones: number[] = [];
   opcionStock: number = 1;
 
-  constructor(private router: Router, private crudService: CrudService, private authService: AuthService, private cartService: CarritoService, 
-    private ionicService: IonicService) {}
+  constructor(private router: Router, private crudService: CrudService, private authService: AuthService, 
+    private cartService: CarritoService, private ionicService: IonicService) {}
     
   async ngOnInit() {
     const producto_id = this.router.getCurrentNavigation()?.extras?.state?.['producto_id'];
@@ -95,7 +95,10 @@ export class ProductoPage implements OnInit {
   }
 
   agregarAlCarrito(producto: any) {
-    this.cartService.agregarProductoAlCarrito(producto.producto_id, this.producto.cantidad)
+    this.ionicService.mostrarAlerta('Elemento', producto.producto_id)
+    this.ionicService.mostrarAlerta('Cantidad', this.opcionStock.toString())
+
+    this.cartService.agregarProductoAlCarrito(producto.producto_id, this.opcionStock)
   }
 
   async eliminarFavorito(producto_id: string) {
@@ -108,16 +111,16 @@ export class ProductoPage implements OnInit {
   }
 
   async manejarFavorito(producto: any) {
-      if (this.esFavorito) {
-        const favorito_id = await this.crudService.obtenerFavoritoId(producto.producto_id);
-        if (favorito_id) {
-          await this.crudService.eliminarFavorito(favorito_id);
-        }
-        this.esFavorito = false;
-      } else {
-        await this.crudService.agregarFavorito(producto.producto_id);
-        this.esFavorito = true;
+    if (this.esFavorito) {
+      const favorito_id = await this.crudService.obtenerFavoritoId(producto.producto_id);
+      if (favorito_id) {
+        await this.crudService.eliminarFavorito(favorito_id);
       }
+      this.esFavorito = false;
+    } else {
+      await this.crudService.agregarFavorito(producto.producto_id);
+      this.esFavorito = true;
     }
+  }
   
 }

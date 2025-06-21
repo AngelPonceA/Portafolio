@@ -122,4 +122,5 @@ export class PerfilPage implements OnInit {
   cerrarSesion() {
     this.authService.logout();
   };
+
 }

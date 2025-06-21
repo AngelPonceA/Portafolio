@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
+import { CarritoService } from 'src/app/services/carrito/carrito.service';
 
 @Component({
   selector: 'app-navegacion',
@@ -16,19 +17,23 @@ import { Location } from '@angular/common';
 })
 export class NavegacionComponent  implements OnInit {
 
+  usuario: any;
   notificaciones?: number ;
-  carrito: number = 3;
+  carrito: any;
   busqueda: string = '';
   sugerencias: any[] = [];
 
   constructor( private router: Router, private navCtrl: NavController, private authService: AuthService, private crudService: CrudService,
-    private location: Location
-   ) { }
+    private location: Location, private cartService: CarritoService ) { }
   
-  ngOnInit() {
-    this.authService.obtenerNotificacionesNav().subscribe((notificacionesEntrantes) => {
-      this.notificaciones = notificacionesEntrantes;    
-    });
+  async ngOnInit() {
+    this.usuario = await this.authService.obtenerPerfil();
+    if (this.usuario) {
+      this.authService.obtenerNotificacionesNav(this.usuario.id).subscribe((notificacionesEntrantes) => {
+        this.notificaciones = notificacionesEntrantes;    
+      });
+    }
+    this.carrito = this.obtenerCantidadCarrito();
   }
   
   enHome(): boolean {
@@ -51,17 +56,17 @@ export class NavegacionComponent  implements OnInit {
     this.sugerencias = [];
   }
   
-buscarProducto() {
-  if (this.busqueda && this.busqueda.trim() !== '') {
-    const currentUrl = this.router.url;
-    if (currentUrl.startsWith('/busqueda')) {
-      window.dispatchEvent(new CustomEvent('actualizarBusqueda', { detail: this.busqueda.trim() }));
-    } else {
-      this.router.navigate(['/busqueda'], { state: { busqueda: this.busqueda.trim() } });
+  buscarProducto() {
+    if (this.busqueda && this.busqueda.trim() !== '') {
+      const currentUrl = this.router.url;
+      if (currentUrl.startsWith('/busqueda')) {
+        window.dispatchEvent(new CustomEvent('actualizarBusqueda', { detail: this.busqueda.trim() }));
+      } else {
+        this.router.navigate(['/busqueda'], { state: { busqueda: this.busqueda.trim() } });
+      }
+      this.sugerencias = [];
     }
-    this.sugerencias = [];
   }
-}
 
   navegar(ruta: string) {
     this.router.navigate([ruta]);
@@ -70,5 +75,14 @@ buscarProducto() {
   retroceder() {
     this.navCtrl.back();
   }  
+
+  async obtenerCantidadCarrito() {
+    try {
+      this.carrito = await this.cartService.obtenerCantidadCarrito();
+      return this.carrito;
+    } catch (error) {
+      return 0;
+    }
+  }
 
 }

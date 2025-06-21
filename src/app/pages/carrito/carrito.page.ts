@@ -49,36 +49,36 @@ export class CarritoPage implements OnInit {
               ) {}
   
   async ngOnInit() {
-    await this.agregarProductoAlCarrito('1xIt9YlbiogSYPtqxlgP');
-    await this.agregarProductoAlCarrito('q4GE9IBSWX2Xk1S8iOVA');
-
     this.usuario = await this.authService.obtenerPerfil();
 
     if (this.usuario){
       await this.obtenerDireccionPrincipal();
     }
 
-    // const carrito = await this.cartService.obtenerCarrito();
+    const carrito = await this.cartService.obtenerCarrito();
 
-    // for (const item of carrito) {
-    //   const producto = await this.crudService.obtenerDetalleProducto(item.producto_id);
+    for (const item of carrito) {
+      const producto = await this.crudService.obtenerDetalleProducto(item.producto_id);
 
-    //   if (producto) {
-    //     const cantidadDeseada = item.cantidad;
-    //     const stockDisponible = producto.stock;
+      if (producto) {
+        const cantidadDeseada = item.cantidad;
+        const stockDisponible = producto.stock;
 
-    //     const cantidadFinal = Math.min(cantidadDeseada, stockDisponible);
+        let cantidadFinal = Math.min(cantidadDeseada, stockDisponible);
+        let stockAjustado = false;
+        if (cantidadFinal < cantidadDeseada) {
+          stockAjustado = true;
+        }
 
-    //     if (cantidadFinal < cantidadDeseada) {
-    //       this.ionicService.mostrarAlerta('Stock ajustado', `Solo quedan ${stockDisponible} unidades de "${producto.producto_titulo}", 
-    //         del cual querías comprar ${cantidadDeseada}`);
-    //     }
+        this.productos.push({
+          ...producto, cantidad: cantidadFinal, cantidadDeseada: cantidadDeseada
+        });
 
-    //     this.productos.push({
-    //       ...producto, cantidad: cantidadFinal,
-    //     });
-    //   }
-    // }
+        if (stockAjustado) {
+          this.ionicService.mostrarAlerta('Stock ajustado', `Solo quedan ${stockDisponible} unidades de "${producto.producto_titulo}", del cual querías comprar ${cantidadDeseada}. Se ajustó la cantidad a ${cantidadFinal}.`);
+        }
+      }
+    }
 
     await this.calcularCostosEnvio();
     await this.calculateTotalAmount();
@@ -100,7 +100,6 @@ export class CarritoPage implements OnInit {
       });
     }
   }
-
 
   onRegionChange(event: any) {
     const regionId = event.detail.value;
@@ -128,58 +127,29 @@ export class CarritoPage implements OnInit {
     this.router.navigate(['/producto'], { state: { producto_id } });
   }
 
-  async agregarProductoAlCarrito(producto_id: string) {
-    const detalleProducto = await this.crudService.obtenerDetalleProducto(producto_id);
-    
-    let cantidad = 1;
-    if (detalleProducto) {
-      if (detalleProducto.stock <= 0) {
-        cantidad = 0;  
-      }
-  
-      this.productos.push({
-        vendedor_id: detalleProducto.vendedor_id,
-        producto_id: detalleProducto.producto_id,
-        producto_titulo: detalleProducto.producto_titulo,
-        descripcion: detalleProducto.producto_descripcion,
-        precio: detalleProducto.precio,
-        precio_oferta: detalleProducto.precio_oferta,
-        etiquetas: detalleProducto.etiquetas,
-        estado: detalleProducto.estado,
-        stock: detalleProducto.stock,
-        imagen: detalleProducto.imagen,
-        cantidad,
-      });
-  
-      await this.calcularCostosEnvio();
-      await this.calculateTotalAmount();
-
-    } else {
-      this.ionicService.mostrarToastAbajo('No se pudo obtener el producto');
-    }
-  }
-
   async restarProducto(producto_id: string) {
     const producto = this.productos.find((p) => p.producto_id === producto_id);
     if (producto && producto.cantidad > 1) {
       producto.cantidad--;
-      // await this.cartService.carritoSumarRestar('restar', producto.cantidad, producto_id);
+      await this.cartService.carritoSumarRestar('restar', 1, producto_id);
       await this.calculateTotalAmount();
     }
   }
 
   async sumarProducto(producto_id: string) {
     const producto = this.productos.find((p) => p.producto_id === producto_id);
-    if (producto && producto.stock >= producto.cantidad + 1) {
+    if (producto && producto.stock > producto.cantidad) {
       producto.cantidad++;
-      // await this.cartService.carritoSumarRestar('sumar', producto.cantidad, producto_id);
-      await this.calculateTotalAmount();      
-    }    
+      await this.cartService.carritoSumarRestar('sumar', 1, producto_id);
+      await this.calculateTotalAmount();
+    } else if (producto && producto.stock <= producto.cantidad) {
+      this.ionicService.mostrarAlerta('Stock insuficiente', `No hay más stock disponible para "${producto.producto_titulo}".`);
+    }
   }
 
   quitarProducto(producto_id: string) {
     this.productos = this.productos.filter((p) => p.producto_id != producto_id);
-    // this.cartService.eliminarProductoDelCarrito(producto_id);
+    this.cartService.eliminarProductoDelCarrito(producto_id);
     this.calculateTotalAmount();
   }
 

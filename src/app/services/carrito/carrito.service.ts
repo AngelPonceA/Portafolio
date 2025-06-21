@@ -20,6 +20,23 @@ export class CarritoService {
                 private authService: AuthService,
                 private ubicacionService: UbicacionService) { }
 
+  async comprobarCarrito() {
+    try {
+      const carrito = await this.nativeStorage.getItem(this.carritoStorage);
+
+      // if (Array.isArray(carrito) && carrito.length > 0) {
+      //   this.ionicService.mostrarAlerta('Carrito existente', `Tienes ${carrito.length} producto(s) en el carrito.`);
+      // } else {
+      //   this.ionicService.mostrarAlerta('Carrito vacío', 'No tienes productos en el carrito.');
+      // }
+
+    } catch (error) {
+      const carritoVacio: any[] = [];
+      await this.nativeStorage.setItem(this.carritoStorage, carritoVacio);
+      // this.ionicService.mostrarAlerta('Carrito creado', 'Tu carrito ha sido inicializado.');
+    }
+  }
+
   async agregarProductoAlCarrito(producto_id: string, cantidad: number) {
     try {
       const producto = await this.crudService.obtenerDetalleProducto(producto_id);
@@ -29,19 +46,17 @@ export class CarritoService {
         return false;
       }
 
-      const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
-      const productoExistente = carrito.find((item: any) => item.producto_id === producto_id);
-
-      const cantidadTotal = productoExistente ? productoExistente.cantidad + cantidad : cantidad;
-
-      if (cantidadTotal > producto.stock) {
-        this.ionicService.mostrarAlerta('Error', 'No se puede agregar más cantidad. Stock insuficiente.');
+      if (cantidad > producto.stock) {
+        this.ionicService.mostrarAlerta('Error', 'Cantidad deseada supera el stock disponible.');
         return false;
       }
 
-      // Agregar o actualizar el producto en el carrito
-      if (productoExistente) {
-        productoExistente.cantidad = cantidadTotal;
+      const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
+
+      const posicion = carrito.findIndex((item: any) => item.producto_id === producto_id);
+
+      if (posicion !== -1) {
+        carrito[posicion].cantidad = cantidad;
       } else {
         carrito.push({ producto_id, cantidad });
       }
@@ -49,20 +64,30 @@ export class CarritoService {
       await this.nativeStorage.setItem(this.carritoStorage, carrito);
       this.ionicService.mostrarToastAbajo(`Producto agregado al carrito.`);
       return true;
+
     } catch (error) {
       this.ionicService.mostrarAlerta('Error', `Error al agregar producto al carrito: ${error}`);
       return false;
     }
   }
 
+
   async obtenerCarrito() {
     try {
-      const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
-      this.ionicService.mostrarToastAbajo('Carrito obtenido correctamente.');
+      const carrito = await this.nativeStorage.getItem(this.carritoStorage);
       return carrito;
     } catch (error) {
       this.ionicService.mostrarAlerta('Error', `Error al obtener el carrito: ${error}`);
       return [];
+    }
+  }
+
+  async obtenerCantidadCarrito() {
+    try {
+      const carrito = await this.obtenerCarrito();
+      return Array.isArray(carrito) ? carrito.length : 0;
+    } catch (error) {
+      return 0;
     }
   }
 
@@ -71,40 +96,54 @@ export class CarritoService {
       const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
       const nuevoCarrito = carrito.filter((item: any) => item.producto_id !== producto_id);
       await this.nativeStorage.setItem(this.carritoStorage, nuevoCarrito);
-      this.ionicService.mostrarToastAbajo('Producto eliminado del carrito.');
     } catch (error) {
       this.ionicService.mostrarAlerta('Error', `Error al eliminar producto del carrito: ${error}`);
     }
   }
 
-  async carritoSumarRestar(accion: string, cantidad: number, producto_id: string) {
+  async carritoSumarRestar(accion: 'sumar' | 'restar', cantidad: number, producto_id: string) {
     try {
       const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
-      const producto = carrito.find((item: any) => item.producto_id === producto_id);
+      const posicion = carrito.findIndex((item: any) => item.producto_id === producto_id);
 
-      if (producto) {
-        if (accion === 'sumar') {
-          if (producto.cantidad < producto.stock) {
-            producto.cantidad += cantidad;
-          } else {
-            this.ionicService.mostrarAlerta('Error', 'No se puede sumar más cantidad. Stock insuficiente.');
-          }
-        } else if (accion === 'restar') {
-          if (producto.cantidad > 1) {
-            producto.cantidad -= cantidad;
-          } else {
-            this.ionicService.mostrarAlerta('Error', 'No se puede restar más cantidad. Cantidad mínima alcanzada.');
-          }
-        }
-
-        await this.nativeStorage.setItem(this.carritoStorage, carrito);
-        this.ionicService.mostrarToastAbajo('Carrito actualizado.');
+      if (posicion === -1) {
+        this.ionicService.mostrarAlerta('Error', 'Producto no encontrado en el carrito.');
+        return;
       }
-    }
-    catch (error) {
-      this.ionicService.mostrarAlerta('Error', `Error al sumar/restar producto en el carrito: ${error}`);
+
+      const productoCarrito = carrito[posicion];
+      const producto = await this.crudService.obtenerDetalleProducto(producto_id);
+
+      if (!producto || typeof producto.stock !== 'number') {
+        this.ionicService.mostrarAlerta('Error', 'No se pudo verificar el stock del producto.');
+        return;
+      }
+
+      if (accion === 'sumar') {
+        const nuevaCantidad = productoCarrito.cantidad + cantidad;
+        if (nuevaCantidad <= producto.stock) {
+          productoCarrito.cantidad = nuevaCantidad;
+        } else {
+          this.ionicService.mostrarAlerta('Error', 'No se puede sumar más cantidad. Stock insuficiente.');
+          return;
+        }
+      } else if (accion === 'restar') {
+        const nuevaCantidad = productoCarrito.cantidad - cantidad;
+        if (nuevaCantidad >= 1) {
+          productoCarrito.cantidad = nuevaCantidad;
+        } else {
+          this.ionicService.mostrarAlerta('Error', 'Cantidad mínima alcanzada.');
+          return;
+        }
+      }
+
+      await this.nativeStorage.setItem(this.carritoStorage, carrito);
+
+    } catch (error) {
+      this.ionicService.mostrarAlerta('Error', `Error al actualizar el carrito: ${error}`);
     }
   }
+
 
   async guardarCarrito(productos: any) {
     try {
@@ -118,6 +157,7 @@ export class CarritoService {
   async limpiarCarrito() {
     try {
       await this.nativeStorage.remove(this.carritoStorage);
+      this.comprobarCarrito();
       this.ionicService.mostrarToastAbajo('Carrito limpiado.');
     } catch (error) {
       this.ionicService.mostrarAlerta('Error', `Error al limpiar el carrito: ${error}`);
