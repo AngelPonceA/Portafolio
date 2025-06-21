@@ -114,6 +114,31 @@
       </div>
     </div>
 
+
+     <!-- Explora más / Scroll Infinito -->
+    <div class="productos-grid-container">
+      <h2 class="productos-titulo">Explora más</h2>
+      <div class="productos-grid">
+        <ion-card *ngFor="let producto of productosInfinitos" (click)="verDetalle(producto.producto_id)" class="producto-card">
+          <img [src]="producto.imagen[0]" />
+          <ion-card-content>
+            <ion-card-title class="nombre">{{ producto.titulo }}</ion-card-title>
+            <ion-card-subtitle class="descripcion">{{ producto.descripcion }}</ion-card-subtitle>
+            <ion-card-subtitle class="descripcion">Stock: {{ producto.stock }}</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="!producto.oferta" class="precio-original">{{ producto.precio | number }} CLP</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="producto.oferta" class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="producto.oferta" class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>
+            <div class="estrellas-general">
+              <span *ngFor="let contador of [1,2,3,4,5]">
+                <ion-icon [name]="contador <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
+              </span>
+              <span class="descripcion">({{ entero(producto.calificacion) || 0 }})</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
     <!-- Scroll infinito -->
     <ion-infinite-scroll threshold="100px" position="bottom" (ionInfinite)="cargarMas($event)">
       <ion-infinite-scroll-content

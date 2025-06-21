@@ -32,6 +32,7 @@ export class HomePage {
 
   async cargarContenidoHome() {
     this.cargarMasProductos();
+    
     this.usuario = await this.authService.obtenerPerfil();
     
     if (this.usuario) {
@@ -43,23 +44,16 @@ export class HomePage {
       );
     }
 
-    this.productosConOferta = this.crudService.obtenerProductosConOferta().pipe(
-      map(productos => productos.slice(0, 8))
-    );
-    this.productosGenerales = this.crudService.obtenerProductosYOferta().pipe(
-      map(productos => productos.slice(0, 8))
-    );
+ this.productosGenerales = this.crudService.obtenerProductosYOferta();
+    this.productosConOferta = this.crudService.obtenerProductosConOferta();
+    this.hayProductos = this.productosGenerales.pipe(map((productos) => productos.length > 0));
+    this.hayOfertas = this.productosConOferta.pipe(map((productos) => productos.length > 0));
+    this.categorias = this.crudService.obtenerCategorias();    
 
-    this.hayProductos = this.productosGenerales.pipe(
-      map((productos) => productos.length > 0)
-    );
-    this.hayOfertas = this.productosConOferta.pipe(
-      map((productos) => productos.length > 0)
-    );
-
-    this.categorias = this.crudService.obtenerCategorias();
+    // this.productosSinOferta.slice(0, 6);
+    // this.productosConOferta = this.productosConOferta.slice(0, 6);
   }
-  
+
   async ionViewDidEnter() {
     this.productosInfinitos = [];
     await this.cargarMasProductos();
