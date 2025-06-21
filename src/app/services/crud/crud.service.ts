@@ -837,20 +837,4 @@ async eliminarProducto(producto_id: string) {
     return mezclados.slice(0, limit);
   }
 
-
-  async obtenerProductosAleatorios(limit: number): Promise<any[]> {
-    const productosRef = collection(this.firestore, 'productos');
-    const snap = await getDocs(productosRef);
-    const productos = snap.docs.map(doc => ({ producto_id: doc.id, ...doc.data() }));
-
-    // Mezcla aleatoria
-    const mezclados = productos
-      .map(p => ({ p, r: Math.random() }))
-      .sort((a, b) => a.r - b.r)
-      .map(({ p }) => p);
-
-    // Puedes permitir repeticiones, así que no necesitas controlar eso
-    return mezclados.slice(0, limit);
-  }
-
 }

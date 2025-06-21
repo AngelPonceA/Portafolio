@@ -11,7 +11,6 @@ import { sendPasswordResetEmail } from '@angular/fire/auth';
 import { IonicService } from "src/app/services/ionic/ionic.service";
 import { CrudService } from '../crud/crud.service';
 import { NavController } from '@ionic/angular';
-import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 
 @Injectable({
   providedIn: 'root'
