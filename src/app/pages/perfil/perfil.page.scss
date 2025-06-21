@@ -252,3 +252,30 @@ ion-button[color="danger"],
     margin: 8px 0;
   }
 }
+
+.avatar-interactiva {
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .icono-camara {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 1.4rem;
+    background: #ffffff;
+    color: #333;
+    border-radius: 50%;
+    padding: 5px;
+    border: 2px solid #d1a15a;
+  }
+
+  &:hover .icono-camara {
+    background: #d1a15a;
+    color: white;
+  }
+}

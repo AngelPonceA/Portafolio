@@ -5,7 +5,7 @@ import { IonicService } from 'src/app/services/ionic/ionic.service';
 import { WebpayService } from 'src/app/services/webpay/webpay.service';
 import { ActivatedRoute } from '@angular/router';
 import { ModalTarjetaDepositosService } from 'src/app/services/modal-tarjeta-depositos/modal-tarjeta-depositos.service';
-
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-perfil',
@@ -143,6 +143,53 @@ export class PerfilPage implements OnInit {
     this.ionicService.mostrarAlerta('Cancelado', 'No se modificó la tarjeta.');
   }
 }
+
+  // Subir foto de perfil
+  async subirFotoPerfil(event: any) {
+    const archivo = event.target.files[0];
+    if (!archivo || !this.usuario?.id) return;
+
+    try {
+      await this.authService.cargarFotoPerfilVendedorComoBase64(this.usuario.id, archivo);
+      this.usuario.imagen = URL.createObjectURL(archivo); // Vista previa instantánea
+      this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
+    } catch (error) {
+      this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
+    }
+  }
+
+  async elegirFoto() {
+    try {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: false,
+        resultType: CameraResultType.DataUrl,
+        source: CameraSource.Prompt
+      });
+
+      const uid = await this.authService.getUserId();
+      if (uid && image.dataUrl) {
+        const file = this.dataURLtoFile(image.dataUrl, 'profile.jpg');
+        await this.authService.cargarFotoPerfilVendedorComoBase64(uid, file);
+        this.usuario.imagen = image.dataUrl;
+        this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
+      }
+    } catch (error) {
+      this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
+    }
+  }
+  // Utilidad para convertir dataURL a File
+  dataURLtoFile(dataurl: string, filename: string): File {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  }
 
   irARegistro() {
     this.router.navigate(['/registro']);

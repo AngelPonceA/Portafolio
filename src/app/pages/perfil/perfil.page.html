@@ -57,9 +57,12 @@
 
     </div>
 
-    <ng-template #comprobarVendedor>
-      <div *ngIf="usuario && usuario.rol == 'usuario-vendedor'; else invitado" class="perfil-container">
-        <div class="perfil-header">
+<ng-template #comprobarVendedor>
+  <div *ngIf="usuario && usuario.rol == 'usuario-vendedor'; else invitado" class="perfil-container">
+    <div class="perfil-header">
+
+      <!-- Imagen de perfil que actúa como botón -->
+      <label class="avatar-interactiva">
         <ion-avatar class="avatar">
           <img 
             [src]="usuario.imagen" 
@@ -67,9 +70,13 @@
             (error)="onImageError($event)"
           >
         </ion-avatar>
-          <h2>{{ usuario.nombre }}</h2>
-          <p>{{ usuario.email }}</p>
-        </div>
+        <input type="file" accept="image/*" (change)="subirFotoPerfil($event)" hidden>
+        <ion-icon name="camera-outline" class="icono-camara"></ion-icon>
+      </label>
+
+      <h2>{{ usuario.nombre }}</h2>
+      <p>{{ usuario.email }}</p>
+  </div>
 
         <div class="perfil-opciones">
 

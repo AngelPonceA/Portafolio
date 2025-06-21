@@ -21,6 +21,15 @@ export class IonicService {
     await toast.present();
   }
 
+  async mostrarToastArriba(mensaje: string) {
+    const toast = await this.toast.create({
+      message: mensaje,
+      duration: 5000,
+      position: 'top',
+    });
+    await toast.present();
+  }
+
   async mostrarAlerta(titulo: string, mensaje: string) {
     const alert = await this.alerta.create({
       header: titulo,
