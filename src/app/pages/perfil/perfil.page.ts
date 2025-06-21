@@ -6,6 +6,7 @@ import { WebpayService } from 'src/app/services/webpay/webpay.service';
 import { ActivatedRoute } from '@angular/router';
 import { ModalTarjetaDepositosService } from 'src/app/services/modal-tarjeta-depositos/modal-tarjeta-depositos.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
+import imageCompression from 'browser-image-compression';
 
 @Component({
   selector: 'app-perfil',
@@ -144,52 +145,77 @@ export class PerfilPage implements OnInit {
   }
 }
 
-  // Subir foto de perfil
-  async subirFotoPerfil(event: any) {
-    const archivo = event.target.files[0];
-    if (!archivo || !this.usuario?.id) return;
+// Subir foto desde input file (por input type="file")
+async subirFotoPerfil(event: any) {
+  const archivo = event.target.files[0];
+  if (!archivo || !this.usuario?.id) return;
 
-    try {
-      await this.authService.cargarFotoPerfilVendedorComoBase64(this.usuario.id, archivo);
-      this.usuario.imagen = URL.createObjectURL(archivo); // Vista previa instantánea
+  try {
+    const compressedFile = await this.compressImage(archivo);
+    if (!compressedFile) throw new Error('No se pudo comprimir');
+
+    await this.authService.cargarFotoPerfilVendedorComoBase64(this.usuario.id, compressedFile);
+    this.usuario.imagen = URL.createObjectURL(compressedFile); // Vista previa temporal
+    this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
+  } catch (error) {
+    this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
+  }
+}
+
+// Elegir foto desde cámara
+async elegirFoto() {
+  try {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Prompt
+    });
+
+    const uid = await this.authService.getUserId();
+    if (uid && image.dataUrl) {
+      const file = this.dataURLtoFile(image.dataUrl, 'profile.jpg');
+      const compressedFile = await this.compressImage(file);
+      if (!compressedFile) throw new Error('No se pudo comprimir');
+
+      await this.authService.cargarFotoPerfilVendedorComoBase64(uid, compressedFile);
+      this.usuario.imagen = URL.createObjectURL(compressedFile); // Vista previa temporal
       this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
-    } catch (error) {
-      this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
     }
+  } catch (error) {
+    this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
   }
+}
 
-  async elegirFoto() {
-    try {
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: false,
-        resultType: CameraResultType.DataUrl,
-        source: CameraSource.Prompt
-      });
-
-      const uid = await this.authService.getUserId();
-      if (uid && image.dataUrl) {
-        const file = this.dataURLtoFile(image.dataUrl, 'profile.jpg');
-        await this.authService.cargarFotoPerfilVendedorComoBase64(uid, file);
-        this.usuario.imagen = image.dataUrl;
-        this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
-      }
-    } catch (error) {
-      this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
-    }
+async compressImage(file: File): Promise<File | null> {
+  const options = {
+    maxSizeMB: 0.1,         
+    maxWidthOrHeight: 1024,    
+    useWebWorker: true,         
+  };
+  try {
+    const compressedFile = await imageCompression(file, options);
+    return compressedFile;
+  } catch (error) {
+    console.error('Error al comprimir imagen:', error);
+    this.ionicService.mostrarAlerta('Error al comprimir la imagen', 'danger');
+    return null;
   }
-  // Utilidad para convertir dataURL a File
+}
+
   dataURLtoFile(dataurl: string, filename: string): File {
     const arr = dataurl.split(',');
-    const mime = arr[0].match(/:(.*?);/)![1];
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/jpeg';
     const bstr = atob(arr[1]);
-    let n = bstr.length;
+    const n = bstr.length;
     const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
+    for (let i = 0; i < n; i++) {
+      u8arr[i] = bstr.charCodeAt(i);
     }
     return new File([u8arr], filename, { type: mime });
   }
+
 
   irARegistro() {
     this.router.navigate(['/registro']);
