@@ -44,15 +44,30 @@ export class BotonSoporteComponent implements OnInit, AfterViewInit {
   }
 
   private resetPosition() {
-    const defaultX = window.innerWidth * 0.8;
-    const defaultY = window.innerHeight * 0.84;
+    const rutaActual = this.router.url;
 
-    this.renderer.setStyle(this.el.nativeElement, 'left', `${defaultX}px`);
-    this.renderer.setStyle(this.el.nativeElement, 'top', `${defaultY}px`);
-    this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
-    this.renderer.setStyle(this.el.nativeElement, 'right', 'auto');
+    if (rutaActual === '/perfil') {
+      // Posición para /perfil: esquina superior derecha con margen mayor
+      const marginRight = 80;
+      const marginTop = 100;
+      this.renderer.setStyle(this.el.nativeElement, 'right', `${marginRight}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'top', `${marginTop}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'left', 'auto');
+      this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
+    } else {
+      // Posición para resto de la app (abajo derecha)
+      const defaultX = window.innerWidth * 0.8;
+      const defaultY = window.innerHeight * 0.84;
+
+      this.renderer.setStyle(this.el.nativeElement, 'left', `${defaultX}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'top', `${defaultY}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'right', 'auto');
+      this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
+    }
+
     this.renderer.setStyle(this.el.nativeElement, 'position', 'fixed');
   }
+
 
   goToSoporte() {
     this.navCtrl.navigateForward('/soporte');
