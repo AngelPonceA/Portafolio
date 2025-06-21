@@ -21,10 +21,13 @@ export class HomePage {
   hayProductos!: Observable<boolean>;
   hayOfertas!: Observable<boolean>;
   categorias!: Observable<any[]>;
+  productosInfinitos: any[] = [];
+  cargando = false;
 
   constructor( private router: Router, private crudService: CrudService, private authService : AuthService ) { }
 
   async ngOnInit() {
+    this.cargarMasProductos();
     this.usuario = await this.authService.obtenerPerfil();
     if (this.usuario){
       this.productosRecomendados = this.crudService.obtenerProductosRecomendados();
@@ -41,6 +44,25 @@ export class HomePage {
     // this.productosConOferta = this.productosConOferta.slice(0, 6);
   }
 
+  async ionViewDidEnter() {
+    this.productosInfinitos = [];
+    await this.cargarMasProductos();
+  }
+
+  async cargarMasProductos() {
+    if (this.cargando) return; // Previene múltiples llamadas
+    this.cargando = true;
+
+    try {
+      const nuevos = await this.crudService.obtenerProductosAleatorios(10);
+      this.productosInfinitos.push(...nuevos);
+    } catch (err) {
+      console.error('Error cargando productos aleatorios:', err);
+    } finally {
+      this.cargando = false; // Asegura que vuelva a estar listo
+    }
+  }
+
   entero(calificacion: number){
     return Math.floor(calificacion || 0);
   }
@@ -55,6 +77,16 @@ export class HomePage {
 
   verDetalle(producto_id: string) {
     this.router.navigate(['/producto'], { state: { producto_id } });
+  }
+
+  async cargarMas(event: any) {
+    try {
+      await this.cargarMasProductos();
+    } catch (error) {
+      console.error('Error al cargar más productos:', error);
+    } finally {
+      event.target.complete();
+    }
   }
 
 }

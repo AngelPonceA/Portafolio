@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { Router } from '@angular/router';
 import { Firestore, collection, query, where, getDocs, addDoc, doc, setDoc, getDoc, onSnapshot, updateDoc, orderBy } from '@angular/fire/firestore';
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updatePassword, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { Usuario } from '../../models/usuario.models';
 import { FirebaseError } from 'firebase/app';
@@ -9,7 +10,6 @@ import { catchError, from, Observable, of, switchMap } from 'rxjs';
 import { sendPasswordResetEmail } from '@angular/fire/auth';
 import { IonicService } from "src/app/services/ionic/ionic.service";
 import { CrudService } from '../crud/crud.service';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -17,11 +17,12 @@ export class AuthService {
 
   private usuarioStorage = "usuario";
 
-  firestore: Firestore = inject(Firestore);
-  auth: Auth = inject(Auth);
+firestore: Firestore = inject(Firestore);
+auth: Auth = inject(Auth);
+storage: Storage = inject(Storage);
 
-  constructor(private nativeStorage: NativeStorage, private router: Router, private ionicService: IonicService,
-    private crudService: CrudService, private ionicServe: IonicService) { }
+constructor(private nativeStorage: NativeStorage, private router: Router, private ionicService: IonicService,
+  private crudService: CrudService, private ionicServe: IonicService) { }
 
   async comprobarSesion() {
     try {
@@ -301,4 +302,42 @@ export class AuthService {
     });
   }
 
+  // Actualizar el rol del usuario
+  async actualizarRol(nuevoRol: string) {
+    try {
+      const uid = await this.getUserId();
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      await updateDoc(usuarioRef, { rol: nuevoRol });
+      console.log('Rol del usuario actualizado a:', nuevoRol);
+    } catch (error) {
+      console.error('Error al actualizar el rol del usuario:', error);
+      throw error;
+    }
+}
+
+async cargarFotoPerfilVendedorComoBase64(uid: string, file: File): Promise<void> {
+  try {
+    const base64String = await this.convertFileToBase64(file);
+
+    // Actualizar documento del usuario en Firestore con base64
+    const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+    await updateDoc(usuarioRef, { imagen: base64String });
+
+    console.log('Imagen base64 actualizada en Firestore');
+  } catch (error) {
+    console.error('Error al subir imagen base64:', error);
+    throw error;
+  }
+}
+
+  convertFileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = error => reject(error);
+  });
+}
 }
