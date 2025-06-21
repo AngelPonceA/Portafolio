@@ -1,3 +1,4 @@
+import { AuthService } from 'src/app/services/auth/auth.service';
 import {
   Component,
   ElementRef,
@@ -21,15 +22,16 @@ export class BotonSoporteComponent implements OnInit, AfterViewInit {
   private offsetX = 0;
   private offsetY = 0;
 
+  usuario: any;
   @ViewChild('fabButton', { static: true }) fabButton!: ElementRef;
 
   constructor(
     private navCtrl: NavController,
     private el: ElementRef,
     private renderer: Renderer2,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
-    // 💡 Resetear posición en cada navegación
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         setTimeout(() => this.resetPosition(), 10);
@@ -39,19 +41,30 @@ export class BotonSoporteComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {}
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     this.resetPosition();
+    this.usuario = await this.authService.obtenerPerfil();
   }
 
   private resetPosition() {
-    const defaultX = window.innerWidth * 0.8;
-    const defaultY = window.innerHeight * 0.84;
+    const rutaActual = this.router.url;
 
-    this.renderer.setStyle(this.el.nativeElement, 'left', `${defaultX}px`);
-    this.renderer.setStyle(this.el.nativeElement, 'top', `${defaultY}px`);
-    this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
-    this.renderer.setStyle(this.el.nativeElement, 'right', 'auto');
-    this.renderer.setStyle(this.el.nativeElement, 'position', 'fixed');
+    if (rutaActual === '/perfil') {
+      const marginRight = 80;
+      const marginTop = 100;
+      this.renderer.setStyle(this.el.nativeElement, 'right', `${marginRight}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'top', `${marginTop}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'left', 'auto');
+      this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
+    } else {
+      const defaultX = window.innerWidth * 0.8;
+      const defaultY = window.innerHeight * 0.84;
+
+      this.renderer.setStyle(this.el.nativeElement, 'left', `${defaultX}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'top', `${defaultY}px`);
+      this.renderer.setStyle(this.el.nativeElement, 'right', 'auto');
+      this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
+    }
   }
 
   goToSoporte() {

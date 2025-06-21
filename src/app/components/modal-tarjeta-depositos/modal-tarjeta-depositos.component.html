@@ -1,0 +1,94 @@
+<div class="overlay" role="dialog" aria-modal="true">
+  <div
+    class="card-form"
+    tabindex="0"
+    role="document"
+    aria-labelledby="titulo-modal"
+  >
+    <form [formGroup]="form" (ngSubmit)="confirmar()">
+      <h2 id="titulo-modal">Información Bancaria</h2>
+
+      <ion-item>
+        <ion-label position="floating">Titular de la Tarjeta</ion-label>
+        <ion-input formControlName="titular"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Banco</ion-label>
+        <ion-input
+          formControlName="banco"
+          (ionInput)="filtrarBancos($event)"
+          [value]="form.value.banco"
+        >
+        </ion-input>
+      </ion-item>
+
+      <ion-list *ngIf="bancosFiltrados.length > 0">
+        <ion-item
+          *ngFor="let banco of bancosFiltrados"
+          (click)="seleccionarBanco(banco)"
+        >
+          {{ banco }}
+        </ion-item>
+      </ion-list>
+
+      <ng-container *ngIf="tiposCuenta.length > 0">
+        <div class="titulo-tipo-cuenta">Tipo de Cuenta</div>
+
+        <div class="tipo-cuenta-lista">
+          <ion-item
+            button
+            *ngFor="let tipo of tiposCuenta"
+            detail="false"
+            (click)="seleccionarTipoCuenta(tipo)"
+            [class.activo]="form.value.tipoCuenta === tipo.valor"
+          >
+            <ion-label>{{ tipo.label }}</ion-label>
+            <ion-icon
+              *ngIf="form.value.tipoCuenta === tipo.valor"
+              name="checkmark-circle"
+              color="success"
+              slot="end"
+            ></ion-icon>
+          </ion-item>
+        </div>
+      </ng-container>
+
+      <ion-item>
+        <ion-label position="floating">Número de cuenta</ion-label>
+        <ion-input
+          type="tel"
+          formControlName="numeroTarjeta"
+          maxlength="16"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Fecha de Vencimiento (MM/AA)</ion-label>
+        <ion-input formControlName="vencimiento"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">CVV</ion-label>
+        <ion-input type="tel" formControlName="cvv" maxlength="4"></ion-input>
+      </ion-item>
+
+      <ion-item lines="none">
+        <ion-checkbox
+          slot="start"
+          formControlName="aceptarTerminos"
+        ></ion-checkbox>
+        <ion-label>Acepto los términos y condiciones</ion-label>
+      </ion-item>
+
+      <div class="acciones">
+        <ion-button color="medium" fill="clear" (click)="cancelar()"
+          >Cancelar</ion-button
+        >
+        <ion-button class="brown-button" type="submit" [disabled]="!form.valid"
+          >Confirmar</ion-button
+        >
+      </div>
+    </form>
+  </div>
+</div>

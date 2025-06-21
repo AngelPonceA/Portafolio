@@ -69,7 +69,7 @@
     <div class="pagar">
       <div class="total-desglose">
         <div>Subtotal productos: ${{ subtotalProductos | number }} CLP</div>
-        <div>Total envíos: ${{ subtotalEnvios | number }} CLP</div>
+        <div *ngIf="usuario && usuario.rol != 'invitado'" >Total envíos: ${{ subtotalEnvios | number }} CLP</div>
         <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
         <div *ngIf="!usuario || usuario.rol == 'invitado'" class="total-final">Inicia sesión para poder realizar la compra</div>
       </div>

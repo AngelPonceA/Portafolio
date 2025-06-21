@@ -1,0 +1,121 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+.card-form {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.acciones {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+@keyframes fadeIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.tipo-cuenta-lista ion-item {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  transition: background 0.2s ease;
+}
+
+.tipo-cuenta-lista ion-item.activo {
+  background-color: #d1a15a2c;
+  border-color: #d1a15a;
+}
+
+.card-form {
+  position: relative; // asegúrate de que esté presente
+}
+
+.autocomplete-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc; // borde gris clarito
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 10;
+  margin-top: 4px;
+}
+
+.autocomplete-list ion-item {
+  --background: transparent;
+  --min-height: 38px;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.autocomplete-list ion-item:last-child {
+  border-bottom: none;
+}
+
+.autocomplete-list ion-item:hover {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+.brown-button {
+  --background: #d1a15a2c;
+  --background-hover: #b8860b33;
+  --background-hover-opacity: 1;
+  --background-activated: #a0522d33;
+  --background-activated-opacity: 1;
+  --background-focused: #cd853f33;
+  --background-focused-opacity: 1;
+  --color: #5c3a1a;
+  --color-hover: #3e2612;
+  --color-activated: #2c1b0e;
+  --color-focused: #3e2612;
+  --border-radius: 15px;
+  --border-color: #8b5e3c;
+  --border-style: solid;
+  --border-width: 1px;
+  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --ripple-color: rgba(139, 69, 19, 0.4);
+  --opacity: 1;
+  --padding-top: 10px;
+  --padding-bottom: 10px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+.titulo-tipo-cuenta {
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: #333;
+  margin-left: 8px;
+}

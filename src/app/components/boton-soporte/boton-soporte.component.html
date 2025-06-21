@@ -1,8 +1,5 @@
-<ion-fab>
-  <ion-fab-button
-    #fabButton
-    (click)="goToSoporte()"
-  >
+<ion-fab *ngIf="usuario && usuario.rol != 'invitado'" >
+  <ion-fab-button #fabButton (click)="goToSoporte()">
     <ion-icon name="help-circle-outline"></ion-icon>
   </ion-fab-button>
 </ion-fab>

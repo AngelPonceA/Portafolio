@@ -29,7 +29,7 @@ export class MisProductosPage implements OnInit {
   ofertas: Oferta[] = [];
   estados = ['nuevo', 'segunda mano'];
   oferta = false;
-  idUsuario: string = 'LtOy7x75rVTK4f56xhErfdDPEs92'; 
+  idUsuario?: string; 
 
   mostrarOferta: boolean = false;
   productoSeleccionado!: Producto;
@@ -54,10 +54,7 @@ export class MisProductosPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    // const { id } = await this.authService.obtenerSesion();
-    // if (!id) throw new Error('El usuario no ha iniciado sesion');
-    // this.idUsuario = id;
-    // console.debug('Sesión existente:', this.idUsuario);
+    this.idUsuario = await this.authService.obtenerSesion().then(sesion => sesion.id);;
   }
 
   async ionViewWillEnter() {

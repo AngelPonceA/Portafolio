@@ -62,7 +62,7 @@ export class CarritoService {
       }
 
       await this.nativeStorage.setItem(this.carritoStorage, carrito);
-      this.ionicService.mostrarToastAbajo(`Producto agregado al carrito.`);
+      this.ionicService.mostrarToastAbajo(`Producto agregado al carrito, cantidad: ${cantidad}.`);
       return true;
 
     } catch (error) {
@@ -229,7 +229,8 @@ export class CarritoService {
       telefono: direccion.apellidos,
       calle: direccion.calle,
       estado_pago: detallesPago.status,
-      medio_pago: detallesPago.payment_type_code
+      medio_pago: detallesPago.payment_type_code,
+      detalles_pago: detallesPago,
     });
     console.log('Funcion crearPedido Exito');
     return pedidoRef;

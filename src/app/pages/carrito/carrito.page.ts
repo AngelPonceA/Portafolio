@@ -20,6 +20,7 @@ import { IonicService } from 'src/app/services/ionic/ionic.service';
   styleUrls: ['./carrito.page.scss'],
   standalone: false
 })
+
 export class CarritoPage implements OnInit {
 
   productos: any[] = [];
@@ -36,17 +37,11 @@ export class CarritoPage implements OnInit {
   direccionPrincipal: any = null;
   direccionesUsuario: any[] = [];
 
-  constructor(private router: Router, 
-                private crudService: CrudService, 
-                private authService: AuthService, 
-                private cartService: CarritoService,
-                private webpayService: WebpayService,
-                private route: ActivatedRoute,
-                private http: HttpClient,
-                private modalCtrl: ModalController,
-                private ubicacionService: UbicacionService,
-                private ionicService: IonicService
-              ) {}
+  constructor(private router: Router, private crudService: CrudService, private authService: AuthService,
+    private cartService: CarritoService, private webpayService: WebpayService, private route: ActivatedRoute, 
+    private http: HttpClient, private modalCtrl: ModalController, private ubicacionService: UbicacionService,
+    private ionicService: IonicService
+  ) {}
   
   async ngOnInit() {
     this.usuario = await this.authService.obtenerPerfil();
@@ -163,7 +158,6 @@ export class CarritoPage implements OnInit {
     }
     this.calcularSubtotales();
   }
-
 
   obtenerCostoEnvio(producto_id: string): number {
     return this.costosEnvio[producto_id] || 0;

@@ -9,7 +9,7 @@
         <div class="info-item">
           <label class="info-label">Correo Electrónico</label>
           <div class="info-card">
-            <ion-icon name="mail-outline" class="info-icon"></ion-icon> <!-- correcto -->
+            <ion-icon name="mail-outline" class="info-icon"></ion-icon> 
             <p class="info-text">{{ usuario.email }}</p>
           </div>
         </div>
@@ -44,7 +44,7 @@
           Mis solicitudes de soporte
         </ion-button>
 
-        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/usuario-vendedor']">
+        <ion-button expand="block" class="accion-btn" fill="outline" (click)="convertirEnVendedor()">
           <ion-icon name="storefront-outline" slot="start"></ion-icon> 
           Transformarte en vendedor
         </ion-button>
@@ -57,15 +57,26 @@
 
     </div>
 
-    <ng-template #comprobarVendedor>
-      <div *ngIf="usuario && usuario.rol == 'usuario-vendedor'; else invitado" class="perfil-container">
-        <div class="perfil-header">
-          <ion-avatar class="avatar">
-            <img [src]=" usuario.imagen " alt="Foto de perfil vendedor">
-          </ion-avatar>
-          <h2>{{ usuario.nombre }}</h2>
-          <p>{{ usuario.email }}</p>
-        </div>
+<ng-template #comprobarVendedor>
+  <div *ngIf="usuario && usuario.rol == 'usuario-vendedor'; else invitado" class="perfil-container">
+    <div class="perfil-header">
+
+      <!-- Imagen de perfil que actúa como botón -->
+      <label class="avatar-interactiva">
+        <ion-avatar class="avatar">
+          <img 
+            [src]="usuario.imagen" 
+            alt="Foto de perfil vendedor"
+            (error)="onImageError($event)"
+          >
+        </ion-avatar>
+        <input type="file" accept="image/*" (change)="subirFotoPerfil($event)" hidden>
+        <ion-icon name="camera-outline" class="icono-camara"></ion-icon>
+      </label>
+
+      <h2>{{ usuario.nombre }}</h2>
+      <p>{{ usuario.email }}</p>
+  </div>
 
         <div class="perfil-opciones">
 
@@ -127,6 +138,14 @@
         </div>
 
       </div>
+
+    <!-- Fab para editar datos bancarios -->
+      <ion-fab slot="fixed" vertical="top" horizontal="start" class="fab-tarjeta" (click)="cambiarTarjeta()">
+        <ion-fab-button>
+          <ion-icon name="card-outline"></ion-icon>
+        </ion-fab-button>
+      </ion-fab>
+
     </ng-template>
 
     <ng-template #invitado>
