@@ -50,6 +50,7 @@ export class BotonSoporteComponent implements OnInit, AfterViewInit {
     const rutaActual = this.router.url;
 
     if (rutaActual === '/perfil') {
+      // Posición para /perfil: esquina superior derecha con margen mayor
       const marginRight = 80;
       const marginTop = 100;
       this.renderer.setStyle(this.el.nativeElement, 'right', `${marginRight}px`);
@@ -57,6 +58,7 @@ export class BotonSoporteComponent implements OnInit, AfterViewInit {
       this.renderer.setStyle(this.el.nativeElement, 'left', 'auto');
       this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
     } else {
+      // Posición para resto de la app (abajo derecha)
       const defaultX = window.innerWidth * 0.8;
       const defaultY = window.innerHeight * 0.84;
 
@@ -65,7 +67,10 @@ export class BotonSoporteComponent implements OnInit, AfterViewInit {
       this.renderer.setStyle(this.el.nativeElement, 'right', 'auto');
       this.renderer.setStyle(this.el.nativeElement, 'bottom', 'auto');
     }
+
+    this.renderer.setStyle(this.el.nativeElement, 'position', 'fixed');
   }
+
 
   goToSoporte() {
     this.navCtrl.navigateForward('/soporte');
