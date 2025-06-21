@@ -64,11 +64,7 @@
       <!-- Imagen de perfil que actúa como botón -->
       <label class="avatar-interactiva">
         <ion-avatar class="avatar">
-          <img 
-            [src]="usuario.imagen" 
-            alt="Foto de perfil vendedor"
-            (error)="onImageError($event)"
-          >
+          <img [src]="usuario.imagen ? usuario.imagen : imagen_default" alt="Foto de perfil vendedor" (error)="onImageError($event)">
         </ion-avatar>
         <input type="file" accept="image/*" (change)="subirFotoPerfil($event)" hidden>
         <ion-icon name="camera-outline" class="icono-camara"></ion-icon>

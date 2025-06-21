@@ -19,7 +19,7 @@ export class PerfilPage implements OnInit {
   usuario?: any;
   costoMembresia: number = 50000;
   mostrarBotonWebpay: boolean = false;
-
+  imagen_default: string = 'assets/img/profile-placeholder.jpg';
   constructor(
               private router: Router, 
               private authService: AuthService, 
