@@ -301,4 +301,16 @@ export class AuthService {
     });
   }
 
+  // Actualizar el rol del usuario
+  async actualizarRol(nuevoRol: string) {
+    try {
+      const uid = await this.getUserId();
+      const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+      await updateDoc(usuarioRef, { rol: nuevoRol });
+      console.log('Rol del usuario actualizado a:', nuevoRol);
+    } catch (error) {
+      console.error('Error al actualizar el rol del usuario:', error);
+      throw error;
+    }
+}
 }

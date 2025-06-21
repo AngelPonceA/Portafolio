@@ -4,6 +4,8 @@ import { AuthService } from './../../services/auth/auth.service';
 import { IonicService } from 'src/app/services/ionic/ionic.service';
 import { WebpayService } from 'src/app/services/webpay/webpay.service';
 import { ActivatedRoute } from '@angular/router';
+import { ModalTarjetaDepositosService } from 'src/app/services/modal-tarjeta-depositos/modal-tarjeta-depositos.service';
+
 
 @Component({
   selector: 'app-perfil',
@@ -18,8 +20,14 @@ export class PerfilPage implements OnInit {
   costoMembresia: number = 50000;
   mostrarBotonWebpay: boolean = false;
 
-  constructor(private router: Router, private authService: AuthService, private ionicService: IonicService, 
-    private webpayService: WebpayService, private route: ActivatedRoute) { }
+  constructor(
+              private router: Router, 
+              private authService: AuthService, 
+              private ionicService: IonicService, 
+              private webpayService: WebpayService, 
+              private route: ActivatedRoute, 
+              private modalTarjetaDepositos: ModalTarjetaDepositosService
+            ) { }
 
   async ngOnInit() {
     const token = this.route.snapshot.queryParamMap.get('token_ws');
@@ -111,6 +119,31 @@ export class PerfilPage implements OnInit {
     });
   }
 
+  //Modal de Tarjeta de Depósitos
+  async convertirEnVendedor() {
+    try {
+      const datosBancarios = await this.modalTarjetaDepositos.mostrarModal();
+      await this.modalTarjetaDepositos.guardarDatosBancarios( datosBancarios );
+      await this.authService.actualizarRol('usuario-vendedor');
+
+      this.usuario.rol = 'usuario-vendedor';
+      this.ionicService.mostrarAlerta('¡Éxito!', 'Ya eres vendedor en la plataforma.');
+    } catch {
+      this.ionicService.mostrarAlerta('Cancelado', 'No se realizó ningún cambio.');
+    }
+  }
+
+  async cambiarTarjeta() {
+  try {
+    const datosActuales = await this.modalTarjetaDepositos.obtenerDatosBancarios();
+    const nuevosDatos = await this.modalTarjetaDepositos.mostrarModalConDatos(datosActuales); // pasa prellenado
+    await this.modalTarjetaDepositos.guardarDatosBancarios( nuevosDatos );
+    this.ionicService.mostrarAlerta('Actualizado', 'Tu tarjeta fue actualizada.');
+  } catch {
+    this.ionicService.mostrarAlerta('Cancelado', 'No se modificó la tarjeta.');
+  }
+}
+
   irARegistro() {
     this.router.navigate(['/registro']);
   }
@@ -122,4 +155,11 @@ export class PerfilPage implements OnInit {
   cerrarSesion() {
     this.authService.logout();
   };
+
+  onImageError(event: Event) {
+  const imgElement = event.target as HTMLImageElement;
+  imgElement.src = 'assets/img/profile-placeholder.jpg';
+  imgElement.onerror = null;
+}
+
 }

@@ -9,7 +9,7 @@
         <div class="info-item">
           <label class="info-label">Correo Electrónico</label>
           <div class="info-card">
-            <ion-icon name="mail-outline" class="info-icon"></ion-icon> <!-- correcto -->
+            <ion-icon name="mail-outline" class="info-icon"></ion-icon> 
             <p class="info-text">{{ usuario.email }}</p>
           </div>
         </div>
@@ -44,7 +44,7 @@
           Mis solicitudes de soporte
         </ion-button>
 
-        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/usuario-vendedor']">
+        <ion-button expand="block" class="accion-btn" fill="outline" (click)="convertirEnVendedor()">
           <ion-icon name="storefront-outline" slot="start"></ion-icon> 
           Transformarte en vendedor
         </ion-button>
@@ -60,9 +60,13 @@
     <ng-template #comprobarVendedor>
       <div *ngIf="usuario && usuario.rol == 'usuario-vendedor'; else invitado" class="perfil-container">
         <div class="perfil-header">
-          <ion-avatar class="avatar">
-            <img [src]=" usuario.imagen " alt="Foto de perfil vendedor">
-          </ion-avatar>
+        <ion-avatar class="avatar">
+          <img 
+            [src]="usuario.imagen" 
+            alt="Foto de perfil vendedor"
+            (error)="onImageError($event)"
+          >
+        </ion-avatar>
           <h2>{{ usuario.nombre }}</h2>
           <p>{{ usuario.email }}</p>
         </div>
