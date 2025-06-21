@@ -30,7 +30,7 @@ export class HomePage {
     this.cargarContenidoHome();
   }
 
-  async cargarContenidoHome() {
+ async cargarContenidoHome() {
     this.cargarMasProductos();
     this.usuario = await this.authService.obtenerPerfil();
     
@@ -59,7 +59,7 @@ export class HomePage {
 
     this.categorias = this.crudService.obtenerCategorias();
   }
-  
+
   async ionViewDidEnter() {
     this.productosInfinitos = [];
     await this.cargarMasProductos();
@@ -83,16 +83,6 @@ export class HomePage {
     return Math.floor(calificacion || 0);
   }
 
-  async cargarMas(event: any) {
-    try {
-      await this.cargarMasProductos();
-    } catch (error) {
-      console.error('Error al cargar más productos:', error);
-    } finally {
-      event.target.complete();
-    }
-  }
-
   verCategoria(categoria: string){
     this.router.navigate(['/busqueda'], { state: { categoria : categoria } });
   }
@@ -103,6 +93,16 @@ export class HomePage {
 
   verDetalle(producto_id: string) {
     this.router.navigate(['/producto'], { state: { producto_id } });
+  }
+
+  async cargarMas(event: any) {
+    try {
+      await this.cargarMasProductos();
+    } catch (error) {
+      console.error('Error al cargar más productos:', error);
+    } finally {
+      event.target.complete();
+    }
   }
 
 }
