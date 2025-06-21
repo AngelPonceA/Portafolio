@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { Router } from '@angular/router';
 import { Firestore, collection, query, where, getDocs, addDoc, doc, setDoc, getDoc, onSnapshot, updateDoc, orderBy } from '@angular/fire/firestore';
+import { Storage, ref, uploadBytes, getDownloadURL } from '@angular/fire/storage';
 import { Auth, createUserWithEmailAndPassword, EmailAuthProvider, reauthenticateWithCredential, updatePassword, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { Usuario } from '../../models/usuario.models';
 import { FirebaseError } from 'firebase/app';
