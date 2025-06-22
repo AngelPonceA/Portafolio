@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ModalTarjetaDepositosService } from 'src/app/services/modal-tarjeta-depositos/modal-tarjeta-depositos.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import imageCompression from 'browser-image-compression';
+import { ActionSheetController } from '@ionic/angular';
 
 @Component({
   selector: 'app-perfil',
@@ -27,7 +28,8 @@ export class PerfilPage implements OnInit {
               private ionicService: IonicService, 
               private webpayService: WebpayService, 
               private route: ActivatedRoute, 
-              private modalTarjetaDepositos: ModalTarjetaDepositosService
+              private modalTarjetaDepositos: ModalTarjetaDepositosService,
+              private actionSheetCtrl: ActionSheetController
             ) { }
 
   async ngOnInit() {
@@ -145,45 +147,78 @@ export class PerfilPage implements OnInit {
   }
 }
 
-// Subir foto desde input file (por input type="file")
-async subirFotoPerfil(event: any) {
-  const archivo = event.target.files[0];
-  if (!archivo || !this.usuario?.id) return;
+// ====== Metodos de cámara y archivos para foto de perfil ======
 
-  try {
-    const compressedFile = await this.compressImage(archivo);
-    if (!compressedFile) throw new Error('No se pudo comprimir');
-
-    await this.authService.cargarFotoPerfilVendedorComoBase64(this.usuario.id, compressedFile);
-    this.usuario.imagen = URL.createObjectURL(compressedFile); // Vista previa temporal
-    this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
-  } catch (error) {
-    this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
+  async subirFotoPerfilPrompt() {
+    const sheet = await this.actionSheetCtrl.create({
+      header: 'Selecciona origen de la foto',
+      buttons: [
+        {
+          text: 'Tomar foto',
+          icon: 'camera-outline',
+          handler: () => this.tomarFoto()
+        },
+        {
+          text: 'Galería',
+          icon: 'images-outline',
+          handler: () => this.elegirDeGaleria()
+        },
+        {
+          text: 'Cancelar',
+          icon: 'close',
+          role: 'cancel'
+        }
+      ]
+    });
+    await sheet.present();
   }
-}
 
-// Elegir foto desde cámara
-async elegirFoto() {
+// Abre la cámara directamente
+async tomarFoto() {
   try {
     const image = await Camera.getPhoto({
       quality: 90,
       allowEditing: false,
       resultType: CameraResultType.DataUrl,
-      source: CameraSource.Prompt
+      source: CameraSource.Camera    
     });
-
-    const uid = await this.authService.getUserId();
-    if (uid && image.dataUrl) {
-      const file = this.dataURLtoFile(image.dataUrl, 'profile.jpg');
-      const compressedFile = await this.compressImage(file);
-      if (!compressedFile) throw new Error('No se pudo comprimir');
-
-      await this.authService.cargarFotoPerfilVendedorComoBase64(uid, compressedFile);
-      this.usuario.imagen = URL.createObjectURL(compressedFile); // Vista previa temporal
-      this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
+    if (image.dataUrl) {
+      await this.procesarImagen(image.dataUrl);
+    } else {
+      this.ionicService.mostrarAlerta('Error', 'No se pudo obtener la foto.');
     }
-  } catch (error) {
-    this.ionicService.mostrarAlerta('Error', 'No se pudo subir la imagen.');
+  } catch {
+    this.ionicService.mostrarAlerta('Error', 'No se pudo tomar la foto.');
+  }
+}
+
+// Abre la galería fija
+async elegirDeGaleria() {
+  try {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Photos     
+    });
+    if (image.dataUrl) {
+      await this.procesarImagen(image.dataUrl);
+    } else {
+      this.ionicService.mostrarAlerta('Error', 'No se pudo obtener la foto.');
+    }
+  } catch {
+    this.ionicService.mostrarAlerta('Error', 'No se pudo elegir la foto.');
+  }
+}
+
+private async procesarImagen(dataUrl: string) {
+  const file = this.dataURLtoFile(dataUrl, 'profile.jpg');
+  const compressed = await this.compressImage(file);
+  const uid = await this.authService.getUserId();
+  if (uid && compressed) {
+    await this.authService.cargarFotoPerfilVendedorComoBase64(uid, compressed);
+    this.usuario!.imagen = URL.createObjectURL(compressed);
+    this.ionicService.mostrarToastArriba('Foto actualizada con éxito');
   }
 }
 

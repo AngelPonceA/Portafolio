@@ -62,13 +62,17 @@
     <div class="perfil-header">
 
       <!-- Imagen de perfil que actúa como botón -->
-      <label class="avatar-interactiva">
-        <ion-avatar class="avatar">
-          <img [src]="usuario.imagen ? usuario.imagen : imagen_default" alt="Foto de perfil vendedor" (error)="onImageError($event)">
-        </ion-avatar>
-        <input type="file" accept="image/*" (change)="subirFotoPerfil($event)" hidden>
+     <label class="avatar-interactiva" (click)="subirFotoPerfilPrompt()">
+      <ion-avatar class="avatar">
+        <img
+          [src]="usuario.imagen || imagen_default"
+          alt="Foto de perfil vendedor"
+          (error)="onImageError($event)"
+        />
         <ion-icon name="camera-outline" class="icono-camara"></ion-icon>
-      </label>
+      </ion-avatar>
+    </label>
+
 
       <h2>{{ usuario.nombre }}</h2>
       <p>{{ usuario.email }}</p>
