@@ -16,7 +16,6 @@
   padding: 1.5rem;
   border-radius: 20px;
   width: 90%;
-  max-width: 400px;
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -26,12 +25,27 @@
 .acciones {
   margin-top: 1rem;
   display: flex;
-  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.acciones ion-button {
+  flex: 1;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  height: auto;
 }
 
 @keyframes fadeIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .tipo-cuenta-lista ion-item {
@@ -82,33 +96,7 @@
 }
 
 .brown-button {
-  --background: #d1a15a2c;
-  --background-hover: #b8860b33;
-  --background-hover-opacity: 1;
-  --background-activated: #a0522d33;
-  --background-activated-opacity: 1;
-  --background-focused: #cd853f33;
-  --background-focused-opacity: 1;
   --color: #5c3a1a;
-  --color-hover: #3e2612;
-  --color-activated: #2c1b0e;
-  --color-focused: #3e2612;
-  --border-radius: 15px;
-  --border-color: #8b5e3c;
-  --border-style: solid;
-  --border-width: 1px;
-  --box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-  --ripple-color: rgba(139, 69, 19, 0.4);
-  --opacity: 1;
-  --padding-top: 10px;
-  --padding-bottom: 10px;
-  --padding-start: 16px;
-  --padding-end: 16px;
-  --transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-  display: inline-block;
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 0.5px;
 }
 
 .titulo-tipo-cuenta {

@@ -82,12 +82,25 @@
       </ion-item>
 
       <div class="acciones">
-        <ion-button color="medium" fill="clear" (click)="cancelar()"
-          >Cancelar</ion-button
+        <ion-button color="medium" fill="clear" (click)="cancelar()">
+          Cancelar
+        </ion-button>
+        <ion-button
+          color="danger"
+          fill="clear"
+          (click)="limpiarFormulario()"
+          type="button"
         >
-        <ion-button class="brown-button" type="submit" [disabled]="!form.valid"
-          >Confirmar</ion-button
+          Limpiar
+        </ion-button>
+        <ion-button
+          class="brown-button"
+          fill="clear"
+          type="submit"
+          [disabled]="!form.valid"
         >
+          Confirmar
+        </ion-button>
       </div>
     </form>
   </div>
