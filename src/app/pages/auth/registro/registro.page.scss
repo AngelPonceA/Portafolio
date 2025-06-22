@@ -1,15 +1,10 @@
 :host {
     --ion-background-color: #f5f5f5;
     --ion-text-color: #000;
-    display: block;
+    height: 100%;
   }
   
   .register-page {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    min-height: 100vh;
     padding-top: 20px;
     background: var(--ion-background-color);
   }
@@ -30,7 +25,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 3vh;
-    margin-bottom: 3vh; // espacio inferior para no pegarlo al formulario
+    margin-bottom: 3vh;
     padding: 0;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
@@ -49,8 +44,10 @@
     margin: auto;
     width: 90%;
     max-width: 400px;
+    max-height: calc(100vh - 200px); 
+    overflow-y: auto;
   }
-  
+
   ion-item {
     margin-bottom: 15px;
     border-radius: 25px;
@@ -117,3 +114,7 @@
     font-weight: bold;
     text-decoration: none;
   }
+
+  ion-content.register-page {
+  --overflow: auto;
+}

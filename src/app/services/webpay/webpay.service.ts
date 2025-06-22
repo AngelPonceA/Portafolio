@@ -17,4 +17,9 @@ export class WebpayService {
   confirmarTransaccion(token: string) {
     return this.http.post(`${this.apiUrl}/commit`, {token_ws: token});
   }
+
+  redirectToApp(token: string) {
+    window.location.href = `${this.apiUrl}/redirect/${token}`;
+  }
+  
 }

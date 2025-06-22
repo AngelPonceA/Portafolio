@@ -3,6 +3,8 @@ import { TriggersService } from './services/triggers/triggers.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from './services/auth/auth.service';
 import { CarritoService } from './services/carrito/carrito.service';
+import { NavController } from '@ionic/angular';
+import { App, URLOpenListener, URLOpenListenerEvent } from '@capacitor/app';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +22,8 @@ export class AppComponent implements OnInit {
   private triggersService: TriggersService,
   private router: Router,
   private authService: AuthService,
-  private cartService: CarritoService
+  private cartService: CarritoService,
+  private navCtrl: NavController
 ) {
   this.router.events.subscribe(event => {
     if (event instanceof NavigationEnd) {
@@ -44,15 +47,15 @@ export class AppComponent implements OnInit {
 
     this.cartService.comprobarCarrito();
     
-  //   this.triggersService.escucharCambiosPedido();
+    //   this.triggersService.escucharCambiosPedido();
 
-  //   this.triggersService.escucharCambiosDetallePedido();
+    //   this.triggersService.escucharCambiosDetallePedido();
 
-  //   this.triggersService.escucharCambiosStock();
+    //   this.triggersService.escucharCambiosStock();
 
-  //   this.triggersService.escucharCreacionPedido();
+    //   this.triggersService.escucharCreacionPedido();
 
-  //   this.authService.comprobarSesion();
+    //   this.authService.comprobarSesion();
 
     try {
       // const sesion = await this.authService.obtenerSesion();
@@ -68,5 +71,19 @@ export class AppComponent implements OnInit {
     const estaExcluida = rutasExcluidas.includes(rutaActual);
 
     this.MostrarBotonSoporte = this.sesionValida && !estaExcluida;
+
+    window.addEventListener('webpayRedirect', (event: any) => {
+      try {
+        const token = event.token_ws;
+        console.log('🎯 Token recibido en app.component.ts:', token);
+        if (token) {
+          this.navCtrl.navigateForward(['/carrito', token]);
+        }
+      } catch (e) {
+        console.error('❌ Error procesando evento webpayRedirect'+JSON.stringify(event), e);
+      }
+    });
+
   }
 }
+

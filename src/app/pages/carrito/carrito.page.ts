@@ -37,11 +37,21 @@ export class CarritoPage implements OnInit {
   direccionPrincipal: any = null;
   direccionesUsuario: any[] = [];
 
-  constructor(private router: Router, private crudService: CrudService, private authService: AuthService,
-    private cartService: CarritoService, private webpayService: WebpayService, private route: ActivatedRoute, 
-    private http: HttpClient, private modalCtrl: ModalController, private ubicacionService: UbicacionService,
-    private ionicService: IonicService
-  ) {}
+  constructor(private router: Router, 
+              private crudService: CrudService, 
+              private authService: AuthService,
+              private cartService: CarritoService, 
+              private webpayService: WebpayService, 
+              private route: ActivatedRoute, 
+              private http: HttpClient, 
+              private modalCtrl: ModalController, 
+              private ubicacionService: UbicacionService,
+              private ionicService: IonicService
+  ) {const token = this.route.snapshot.paramMap.get('token_ws');
+  if (token) {
+    console.error('🎯 Token recibido en carrito:', token);
+    this.confirmarTransaccion(token);
+  }}
   
   async ngOnInit() {
     this.usuario = await this.authService.obtenerPerfil();
@@ -79,11 +89,6 @@ export class CarritoPage implements OnInit {
     await this.calculateTotalAmount();
 
     this.regiones = this.ubicacionService.getRegiones();
-
-    const token = this.route.snapshot.queryParamMap.get('token_ws');
-    if (token) {
-      this.confirmarTransaccion(token);
-    }
   }
 
   ngAfterViewInit() {

@@ -24,6 +24,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/carrito/carrito.module').then( m => m.CarritoPageModule)
   },
   {
+  path: 'carrito/:token_ws',
+  loadChildren: () => import('./pages/carrito/carrito.module').then(m => m.CarritoPageModule)
+  },
+  {
     path: 'producto',
     loadChildren: () => import('./pages/producto/producto.module').then( m => m.ProductoPageModule)
   },
