@@ -5,6 +5,11 @@
     role="document"
     aria-labelledby="titulo-modal"
   >
+
+  <ion-note color="medium">
+  Esta información es utilizada exclusivamente para transferencias de pago por tus ventas. Nunca solicitaremos datos de tarjetas para cobros.
+  </ion-note>
+
     <form [formGroup]="form" (ngSubmit)="confirmar()">
       <h2 id="titulo-modal">Información Bancaria</h2>
 
@@ -57,20 +62,10 @@
       <ion-item>
         <ion-label position="floating">Número de cuenta</ion-label>
         <ion-input
-          type="tel"
-          formControlName="numeroTarjeta"
-          maxlength="16"
+          type="text"
+          formControlName="numeroCuenta"
+          maxlength="20"
         ></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Fecha de Vencimiento (MM/AA)</ion-label>
-        <ion-input formControlName="vencimiento"></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">CVV</ion-label>
-        <ion-input type="tel" formControlName="cvv" maxlength="4"></ion-input>
       </ion-item>
 
       <ion-item lines="none">
@@ -78,7 +73,9 @@
           slot="start"
           formControlName="aceptarTerminos"
         ></ion-checkbox>
-        <ion-label>Acepto los términos y condiciones</ion-label>
+      <ion-label>
+        Acepto los términos y condiciones, autorizando el tratamiento de mis datos bancarios según la Ley N° 19.628.
+      </ion-label>
       </ion-item>
 
       <div class="acciones">
@@ -99,7 +96,7 @@
           type="submit"
           [disabled]="!form.valid"
         >
-          Confirmar
+          Guardar
         </ion-button>
       </div>
     </form>

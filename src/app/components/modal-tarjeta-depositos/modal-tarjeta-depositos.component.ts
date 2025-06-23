@@ -55,15 +55,10 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       titular: ['', Validators.required],
-      numeroTarjeta: [
+      numeroCuenta: [
         '',
-        [Validators.required, Validators.pattern(/^\d{16}$/)],
+        [Validators.required, Validators.pattern(/^\d{6,20}$/)],
       ],
-      vencimiento: [
-        '',
-        [Validators.required, Validators.pattern(/^(0[1-9]|1[0-2])\/\d{2}$/)],
-      ],
-      cvv: ['', [Validators.required, Validators.pattern(/^\d{3,4}$/)]],
       banco: ['', Validators.required],
       tipoCuenta: ['', Validators.required],
       aceptarTerminos: [false, Validators.requiredTrue],
@@ -97,7 +92,7 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
         this.form.patchValue({
           titular: init.titular || '',
           banco: init.banco || '',
-          numeroTarjeta: init.numeroTarjeta || '',
+          numeroCuenta: init.numeroCuenta || '',
           vencimiento: init.vencimiento || '',
           cvv: init.cvv || '',
           tipoCuenta: init.tipoCuenta || null,
@@ -161,7 +156,7 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
     this.form.reset({
       titular: '',
       banco: '',
-      numeroTarjeta: '',
+      numeroCuenta: '',
       vencimiento: '',
       cvv: '',
       tipoCuenta: null,
