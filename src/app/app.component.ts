@@ -4,7 +4,6 @@ import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from './services/auth/auth.service';
 import { CarritoService } from './services/carrito/carrito.service';
 import { NavController } from '@ionic/angular';
-import { App, URLOpenListener, URLOpenListenerEvent } from '@capacitor/app';
 import { App as CapacitorApp } from '@capacitor/app';
 
 @Component({
