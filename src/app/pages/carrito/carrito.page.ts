@@ -37,23 +37,20 @@ export class CarritoPage implements OnInit {
   direccionPrincipal: any = null;
   direccionesUsuario: any[] = [];
 
-  constructor(private router: Router, 
-              private crudService: CrudService, 
-              private authService: AuthService,
-              private cartService: CarritoService, 
-              private webpayService: WebpayService, 
-              private route: ActivatedRoute, 
-              private http: HttpClient, 
-              private modalCtrl: ModalController, 
-              private ubicacionService: UbicacionService,
-              private ionicService: IonicService
-  ) {const token = this.route.snapshot.paramMap.get('token_ws');
-  if (token) {
-    console.error('🎯 Token recibido en carrito:', token);
-    this.confirmarTransaccion(token);
-  }}
+  constructor(private router: Router, private crudService: CrudService, private authService: AuthService,
+    private cartService: CarritoService, private webpayService: WebpayService, private route: ActivatedRoute, private http: HttpClient, 
+    private modalCtrl: ModalController, private ubicacionService: UbicacionService, private ionicService: IonicService
+  ) {}
   
   async ngOnInit() {
+    // Esto es clave, es la comprobación de pago para WebPay
+    this.route.queryParams.subscribe(params => {
+      const token = params['token_ws'];
+      if (token) {
+        this.confirmarTransaccion(token);
+      }
+    });
+
     this.usuario = await this.authService.obtenerPerfil();
 
     if (this.usuario){
@@ -189,13 +186,16 @@ export class CarritoPage implements OnInit {
   iniciarPagoWebpay() {
     const data = {
       amount: this.totalAmount,
-      session_id: 'sesion-' + Date.now(), 
-      buy_order: 'orden-' + Date.now()   
+      session_id: 'sesion-' + Date.now(),
+      buy_order: 'orden-' + Date.now(),
+      return_url: 'fleamarket://transaction'
     };
 
     this.webpayService.crearTransaccion(data).subscribe((res: any) => {
       if (res.url && res.token) {
-        this.redirigirAWebpay(res.url, res.token);
+        window.open(`${res.url}?token_ws=${res.token}`, '_system');
+      } else {
+        this.ionicService.mostrarAlerta('Error', 'No se pudo iniciar el pago.');
       }
     });
   }

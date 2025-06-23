@@ -24,16 +24,9 @@ export class CarritoService {
     try {
       const carrito = await this.nativeStorage.getItem(this.carritoStorage);
 
-      // if (Array.isArray(carrito) && carrito.length > 0) {
-      //   this.ionicService.mostrarAlerta('Carrito existente', `Tienes ${carrito.length} producto(s) en el carrito.`);
-      // } else {
-      //   this.ionicService.mostrarAlerta('Carrito vacío', 'No tienes productos en el carrito.');
-      // }
-
     } catch (error) {
       const carritoVacio: any[] = [];
       await this.nativeStorage.setItem(this.carritoStorage, carritoVacio);
-      // this.ionicService.mostrarAlerta('Carrito creado', 'Tu carrito ha sido inicializado.');
     }
   }
 
@@ -190,7 +183,8 @@ export class CarritoService {
 
   async registrarCompra(productos: any | any[], direccion: any, detallesPago: any) {
     try {
-      const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
+      const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
+
       const lista = (Array.isArray(productos) ? productos : [productos]).filter((p: any) => p.cantidad > 0);
 
       if (lista.length === 0) {
@@ -226,7 +220,7 @@ export class CarritoService {
       nombres: direccion.nombres,
       numero: direccion.numero,
       apellidos: direccion.apellidos,
-      telefono: direccion.apellidos,
+      telefono: direccion.telefono,
       calle: direccion.calle,
       estado_pago: detallesPago.status,
       medio_pago: detallesPago.payment_type_code,

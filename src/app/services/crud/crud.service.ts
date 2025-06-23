@@ -810,7 +810,6 @@ async eliminarProducto(producto_id: string) {
 
   async guardarDireccion(direccion: any) {
     const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
-    // const uid = 'LtOy7x75rVTK4f56xhErfdDPEs92';
     const direccionesRef = collection(this.firestore, 'direcciones');
     const nuevaDireccionRef = doc(direccionesRef);
     const nuevaDireccion = {

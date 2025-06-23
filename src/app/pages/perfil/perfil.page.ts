@@ -22,21 +22,20 @@ export class PerfilPage implements OnInit {
   costoMembresia: number = 50000;
   mostrarBotonWebpay: boolean = false;
   imagen_default: string = 'assets/img/profile-placeholder.jpg';
-  constructor(
-              private router: Router, 
-              private authService: AuthService, 
-              private ionicService: IonicService, 
-              private webpayService: WebpayService, 
-              private route: ActivatedRoute, 
-              private modalTarjetaDepositos: ModalTarjetaDepositosService,
-              private actionSheetCtrl: ActionSheetController
-            ) { }
+
+  constructor(private router: Router, private authService: AuthService, private ionicService: IonicService, 
+    private webpayService: WebpayService, private route: ActivatedRoute, private modalTarjetaDepositos: ModalTarjetaDepositosService,
+    private actionSheetCtrl: ActionSheetController
+  ) { }
 
   async ngOnInit() {
-    const token = this.route.snapshot.queryParamMap.get('token_ws');
-    if (token) {
-      this.confirmarTransaccion(token);
-    }
+    // Esto es clave, es la comprobación de pago para WebPay
+    this.route.queryParams.subscribe(params => {
+      const token = params['token_ws'];
+      if (token) {
+        this.confirmarTransaccion(token);
+      }
+    });
 
     this.authService.obtenerPerfil().then((usuario) => {
       this.usuario = usuario;
@@ -67,26 +66,18 @@ export class PerfilPage implements OnInit {
   iniciarPagoWebpay() {
     const data = {
       amount: this.costoMembresia,
-      session_id: 'membresia-' + Date.now(),
-      buy_order: 'id-subs-' + Date.now()
+      session_id: 'sesion-' + Date.now(),
+      buy_order: 'orden-' + Date.now(),
     };
 
-    this.ionicService.mostrarCargando('Redirigiendo a WebPay...');
-
-    this.webpayService.crearTransaccion(data).subscribe({
-      next: (res: any) => {
-        if (res.url && res.token) {
-          this.redirigirAWebpay(res.url, res.token);
-        } else {
-          this.ionicService.mostrarAlerta('Error', 'No se pudo iniciar la transacción.');
-        }
-      },
-      error: (err) => {
-        this.ionicService.mostrarAlerta('Error', 'No se pudo iniciar la transacción.');
-        console.error(err);
+    this.webpayService.crearTransaccion(data).subscribe((res: any) => {
+      if (res.url && res.token) {
+        window.open(`${res.url}?token_ws=${res.token}`, '_system');
+      } else {
+        this.ionicService.mostrarAlerta('Error', 'No se pudo iniciar el pago.');
       }
     });
-  }
+  };
 
   redirigirAWebpay(url: string, token: string) {
     const form = document.createElement('form');
@@ -110,9 +101,9 @@ export class PerfilPage implements OnInit {
       next: async (respuesta: any) => {
         await this.authService.actualizarMembresia(true);
         this.ionicService.ocultarCargando();
-        this.ionicService.mostrarAlerta('¡Membresía activa!', 'Ya puedes ver tus predicciones de venta 🧠');
         this.usuario.membresia = true;
         this.mostrarBotonWebpay = false;
+        this.ionicService.mostrarAlerta('¡Membresía activa!', 'Ya puedes ver tus predicciones de venta 🧠');
       },
       error: (err) => {
         this.ionicService.ocultarCargando();
