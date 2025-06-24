@@ -1,11 +1,19 @@
-import { Component, Output, OnInit, EventEmitter, Input, SimpleChanges, OnChanges } from '@angular/core';
+import {
+  Component,
+  Output,
+  OnInit,
+  EventEmitter,
+  Input,
+  SimpleChanges,
+  OnChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonicModule,
   ToastController,
   AlertController,
-  ModalController
+  ModalController,
 } from '@ionic/angular';
 import imageCompression from 'browser-image-compression';
 
@@ -16,6 +24,7 @@ import { Categoria } from 'src/app/models/categoria.models';
 // Importar servicios
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
 
 @Component({
   selector: 'app-modal-editar-producto',
@@ -23,19 +32,15 @@ import { AuthService } from 'src/app/services/auth/auth.service';
   styleUrls: ['./modal-editar-producto.component.scss'],
   imports: [CommonModule, FormsModule, IonicModule],
 })
-export class ModalEditarProductoComponent implements OnInit, OnChanges{
-  //@Input() userId: string = '';
-  userId: string = 'LtOy7x75rVTK4f56xhErfdDPEs92';
-
+export class ModalEditarProductoComponent implements OnInit, OnChanges {
+  @Input() userId: string = '';
   @Input() initialProductData!: Producto;
   productoId: string = '';
-
-  // Detectar cambios en las propiedades de entrada
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['initialProductData']) {
-      this.cargarDatosProducto();
-    }
-  }
+  regiones: any[] = [];
+  comunas: string[] = [];
+  estados = ['nuevo', 'segunda mano'];
+  nuevaEtiqueta = '';
+  categorias: Categoria[] = [];
 
   // Salidas para notificar al componente padre sobre acciones
   @Output() productSaved = new EventEmitter<Producto>();
@@ -54,11 +59,15 @@ export class ModalEditarProductoComponent implements OnInit, OnChanges{
     inventario_minimo: 0,
     auto_stock: false,
     imagen: [],
+    direccionOrigen: {
+      region: '',
+      comuna: '',
+      calle: '',
+      numero: 0,
+      departamento: '',
+      descripcion: '',
+    },
   };
-
-  estados = ['nuevo', 'segunda mano'];
-  nuevaEtiqueta = '';
-  categorias: Categoria[] = [];
 
   constructor(
     private toastController: ToastController,
@@ -66,86 +75,142 @@ export class ModalEditarProductoComponent implements OnInit, OnChanges{
     private modalController: ModalController,
     private crudService: CrudService,
     private authService: AuthService,
+    private ubicacionService: UbicacionService
   ) {}
 
   ngOnInit() {
     this.obtenerCategorias();
+    this.regiones = this.ubicacionService.getRegiones();
     this.cargarDatosProducto();
   }
 
-  cargarDatosProducto() {
-    if (this.initialProductData) {
-      this.nuevoProductoEditadoForm = { ...this.initialProductData};
-      this.productoId = this.initialProductData.producto_id || '';
-    } else {
-      this.resetearFormularioProductoEditado();
+  // Detectar cambios en las propiedades de entrada
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['initialProductData']) {
+      this.cargarDatosProducto();
     }
   }
+
+  onRegionChange(event: any) {
+    const regionNombre = event.detail.value;
+
+    const regionSeleccionada = this.regiones.find(r => r.nombre === regionNombre);
+
+    if (regionSeleccionada) {
+      this.comunas = regionSeleccionada.comunas;
+      this.nuevoProductoEditadoForm.direccionOrigen.comuna = ''; // reset comuna
+    } else {
+      this.comunas = [];
+    }
+  }
+
+cargarDatosProducto() {
+  if (this.initialProductData) {
+    this.productoId = this.initialProductData.producto_id || '';
+
+    const direccionRaw = this.initialProductData.direccionOrigen;
+
+    const direccion = Array.isArray(direccionRaw)
+      ? direccionRaw[0]
+      : direccionRaw || {
+          region: '',
+          comuna: '',
+          calle: '',
+          numero: 0,
+          departamento: '',
+          descripcion: '',
+        };
+
+    this.nuevoProductoEditadoForm = {
+      ...this.initialProductData,
+      direccionOrigen: direccion,
+    };
+
+    const regionObj = this.regiones.find(r => r.nombre === direccion.region);
+    this.comunas = regionObj ? regionObj.comunas : [];
+  } else {
+    this.resetearFormularioProductoEditado();
+  }
+}
+
 
   async guardarProductoEditado() {
     try {
-      this.nuevoProductoEditadoForm.usuario_id = this.userId;
+        this.nuevoProductoEditadoForm.usuario_id = this.userId;
 
-      const esValido = await this.validarProducto(
-        this.nuevoProductoEditadoForm
-      );
+        const esValido = await this.validarProducto(this.nuevoProductoEditadoForm);
+        if (!esValido) return;
 
-      if (!esValido) {
-        return;
+        console.log('Editando producto ID:', this.productoId);
+        console.log('Datos enviados:', this.nuevoProductoEditadoForm);
+
+        const cleanProducto = JSON.parse(JSON.stringify(this.nuevoProductoEditadoForm));
+        await this.crudService.editarProducto(this.productoId, cleanProducto);
+
+
+        this.productSaved.emit(this.nuevoProductoEditadoForm);
+        this.mostrarToast('Producto editado correctamente', 'success');
+        await this.cerrarModal(true);
+      } catch (error) {
+        this.mostrarToast('Error al editar el producto', 'danger');
+        console.error('Error al editar el producto:', error);
       }
-
-      await this.crudService.editarProducto(
-        this.productoId,
-        this.nuevoProductoEditadoForm
-      );
-      this.productSaved.emit(this.nuevoProductoEditadoForm);
-      this.mostrarToast('Producto editado correctamente', 'success');
-      await this.cerrarModal(true);
-    } catch (error) {
-      this.mostrarToast('Error al editar el producto', 'danger');
-      console.error('Error al editar el producto:', error);
-    }
-  }
+    } 
 
   async validarProducto(producto: Producto): Promise<boolean> {
-    if (producto.titulo.trim() === '') {
-      this.mostrarToast('El título no puede estar vacío', 'warning');
+    if (typeof producto.titulo !== 'string' || producto.titulo.trim().length < 3) {
+      this.mostrarToast('El título debe tener al menos 3 caracteres', 'warning');
       return false;
     }
-    if (producto.descripcion.trim() === '') {
-      this.mostrarToast('La descripción no puede estar vacía', 'warning');
+
+    if (typeof producto.descripcion !== 'string' || producto.descripcion.trim().length < 10) {
+      this.mostrarToast('La descripción debe tener al menos 10 caracteres', 'warning');
       return false;
     }
-    if (producto.categoria.trim() === '') {
-      this.mostrarToast('La categoría no puede estar vacía', 'warning');
+
+    if (typeof producto.categoria !== 'string' || producto.categoria.trim() === '') {
+      this.mostrarToast('La categoría es obligatoria', 'warning');
       return false;
     }
-    if (producto.precio <= 0) {
-      this.mostrarToast('El precio debe ser mayor a 0', 'warning');
+
+    if (typeof producto.precio !== 'number' || isNaN(producto.precio) || producto.precio <= 0) {
+      this.mostrarToast('El precio debe ser un número mayor a 0', 'warning');
       return false;
     }
-    if (producto.stock < 0) {
-      this.mostrarToast('El stock no puede ser negativo', 'warning');
+
+    if (typeof producto.stock !== 'number' || isNaN(producto.stock) || producto.stock < 0) {
+      this.mostrarToast('El stock debe ser un número igual o mayor a 0', 'warning');
       return false;
     }
-    if (producto.etiquetas.length === 0) {
-      this.mostrarToast(
-        'El producto debe tener al menos una etiqueta',
-        'warning'
-      );
+
+    if (!Array.isArray(producto.etiquetas) || producto.etiquetas.length === 0) {
+      this.mostrarToast('Debes agregar al menos una etiqueta', 'warning');
       return false;
     }
-    if (producto.imagen.length === 0) {
-      this.mostrarToast(
-        'El producto debe tener al menos una imagen',
-        'warning'
-      );
+
+    if (!Array.isArray(producto.imagen) || producto.imagen.length === 0) {
+      this.mostrarToast('Debes subir al menos una imagen', 'warning');
       return false;
     }
-    if (producto.estado.trim() === '') {
-      this.mostrarToast('El estado no puede estar vacío', 'warning');
+
+    const estadosValidos = ['nuevo', 'segunda mano'];
+    if (typeof producto.estado !== 'string' || !estadosValidos.includes(producto.estado.trim().toLowerCase())) {
+      this.mostrarToast('El estado debe ser "nuevo" o "segunda mano"', 'warning');
       return false;
     }
+
+    const dir = producto.direccionOrigen;
+    if (
+      !dir ||
+      typeof dir.region !== 'string' || dir.region.trim() === '' ||
+      typeof dir.comuna !== 'string' || dir.comuna.trim() === '' ||
+      typeof dir.calle !== 'string' || dir.calle.trim() === '' ||
+      typeof dir.numero !== 'number' || isNaN(dir.numero) || dir.numero <= 0
+    ) {
+      this.mostrarToast('Completa correctamente la dirección de origen', 'warning');
+      return false;
+    }
+
     return true;
   }
 
@@ -234,12 +299,12 @@ export class ModalEditarProductoComponent implements OnInit, OnChanges{
     }
   }
 
-async cerrarModal(actualizado = false) {
-  await this.modalController.dismiss({
-    actualizado,
-  });
-  this.modalClosed.emit();
-}
+  async cerrarModal(actualizado = false) {
+    await this.modalController.dismiss({
+      actualizado,
+    });
+    this.modalClosed.emit();
+  }
 
   resetearFormularioProductoEditado() {
     this.nuevoProductoEditadoForm = {
@@ -254,6 +319,14 @@ async cerrarModal(actualizado = false) {
       inventario_minimo: 0,
       auto_stock: false,
       imagen: [],
+      direccionOrigen: {
+        region: '',
+        comuna: '',
+        calle: '',
+        numero: 0,
+        departamento: '',
+        descripcion: '',
+      },
     };
     this.nuevaEtiqueta = '';
   }

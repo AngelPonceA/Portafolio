@@ -18,5 +18,5 @@ export interface Producto {
     oferta?: Oferta;
     calificacion?: Calificacion[] | number;
     esta_eliminado?: boolean;
-    direccionOrigen?: Direccion
+    direccionOrigen: Direccion;
 }

@@ -16,6 +16,7 @@ import { Categoria } from 'src/app/models/categoria.models';
 // Importar servicios
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
 @Component({
   selector: 'app-modal-agregar-producto',
   templateUrl: './modal-agregar-producto.component.html',
@@ -29,8 +30,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 export class ModalAgregarProductoComponent{
 
   @Input() initialProductData?: Producto; 
-  //@Input() userId: string = ''; 
-  userId: string = 'kCnjHs7m1fWHHnavK2qvv2lRy2L2';
+  @Input() userId: string = ''; 
 
   // Salidas para notificar al componente padre sobre acciones
   @Output() productSaved = new EventEmitter<Producto>();
@@ -49,22 +49,43 @@ export class ModalAgregarProductoComponent{
     inventario_minimo: 0,
     auto_stock: false,
     imagen: [],
+    direccionOrigen: {
+      region: '',
+      comuna: '',
+      calle: '',
+      numero: 0,
+      departamento: '',
+      descripcion: ''
+    }
+    
   };
 
+  regiones: any[] = [];
+  comunas: string[] = [];
   estados = ['nuevo', 'segunda mano'];
   nuevaEtiqueta = '';
   categorias: Categoria[] = [];
+
   constructor(
     private toastController: ToastController,
     private alertController: AlertController, 
     private crudService: CrudService,
     private modalController: ModalController, 
-    private authService: AuthService 
+    private authService: AuthService,
+    private ubicacionService: UbicacionService
   ) {}
 
   async ngOnInit() {
     this.obtenerCategorias();
+    this.regiones = this.ubicacionService.getRegiones();
   }
+
+  onRegionChange(event: any) {
+  const regionId = event.detail.value;
+  const region = this.regiones.find(r => r.id === regionId);
+  this.comunas = region ? region.comunas : [];
+  this.nuevoProductoForm.direccionOrigen.comuna = '';
+}
 
   // Lógica para guardar el producto
   async guardarProducto() {
@@ -92,40 +113,62 @@ export class ModalAgregarProductoComponent{
   }
 
   async validarProducto(producto: Producto): Promise<boolean> {
-    if (producto.titulo.trim() === '') {
-      this.mostrarToast('El título no puede estar vacío', 'warning');
+    if (typeof producto.titulo !== 'string' || producto.titulo.trim().length < 3) {
+      this.mostrarToast('El título debe tener al menos 3 caracteres', 'warning');
       return false;
     }
-    if (producto.descripcion.trim() === '') {
-      this.mostrarToast('La descripción no puede estar vacía', 'warning');
+
+    if (typeof producto.descripcion !== 'string' || producto.descripcion.trim().length < 10) {
+      this.mostrarToast('La descripción debe tener al menos 10 caracteres', 'warning');
       return false;
     }
-    if (producto.categoria.trim() === '') {
-      this.mostrarToast('La categoría no puede estar vacía', 'warning');
+
+    if (typeof producto.categoria !== 'string' || producto.categoria.trim() === '') {
+      this.mostrarToast('La categoría es obligatoria', 'warning');
       return false;
     }
-    if (producto.precio <= 0) {
-      this.mostrarToast('El precio debe ser mayor a 0', 'warning');
+
+    if (typeof producto.precio !== 'number' || isNaN(producto.precio) || producto.precio <= 0) {
+      this.mostrarToast('El precio debe ser un número mayor a 0', 'warning');
       return false;
     }
-    if (producto.stock < 0) {
-      this.mostrarToast('El stock no puede ser negativo', 'warning');
+
+    if (typeof producto.stock !== 'number' || isNaN(producto.stock) || producto.stock < 0) {
+      this.mostrarToast('El stock debe ser un número igual o mayor a 0', 'warning');
       return false;
     }
-    if (producto.etiquetas.length === 0) {
-      this.mostrarToast('El producto debe tener al menos una etiqueta', 'warning');
+
+    if (!Array.isArray(producto.etiquetas) || producto.etiquetas.length === 0) {
+      this.mostrarToast('Debes agregar al menos una etiqueta', 'warning');
       return false;
     }
-    if (producto.imagen.length === 0) {
-      this.mostrarToast('El producto debe tener al menos una imagen', 'warning');
+
+    if (!Array.isArray(producto.imagen) || producto.imagen.length === 0) {
+      this.mostrarToast('Debes subir al menos una imagen', 'warning');
       return false;
     }
-    if (producto.estado.trim() === '') {
-      this.mostrarToast('El estado no puede estar vacío', 'warning');
+
+    const estadosValidos = ['nuevo', 'segunda mano'];
+    if (typeof producto.estado !== 'string' || !estadosValidos.includes(producto.estado.trim().toLowerCase())) {
+      this.mostrarToast('El estado debe ser "nuevo" o "segunda mano"', 'warning');
       return false;
     }
+
+    const dir = producto.direccionOrigen;
+    if (
+      !dir ||
+      typeof dir.region !== 'string' || dir.region.trim() === '' ||
+      typeof dir.comuna !== 'string' || dir.comuna.trim() === '' ||
+      typeof dir.calle !== 'string' || dir.calle.trim() === '' ||
+      typeof dir.numero !== 'number' || isNaN(dir.numero) || dir.numero <= 0
+    ) {
+      this.mostrarToast('Completa correctamente la dirección de origen', 'warning');
+      return false;
+    }
+
     return true;
   }
+
 
   // Métodos para etiquetas
   agregarEtiqueta() {
@@ -224,6 +267,15 @@ export class ModalAgregarProductoComponent{
       inventario_minimo: 0,
       auto_stock: false,
       imagen: [],
+      direccionOrigen: 
+      {
+        region: '',
+        comuna: '',
+        calle: '',
+        numero: 0,
+        departamento: '',
+        descripcion: ''
+      }
     };
     this.nuevaEtiqueta = '';
   }

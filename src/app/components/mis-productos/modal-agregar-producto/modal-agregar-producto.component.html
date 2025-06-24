@@ -17,12 +17,20 @@
 
     <ion-item>
       <ion-label position="floating">Nombre del Producto</ion-label>
-      <ion-input [(ngModel)]="nuevoProductoForm.titulo" name="titulo" required></ion-input>
+      <ion-input
+        [(ngModel)]="nuevoProductoForm.titulo"
+        name="titulo"
+        required
+      ></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Descripción</ion-label>
-      <ion-textarea [(ngModel)]="nuevoProductoForm.descripcion" name="descripcion" rows="3"></ion-textarea>
+      <ion-textarea
+        [(ngModel)]="nuevoProductoForm.descripcion"
+        name="descripcion"
+        rows="3"
+      ></ion-textarea>
     </ion-item>
 
     <ion-item>
@@ -37,7 +45,11 @@
     <ion-item>
       <ion-label>Categoría</ion-label>
       <ion-select [(ngModel)]="nuevoProductoForm.categoria" name="categoria">
-        <ion-select-option *ngFor="let categoria of categorias" [value]="categoria.nombre">{{ categoria.nombre }}</ion-select-option>
+        <ion-select-option
+          *ngFor="let categoria of categorias"
+          [value]="categoria.nombre"
+          >{{ categoria.nombre }}</ion-select-option
+        >
       </ion-select>
     </ion-item>
 
@@ -46,52 +58,154 @@
       <div class="chip-wrapper">
         <ion-chip *ngFor="let etiqueta of nuevoProductoForm.etiquetas">
           <ion-label>{{ etiqueta }}</ion-label>
-          <ion-icon name="close" (click)="eliminarEtiqueta(etiqueta)" class="close-icon"></ion-icon>
+          <ion-icon
+            name="close"
+            (click)="eliminarEtiqueta(etiqueta)"
+            class="close-icon"
+          ></ion-icon>
         </ion-chip>
       </div>
     </div>
 
     <ion-item>
-      <ion-input placeholder="Nueva Etiqueta" [(ngModel)]="nuevaEtiqueta" name="nuevaEtiqueta" (keyup.enter)="agregarEtiqueta()"></ion-input>
-      <ion-button slot="end" (click)="agregarEtiqueta()" [disabled]="nuevoProductoForm.etiquetas.length >= 10">
+      <ion-input
+        placeholder="Nueva Etiqueta"
+        [(ngModel)]="nuevaEtiqueta"
+        name="nuevaEtiqueta"
+        (keyup.enter)="agregarEtiqueta()"
+      ></ion-input>
+      <ion-button
+        slot="end"
+        (click)="agregarEtiqueta()"
+        [disabled]="nuevoProductoForm.etiquetas.length >= 10"
+      >
         Agregar
       </ion-button>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Precio (CLP)</ion-label>
-      <ion-input type="number" [(ngModel)]="nuevoProductoForm.precio" name="precio" min="1" required></ion-input>
+      <ion-input
+        type="number"
+        [(ngModel)]="nuevoProductoForm.precio"
+        name="precio"
+        min="1"
+        required
+      ></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Stock disponible</ion-label>
-      <ion-input type="number" [(ngModel)]="nuevoProductoForm.stock" name="stock" min="1" required></ion-input>
+      <ion-input
+        type="number"
+        [(ngModel)]="nuevoProductoForm.stock"
+        name="stock"
+        min="1"
+        required
+      ></ion-input>
     </ion-item>
 
-      <ion-item>
-        <ion-label>Imágenes</ion-label>
-        <input
-          id="fileEditInput"
-          type="file"
-          multiple
-          accept="image/*"
-          class="hidden-file-input"
-          (change)="procesarImagenes($event)" />
-        <label for="fileEditInput" class="custom-file-button">
-          Elegir Archivos
-        </label>
-      </ion-item>
-
+    <ion-item>
+      <ion-label>Imágenes</ion-label>
+      <input
+        id="fileEditInput"
+        type="file"
+        multiple
+        accept="image/*"
+        class="hidden-file-input"
+        (change)="procesarImagenes($event)"
+      />
+      <label for="fileEditInput" class="custom-file-button">
+        Elegir Archivos
+      </label>
+    </ion-item>
 
     <div *ngIf="nuevoProductoForm.imagen.length > 0" class="imagenes-grid">
       <ion-grid>
         <ion-row>
           <ion-col size="4" *ngFor="let img of nuevoProductoForm.imagen">
-            <img [src]="img || 'assets/img/placeholder.png'" class="imagen-preview" />
+            <img
+              [src]="img || 'assets/img/placeholder.png'"
+              class="imagen-preview"
+            />
           </ion-col>
         </ion-row>
       </ion-grid>
     </div>
+
+    <ion-list-header>
+      <ion-label>Dirección de Origen</ion-label>
+    </ion-list-header>
+
+    <!-- Región -->
+    <ion-item>
+      <ion-label position="stacked">Región</ion-label>
+      <ion-select
+        [(ngModel)]="nuevoProductoForm.direccionOrigen.region"
+        name="region"
+        (ionChange)="onRegionChange($event)"
+      >
+        <ion-select-option
+          *ngFor="let region of regiones"
+          [value]="region.nombre"
+          >{{ region.nombre }}</ion-select-option
+        >
+      </ion-select>
+    </ion-item>
+
+    <!-- Comuna -->
+    <ion-item>
+      <ion-label position="stacked">Comuna</ion-label>
+      <ion-select
+        [(ngModel)]="nuevoProductoForm.direccionOrigen.comuna"
+        name="comuna"
+        [disabled]="!nuevoProductoForm.direccionOrigen.region"
+      >
+        <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">{{
+          comuna
+        }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- Calle -->
+    <ion-item>
+      <ion-label position="floating">Calle</ion-label>
+      <ion-input
+        [(ngModel)]="nuevoProductoForm.direccionOrigen.calle"
+        name="calle"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <!-- Número -->
+    <ion-item>
+      <ion-label position="floating">Número</ion-label>
+      <ion-input
+        type="number"
+        [(ngModel)]="nuevoProductoForm.direccionOrigen.numero"
+        name="numero"
+        required
+      ></ion-input>
+    </ion-item>
+
+    <!-- Departamento -->
+    <ion-item>
+      <ion-label position="floating">Departamento (Opcional)</ion-label>
+      <ion-input
+        [(ngModel)]="nuevoProductoForm.direccionOrigen.departamento"
+        name="departamento"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Descripción -->
+    <ion-item>
+      <ion-label position="stacked">Descripción (Opcional)</ion-label>
+      <ion-textarea
+        [(ngModel)]="nuevoProductoForm.direccionOrigen.descripcion"
+        name="descripcion"
+        rows="2"
+      ></ion-textarea>
+    </ion-item>
 
     <ion-button expand="block" type="submit">
       <ion-icon name="save-outline" slot="start"></ion-icon>

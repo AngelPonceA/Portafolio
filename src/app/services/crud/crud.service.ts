@@ -682,12 +682,8 @@ async eliminarProducto(producto_id: string) {
   }
 
   async editarProducto(producto_id: string, producto: Partial<Producto>) {
-    try {
-      const productoRef = doc(this.firestore, 'productos', producto_id);
-      await updateDoc(productoRef, producto);
-    } catch (error) {
-      console.error('Error al actualizar el producto:', error);
-    }
+    const productoRef = doc(this.firestore, 'productos', producto_id);
+    await updateDoc(productoRef, producto);
   }
 
   // Métodos de clase oferta

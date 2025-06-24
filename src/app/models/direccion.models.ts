@@ -1,8 +1,9 @@
 export interface Direccion {
-    id: string;
+    id?: string;
     usuario_id?: string;
     producto_id?: string
     region: string;
+    valorRegion?: number;
     comuna: string;
     calle: string;
     numero: number;
