@@ -1,4 +1,5 @@
 import { Calificacion } from './calificacion.models';
+import { Direccion } from './direccion.models';
 import { Oferta } from './oferta.models';
 
 export interface Producto {
@@ -17,4 +18,5 @@ export interface Producto {
     oferta?: Oferta;
     calificacion?: Calificacion[] | number;
     esta_eliminado?: boolean;
+    direccionOrigen?: Direccion
 }

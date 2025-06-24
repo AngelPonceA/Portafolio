@@ -1,11 +1,15 @@
 export interface Direccion {
     id: string;
-    usuario_id: string;
+    usuario_id?: string;
+    producto_id?: string
     region: string;
     comuna: string;
-    calle_numero: string;
-    nombre_apellido: string;
-    telefono: string;
+    calle: string;
+    numero: number;
+    nombres?: string;
+    apellidos?: string;
+    telefono?: string;
     departamento?: string;
-    descripcion: string;
+    descripcion?: string;
 }
+
