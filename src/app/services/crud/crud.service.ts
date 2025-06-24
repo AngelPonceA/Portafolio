@@ -214,6 +214,7 @@ export class CrudService {
         estado: producto['estado'],
         atributo: producto['atributo'],
         imagen: producto['imagen'],
+        direccionOrigen: producto['direccionOrigen'],
       };
 
     } catch (error) {

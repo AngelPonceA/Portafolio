@@ -84,7 +84,7 @@
 
           <div class="envios-desglosados">
             <div *ngFor="let p of productos" class="envio-desglose-item">
-              <span class="titulo-producto">{{ p.titulo }}</span>
+              <span class="titulo-producto">{{ p.producto_titulo }}</span>
               <span class="valor-envio">${{ obtenerCostoEnvio(p.producto_id) | number }} CLP</span>
             </div>
           </div>

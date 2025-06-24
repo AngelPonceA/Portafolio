@@ -475,8 +475,8 @@ export class UbicacionService {
   }
 
   buscarRegionPorNombre(nombre: string): Region | undefined {
-    return this.regiones.find(region => 
-      region.nombre.toLowerCase().includes(nombre.toLowerCase())
+    return this.regiones.find(region =>
+      region.nombre.trim().toLowerCase() === nombre.trim().toLowerCase()
     );
   }
 

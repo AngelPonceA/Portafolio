@@ -166,8 +166,6 @@ export class CarritoPage implements OnInit {
       cantidad: p.cantidad
     }));
 
-    this.subtotalEnvios = this.costoDeEnvioService.calcularTotalEnvio(items, this.direccionPrincipal);
-
     for (const item of items) {
       const producto = item.producto;
       const regionOrigen = producto.direccionOrigen?.region;
@@ -183,8 +181,10 @@ export class CarritoPage implements OnInit {
       const diferencia = Math.abs(origen.id - destino.id);
       const costo = (3000 + (diferencia * 1000)) * item.cantidad;
 
-      this.costosEnvio[producto.producto_id] = costo;
-      producto.costo_envio = costo;
+      if (producto.producto_id && !isNaN(costo)) {
+        this.costosEnvio[producto.producto_id] = costo;
+        producto.costo_envio = costo;
+      }
     }
     this.calcularSubtotales();
   }
