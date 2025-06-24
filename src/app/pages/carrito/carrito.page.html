@@ -18,7 +18,6 @@
   </ion-button>
 </div>
 
-
 <ion-content>
   <div *ngIf="direccionPrincipal && usuario && usuario.rol != 'invitado'" class="direccion-principal">
     <ion-item lines="none">
@@ -35,10 +34,10 @@
 
   <div *ngIf="productos && productos.length > 0 && productos != undefined; else vacio" class="productos-grid">
     <div class="producto-card" *ngFor="let producto of productos">
-      <img src="{{ producto.imagen[0] }}" (click)="verDetalle(producto.producto_id)"/>
+      <img src="{{ producto.imagen[0] }}" (click)="verDetalle(producto.producto_id)" />
       <ion-card-content>
         <div class="nombre">{{ producto.producto_titulo }}</div>
-        <div *ngIf="!producto.precio_oferta ; else oferta" class="precio">${{ producto.precio | number }} CLP</div>
+        <div *ngIf="!producto.precio_oferta; else oferta" class="precio">${{ producto.precio | number }} CLP</div>
         <ng-template #oferta>
           <div class="precio-oferta">${{ producto.precio_oferta | number }} CLP</div>
           <div class="precio-original-tachado">${{ producto.precio | number }} CLP</div>
@@ -79,7 +78,18 @@
     <div class="pagar">
       <div class="total-desglose">
         <div>Subtotal productos: ${{ subtotalProductos | number }} CLP</div>
-        <div *ngIf="usuario && usuario.rol != 'invitado'" >Total envíos: ${{ subtotalEnvios | number }} CLP</div>
+
+        <div *ngIf="usuario && usuario.rol != 'invitado'">
+          <div>Total envíos: ${{ subtotalEnvios | number }} CLP</div>
+
+          <div class="envios-desglosados">
+            <div *ngFor="let p of productos" class="envio-desglose-item">
+              <span class="titulo-producto">{{ p.titulo }}</span>
+              <span class="valor-envio">${{ obtenerCostoEnvio(p.producto_id) | number }} CLP</span>
+            </div>
+          </div>
+        </div>
+
         <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
         <div *ngIf="!usuario || usuario.rol == 'invitado'" class="total-final">Inicia sesión para poder realizar la compra</div>
       </div>
@@ -88,14 +98,13 @@
     <button *ngIf="usuario && usuario.rol != 'invitado'" class="webpay-button" (click)="iniciarPagoWebpay()">
       <span>Pagar con WebPay</span>
     </button>
-
   </div>
-  
+
+  <!-- BLOQUE VACÍO -->
   <ng-template #vacio>
-    <div class="vacio-container">
-      <ion-icon name="cart-outline"></ion-icon>
-      <h2>Carrito Vacío</h2>
-      <p>Agrega productos a tu carrito para comprarlos.</p>
+    <div class="carrito-vacio">
+      <ion-icon name="cart-outline" size="large"></ion-icon>
+      <p>Tu carrito está vacío.</p>
     </div>
   </ng-template>
 

@@ -10,28 +10,49 @@ export class CostoDeEnvioService {
   private readonly BASE_ENVIO = 3000;
   private readonly MULTIPLICADOR = 1000;
 
-  constructor(private ubicacionService: UbicacionService) { }
+  constructor(private ubicacionService: UbicacionService) {}
 
-  calcularCostoEnvioProducto(producto: Producto, direccionDestino: Direccion, cantidad: number = 1): number {
-    const regionOrigenNombre = producto.direccionOrigen?.region;
-    const regionDestinoNombre = direccionDestino?.region;
-    
+  calcularTotalEnvio(items: { producto: Producto, cantidad: number }[], direccionDestino: Direccion): number {
+    let total = 0;
 
-    if (!regionOrigenNombre || !regionDestinoNombre) {
-      return 6000; // si no hay datos, costo fijo
+    for (const item of items) {
+      const { producto, cantidad } = item;
+      const regionOrigen = producto.direccionOrigen?.region;
+      const regionDestino = direccionDestino?.region;
+
+      if (!regionOrigen || !regionDestino) continue;
+
+      const origen = this.ubicacionService.buscarRegionPorNombre(regionOrigen);
+      const destino = this.ubicacionService.buscarRegionPorNombre(regionDestino);
+
+      if (!origen || !destino) continue;
+
+      const diferencia = Math.abs(origen.id - destino.id);
+      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR)) * cantidad;
+
+      total += costo;
     }
 
-    const regionOrigen = this.ubicacionService.buscarRegionPorNombre(regionOrigenNombre);
-    const regionDestino = this.ubicacionService.buscarRegionPorNombre(regionDestinoNombre);
+    return total;
+  }
 
-    if (!regionOrigen || !regionDestino) {
-      return 6000; // si no hay datos, costo fijo
+  logEnvio(items: { producto: Producto, cantidad: number }[], direccionDestino: Direccion): void {
+    for (const item of items) {
+      const { producto, cantidad } = item;
+      const regionOrigen = producto.direccionOrigen?.region;
+      const regionDestino = direccionDestino?.region;
+
+      if (!regionOrigen || !regionDestino) continue;
+
+      const origen = this.ubicacionService.buscarRegionPorNombre(regionOrigen);
+      const destino = this.ubicacionService.buscarRegionPorNombre(regionDestino);
+
+      if (!origen || !destino) continue;
+
+      const diferencia = Math.abs(origen.id - destino.id);
+      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR)) * cantidad;
+
+      console.log(`[${producto.titulo}] ${regionOrigen} ➜ ${regionDestino} x${cantidad} → $${costo}`);
     }
-
-    const diferenciaIds = Math.abs(regionOrigen.id - regionDestino.id);
-    const costo = this.BASE_ENVIO + (diferenciaIds * this.MULTIPLICADOR);
-
-    return costo * cantidad;
-
   }
 }

@@ -13,6 +13,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
 import { Region } from 'src/app/models/region.models';
 import { IonicService } from 'src/app/services/ionic/ionic.service';
+import { CostoDeEnvioService } from 'src/app/services/costo-de-envio/costo-de-envio.service';
 
 @Component({
   selector: 'app-carrito',
@@ -40,7 +41,8 @@ export class CarritoPage implements OnInit {
 
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService,
     private cartService: CarritoService, private webpayService: WebpayService, private route: ActivatedRoute, private http: HttpClient, 
-    private modalCtrl: ModalController, private ubicacionService: UbicacionService, private ionicService: IonicService
+    private modalCtrl: ModalController, private ubicacionService: UbicacionService, private ionicService: IonicService,
+    private costoDeEnvioService: CostoDeEnvioService
   ) {}
   
   async ngOnInit() {
@@ -154,15 +156,39 @@ export class CarritoPage implements OnInit {
   }
 
   async calcularCostosEnvio() {
-    for (const producto of this.productos) {
-      if (producto.stock && producto.stock > 0) {
-        const costoEnvio = await this.cartService.calcularCostoEnvioProducto(producto);
-        producto.costo_envio = costoEnvio;
-        this.costosEnvio[producto.producto_id] = costoEnvio;
-      }
+    if (!this.direccionPrincipal || this.productos.length === 0) {
+      this.subtotalEnvios = 0;
+      return;
+    }
+
+    const items = this.productos.map(p => ({
+      producto: p,
+      cantidad: p.cantidad
+    }));
+
+    this.subtotalEnvios = this.costoDeEnvioService.calcularTotalEnvio(items, this.direccionPrincipal);
+
+    for (const item of items) {
+      const producto = item.producto;
+      const regionOrigen = producto.direccionOrigen?.region;
+      const regionDestino = this.direccionPrincipal?.region;
+
+      if (!regionOrigen || !regionDestino) continue;
+
+      const origen = this.ubicacionService.buscarRegionPorNombre(regionOrigen);
+      const destino = this.ubicacionService.buscarRegionPorNombre(regionDestino);
+
+      if (!origen || !destino) continue;
+
+      const diferencia = Math.abs(origen.id - destino.id);
+      const costo = (3000 + (diferencia * 1000)) * item.cantidad;
+
+      this.costosEnvio[producto.producto_id] = costo;
+      producto.costo_envio = costo;
     }
     this.calcularSubtotales();
   }
+
 
   obtenerCostoEnvio(producto_id: string): number {
     return this.costosEnvio[producto_id] || 0;
