@@ -3,8 +3,9 @@ import { TriggersService } from './services/triggers/triggers.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { AuthService } from './services/auth/auth.service';
 import { CarritoService } from './services/carrito/carrito.service';
-import { NavController } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 import { App as CapacitorApp } from '@capacitor/app';
+import { StatusBar, Style } from '@capacitor/status-bar';
 
 @Component({
   selector: 'app-root',
@@ -17,8 +18,12 @@ export class AppComponent implements OnInit {
 
   sesionValida = false;
 
-  constructor(private triggersService: TriggersService, private router: Router, private authService: AuthService,
-    private cartService: CarritoService, private navCtrl: NavController
+  constructor(private triggersService: TriggersService, 
+              private router: Router, 
+              private authService: AuthService,
+              private cartService: CarritoService, 
+              private navCtrl: NavController,
+              private platform: Platform
   ) {
 
     this.router.events.subscribe(event => {
@@ -83,6 +88,13 @@ export class AppComponent implements OnInit {
         }
       }
     });
+
+    this.platform.ready().then(() => {
+      StatusBar.setOverlaysWebView({ overlay: false }); 
+      StatusBar.setStyle({ style: Style.Dark }); 
+      StatusBar.setBackgroundColor({ color: '#d1a15a' }); 
+    });
+
 
   }
 }
