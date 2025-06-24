@@ -44,6 +44,7 @@ export class ModalFormNuevaDireccionComponent implements OnInit {
     this.regiones = this.ubicacionService.getRegiones();
     const uid = await this.authService.getUserId();
     this.direcciones = await this.ubicacionService.obtenerDireccionesPorUsuario(uid);
+    this.mostrarFormulario = this.direcciones.length === 0;
   }
 
   seleccionarDireccion(dir: any) {

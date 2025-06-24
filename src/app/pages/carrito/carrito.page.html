@@ -9,6 +9,16 @@
   </ion-toolbar>
 </ion-header>
 
+<div *ngIf="mostrarBotonAgregarDireccion" class="aviso-direccion-faltante">
+  <ion-icon name="location-outline"></ion-icon>
+  <span>Agrega una dirección para poder pagar</span>
+  <ion-button fill="solid" class="boton-agregar-direccion" size="small" (click)="abrirModalDirecciones()">
+    <ion-icon slot="start" name="add-outline"></ion-icon>
+    Agregar Dirección
+  </ion-button>
+</div>
+
+
 <ion-content>
   <div *ngIf="direccionPrincipal && usuario && usuario.rol != 'invitado'" class="direccion-principal">
     <ion-item lines="none">

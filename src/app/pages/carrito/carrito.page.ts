@@ -34,6 +34,7 @@ export class CarritoPage implements OnInit {
   regionSeleccionada: number | null = null;
   comunaSeleccionada: string | null = null;
   
+  mostrarBotonAgregarDireccion = false;
   direccionPrincipal: any = null;
   direccionesUsuario: any[] = [];
 
@@ -55,6 +56,8 @@ export class CarritoPage implements OnInit {
 
     if (this.usuario){
       await this.obtenerDireccionPrincipal();
+
+      this.mostrarBotonAgregarDireccion = !this.direccionPrincipal;
     }
 
     const carrito = await this.cartService.obtenerCarrito();
@@ -183,7 +186,13 @@ export class CarritoPage implements OnInit {
     return this.totalAmount;
   }
 
-  iniciarPagoWebpay() {
+  async iniciarPagoWebpay() {
+    if (!this.direccionPrincipal) {
+      this.ionicService.mostrarToastArriba('Necesitas agregar una dirección para pagar');
+      await this.abrirModalDirecciones(); 
+      if (!this.direccionPrincipal) return; 
+    }
+
     const data = {
       amount: this.totalAmount,
       session_id: 'sesion-' + Date.now(),
@@ -264,15 +273,23 @@ export class CarritoPage implements OnInit {
     if (role === 'confirm' && data) {
       this.direccionPrincipal = data;
       this.direccionesUsuario.unshift(data);
+      this.mostrarBotonAgregarDireccion = false;
+
+      this.ionicService.mostrarToastArriba('Dirección guardada con éxito');
     }
   }
 
   async obtenerDireccionPrincipal() {
-    const uid = this.usuario.id;    
+    const uid = this.usuario.id;
     const direcciones = await this.ubicacionService.obtenerDireccionesPorUsuario(uid);
     this.direccionesUsuario = direcciones;
+
     if (direcciones.length > 0) {
       this.direccionPrincipal = direcciones[0];
+      this.mostrarBotonAgregarDireccion = false;
+    } else {
+      this.direccionPrincipal = null;
+      this.mostrarBotonAgregarDireccion = true;
     }
   }
 
