@@ -139,8 +139,14 @@
 
       </div>
 
-    <!-- Fab para editar datos bancarios -->
-      <ion-fab *ngIf="usuario?.rol === 'usuario-vendedor'" slot="fixed" vertical="top" horizontal="start" class="fab-tarjeta" (click)="cambiarTarjeta()">
+      <ion-fab 
+        id="fabPerfil"
+        *ngIf="usuario?.rol === 'usuario-vendedor'" 
+        slot="fixed" 
+        vertical="top" 
+        horizontal="start" 
+        class="fab-tarjeta" 
+        (click)="cambiarTarjeta()">
         <ion-fab-button>
           <ion-icon name="card-outline"></ion-icon>
         </ion-fab-button>

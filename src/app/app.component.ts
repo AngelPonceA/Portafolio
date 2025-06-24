@@ -29,6 +29,8 @@ export class AppComponent implements OnInit {
           '/registro',
           '/home',
           '/soporte',
+          '/mis-productos',
+          '/carrito'
         ];
         const currentUrl = event.urlAfterRedirects;
         const rutaExcluida = excludedRoutes.includes(currentUrl);
@@ -62,7 +64,7 @@ export class AppComponent implements OnInit {
     }
 
     const rutaActual = this.router.url;
-    const rutasExcluidas = ['/ingreso', '/registro', '/soporte', '/home'];
+    const rutasExcluidas = ['/ingreso', '/registro', '/soporte', '/home', '/mis-productos','/carrito'];
     const estaExcluida = rutasExcluidas.includes(rutaActual);
 
     this.MostrarBotonSoporte = this.sesionValida && !estaExcluida;
