@@ -817,19 +817,20 @@ async eliminarProducto(producto_id: string) {
     await setDoc(nuevaDireccionRef, nuevaDireccion);
     return nuevaDireccion;
   }
-  
-  async obtenerProductosAleatorios(limit: number): Promise<any[]> {
+
+  async obtenerProductosAleatorios(limit: number): Promise<Producto[]> {
     const productosRef = collection(this.firestore, 'productos');
     const snap = await getDocs(productosRef);
-    const productos = snap.docs.map(doc => ({ producto_id: doc.id, ...doc.data() }));
 
-    // Mezcla aleatoria
+    const productos: Producto[] = snap.docs
+      .map(doc => ({ producto_id: doc.id, ...doc.data() } as Producto))
+      .filter(producto => producto.stock > 0 && !producto.esta_eliminado);
+
     const mezclados = productos
       .map(p => ({ p, r: Math.random() }))
       .sort((a, b) => a.r - b.r)
       .map(({ p }) => p);
 
-    // Puedes permitir repeticiones, así que no necesitas controlar eso
     return mezclados.slice(0, limit);
   }
 
