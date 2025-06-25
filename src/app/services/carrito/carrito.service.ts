@@ -5,6 +5,7 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 import { IonicService } from "src/app/services/ionic/ionic.service";
 import { AuthService } from '../auth/auth.service';
 import { UbicacionService } from '../ubicacion/ubicacion.service';
+import { CostoDeEnvioService } from '../costo-de-envio/costo-de-envio.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class CarritoService {
                 private firestore: Firestore,
                 private ionicService: IonicService, 
                 private authService: AuthService,
-                private ubicacionService: UbicacionService) { }
+                private ubicacionService: UbicacionService,
+                private costosService: CostoDeEnvioService) { }
 
   async comprobarCarrito() {
     try {
@@ -201,6 +203,7 @@ export class CarritoService {
       await this.insertarVentasPorVendedor(porVendedor, pedidoRef.id, uid);
 
       await this.authService.actualizarRecomendadosUsuario(lista);
+      
       this.ionicService.mostrarAlerta('Compra exitosa', 'Compra registrada con éxito.');
     } catch (error: any) {
       this.ionicService.mostrarAlerta('Error', `Error al registrar la compra: ${error}`);
@@ -310,55 +313,24 @@ export class CarritoService {
     console.log('Funcion insertarVentasPorVendedor Exito');
   }
   
-  async calcularCostoEnvioProducto(producto: any): Promise<number> {
-    const ubicacionActual = this.ubicacionService.getRegionComunaActual();
-    
-    if (!ubicacionActual) {
-      return 5000; // Costo por defecto si no hay ubicación seleccionada
+  async calcularCostosEnvio(productos: any[], direccionDestino: any): Promise<{ [producto_id: string]: number }> {
+    if (!direccionDestino || productos.length === 0) return {};
+
+    const items = productos.map(p => ({
+      producto: p,
+      cantidad: p.cantidad
+    }));
+
+    const costos = this.costosService.getCostosEnvioPorProducto(items, direccionDestino);
+
+    for (const producto of productos) {
+      const costo = costos[producto.producto_id];
+      if (costo !== undefined) {
+        producto.costo_envio = costo;
+      }
     }
 
-    // Costo base según la región
-    let costoBase = 3000; // RM
-    switch(ubicacionActual.region) {
-      case 'Valparaíso':
-      case 'O\'Higgins':
-        costoBase = 3500;
-        break;
-      case 'Maule':
-      case 'Ñuble':
-      case 'Biobío':
-        costoBase = 4000;
-        break;
-      case 'La Araucanía':
-      case 'Los Ríos':
-      case 'Los Lagos':
-        costoBase = 4500;
-        break;
-      case 'Aysén':
-      case 'Magallanes':
-        costoBase = 6000;
-        break;
-      // Regiones del norte
-      case 'Arica y Parinacota':
-      case 'Tarapacá':
-      case 'Antofagasta':
-      case 'Atacama':
-      case 'Coquimbo':
-        costoBase = 5000;
-        break;
-    }
-
-    // Ajustes por comuna específica
-    if (ubicacionActual.comuna.includes('Santiago') || 
-        ubicacionActual.comuna.includes('Providencia') ||
-        ubicacionActual.comuna.includes('Las Condes')) {
-      costoBase += 500; // Zonas céntricas pueden tener recargo
-    }
-
-    // Factor de peso/tamaño (simulado)
-    const factorPeso = 1.0;
-
-    return costoBase * factorPeso * producto.cantidad;
+    return costos;
   }
   
 }

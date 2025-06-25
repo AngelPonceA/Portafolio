@@ -36,6 +36,34 @@ export class CostoDeEnvioService {
     return total;
   }
 
+  getCostosEnvioPorProducto(
+    items: { producto: Producto, cantidad: number }[],
+    direccionDestino: Direccion
+  ): { [producto_id: string]: number } {
+    const resultado: { [producto_id: string]: number } = {};
+
+    for (const item of items) {
+      const producto = item.producto;
+      const producto_id = producto.producto_id;
+      const regionOrigen = producto.direccionOrigen?.region;
+      const regionDestino = direccionDestino.region;
+
+      if (!producto_id || !regionOrigen || !regionDestino) continue;
+
+      const origen = this.ubicacionService.buscarRegionPorNombre(regionOrigen);
+      const destino = this.ubicacionService.buscarRegionPorNombre(regionDestino);
+      if (!origen || !destino) continue;
+
+      const diferencia = Math.abs(origen.id - destino.id);
+      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR)) * item.cantidad;
+
+      resultado[producto_id] = costo;
+    }
+
+    return resultado;
+  }
+
+
   logEnvio(items: { producto: Producto, cantidad: number }[], direccionDestino: Direccion): void {
     for (const item of items) {
       const { producto, cantidad } = item;

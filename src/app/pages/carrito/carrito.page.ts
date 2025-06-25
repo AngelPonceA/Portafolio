@@ -134,6 +134,7 @@ export class CarritoPage implements OnInit {
     if (producto && producto.cantidad > 1) {
       producto.cantidad--;
       await this.cartService.carritoSumarRestar('restar', 1, producto_id);
+      await this.calcularCostosEnvio();
       await this.calculateTotalAmount();
     }
   }
@@ -143,17 +144,20 @@ export class CarritoPage implements OnInit {
     if (producto && producto.stock > producto.cantidad) {
       producto.cantidad++;
       await this.cartService.carritoSumarRestar('sumar', 1, producto_id);
+      await this.calcularCostosEnvio();
       await this.calculateTotalAmount();
     } else if (producto && producto.stock <= producto.cantidad) {
       this.ionicService.mostrarAlerta('Stock insuficiente', `No hay más stock disponible para "${producto.producto_titulo}".`);
     }
   }
 
-  quitarProducto(producto_id: string) {
+  async quitarProducto(producto_id: string) {
     this.productos = this.productos.filter((p) => p.producto_id != producto_id);
-    this.cartService.eliminarProductoDelCarrito(producto_id);
-    this.calculateTotalAmount();
+    await this.cartService.eliminarProductoDelCarrito(producto_id);
+    await this.calcularCostosEnvio();
+    await this.calculateTotalAmount();
   }
+
 
   async calcularCostosEnvio() {
     if (!this.direccionPrincipal || this.productos.length === 0) {
@@ -161,31 +165,9 @@ export class CarritoPage implements OnInit {
       return;
     }
 
-    const items = this.productos.map(p => ({
-      producto: p,
-      cantidad: p.cantidad
-    }));
+    this.costosEnvio = await this.cartService.calcularCostosEnvio(this.productos, this.direccionPrincipal);
 
-    for (const item of items) {
-      const producto = item.producto;
-      const regionOrigen = producto.direccionOrigen?.region;
-      const regionDestino = this.direccionPrincipal?.region;
-
-      if (!regionOrigen || !regionDestino) continue;
-
-      const origen = this.ubicacionService.buscarRegionPorNombre(regionOrigen);
-      const destino = this.ubicacionService.buscarRegionPorNombre(regionDestino);
-
-      if (!origen || !destino) continue;
-
-      const diferencia = Math.abs(origen.id - destino.id);
-      const costo = (3000 + (diferencia * 1000)) * item.cantidad;
-
-      if (producto.producto_id && !isNaN(costo)) {
-        this.costosEnvio[producto.producto_id] = costo;
-        producto.costo_envio = costo;
-      }
-    }
+    this.subtotalEnvios = Object.values(this.costosEnvio).reduce((acc, val) => acc + val, 0);
     this.calcularSubtotales();
   }
 
@@ -302,6 +284,9 @@ export class CarritoPage implements OnInit {
       this.mostrarBotonAgregarDireccion = false;
 
       this.ionicService.mostrarToastArriba('Dirección guardada con éxito');
+
+      await this.calcularCostosEnvio(); 
+      await this.calculateTotalAmount(); 
     }
   }
 
@@ -317,6 +302,10 @@ export class CarritoPage implements OnInit {
       this.direccionPrincipal = null;
       this.mostrarBotonAgregarDireccion = true;
     }
+
+    await this.calcularCostosEnvio();
+    await this.calculateTotalAmount();
+
   }
 
 }
