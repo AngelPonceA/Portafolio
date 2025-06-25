@@ -50,6 +50,19 @@ ion-footer {
   border-top-left-radius: 16px;
   position: relative;
   z-index: 1;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.footer-oculto {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.footer-oculto::after {
+  display: none;
 }
 
 ion-footer::after {

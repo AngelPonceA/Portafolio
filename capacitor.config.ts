@@ -1,9 +1,17 @@
-import type { CapacitorConfig } from '@capacitor/cli';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.tuapp.id',
   appName: 'FleaMarket',
-  webDir: 'www'
+  webDir: 'www',
+  plugins: {
+    Keyboard: {
+      resize: 'body' as any
+    }
+  },
+  server: {
+    androidScheme: 'https'
+  }
 };
 
 export default config;

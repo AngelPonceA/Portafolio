@@ -31,7 +31,7 @@
   <ng-content></ng-content>
 </div>
 
-<ion-footer>
+<ion-footer [class.footer-oculto]="keyboardAbierto">
   <ion-button (click)="navegar('/home')" class="footer-header-button">
     <ion-icon name="home"></ion-icon>
   </ion-button>

@@ -8,6 +8,8 @@ import { CrudService } from 'src/app/services/crud/crud.service';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
+import { Keyboard } from '@capacitor/keyboard'
+import { Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-navegacion',
@@ -16,16 +18,20 @@ import { CarritoService } from 'src/app/services/carrito/carrito.service';
   styleUrls: ['./navegacion.component.scss'],
 })
 export class NavegacionComponent  implements OnInit {
-
+  keyboardAbierto = false;
   usuario: any;
   notificaciones?: number ;
   carrito: any;
   busqueda: string = '';
   sugerencias: any[] = [];
-
-  constructor( private router: Router, private navCtrl: NavController, private authService: AuthService, private crudService: CrudService,
-    private location: Location, private cartService: CarritoService ) { }
-  
+  constructor(  private router: Router, 
+                private navCtrl: NavController, 
+                private authService: AuthService, 
+                private crudService: CrudService,
+                private location: Location, 
+                private cartService: CarritoService,
+                private renderer: Renderer2 ) { }
+                
   async ngOnInit() {
     this.usuario = await this.authService.obtenerPerfil();
     if (this.usuario) {
@@ -34,6 +40,14 @@ export class NavegacionComponent  implements OnInit {
       });
     }
     this.carrito = this.obtenerCantidadCarrito();
+
+    Keyboard.addListener('keyboardWillShow', () => {
+      this.renderer.addClass(document.body, 'keyboard-is-open');
+    });
+
+    Keyboard.addListener('keyboardWillHide', () => {
+      this.renderer.removeClass(document.body, 'keyboard-is-open');
+    });
   }
   
   enHome(): boolean {

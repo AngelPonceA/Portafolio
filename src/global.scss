@@ -48,3 +48,12 @@ ion-content {
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+body.keyboard-is-open ion-footer {
+  display: none !important;
+}
+
+body.keyboard-is-open .contenido {
+  height: auto !important;
+  max-height: 100% !important;
+}
