@@ -150,6 +150,45 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
 
   seleccionarTipoCuenta(tipo: { valor: string; label: string }) {
     this.form.get('tipoCuenta')?.setValue(tipo.valor);
+    this.ajustarValidacionNumeroCuenta(tipo.valor);
+  }
+
+  onInputNumeroCuenta(event: any) {
+    const tipoCuenta = this.form.value.tipoCuenta;
+    const input = event.target as HTMLInputElement;
+    let valor = input.value.replace(/\D/g, '');
+
+    let max = 12;
+    if (tipoCuenta === 'rut') {
+      max = 8;
+    }
+
+    if (valor.length > max) {
+      valor = valor.slice(0, max);
+    }
+
+    this.form.patchValue({ numeroCuenta: valor }, { emitEvent: false });
+  }
+
+  ajustarValidacionNumeroCuenta(tipoCuenta: string) {
+    let min = 12;
+    let max = 12;
+
+    if (tipoCuenta === 'rut') {
+      min = 7;
+      max = 8;
+    }
+
+    this.form
+      .get('numeroCuenta')
+      ?.setValidators([
+        Validators.required,
+        Validators.pattern(/^\d+$/),
+        Validators.minLength(min),
+        Validators.maxLength(max),
+      ]);
+
+    this.form.get('numeroCuenta')?.updateValueAndValidity();
   }
 
   limpiarFormulario() {

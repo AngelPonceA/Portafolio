@@ -5,10 +5,10 @@
     role="document"
     aria-labelledby="titulo-modal"
   >
-
-  <ion-note color="medium">
-  Esta información es utilizada exclusivamente para transferencias de pago por tus ventas. Nunca solicitaremos datos de tarjetas para cobros.
-  </ion-note>
+    <ion-note color="medium">
+      Esta información es utilizada exclusivamente para transferencias de pago
+      por tus ventas. Nunca solicitaremos datos de tarjetas para cobros.
+    </ion-note>
 
     <form [formGroup]="form" (ngSubmit)="confirmar()">
       <h2 id="titulo-modal">Información Bancaria</h2>
@@ -64,18 +64,41 @@
         <ion-input
           type="text"
           formControlName="numeroCuenta"
-          maxlength="20"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          (ionInput)="onInputNumeroCuenta($event)"
         ></ion-input>
       </ion-item>
+      <ion-text
+        color="danger"
+        *ngIf="
+          form.get('numeroCuenta')?.invalid && form.get('numeroCuenta')?.touched
+        "
+      >
+        <p
+          *ngIf="form.get('numeroCuenta')?.errors?.['minlength'] || form.get('numeroCuenta')?.errors?.['maxlength']"
+        >
+          El número de cuenta debe tener
+          {{
+            form.value.tipoCuenta === "rut"
+              ? "entre 7 y 8 dígitos"
+              : "exactamente 12 dígitos"
+          }}.
+        </p>
+        <p *ngIf="form.get('numeroCuenta')?.errors?.['pattern']">
+          Solo se permiten números.
+        </p>
+      </ion-text>
 
       <ion-item lines="none">
         <ion-checkbox
           slot="start"
           formControlName="aceptarTerminos"
         ></ion-checkbox>
-      <ion-label>
-        Acepto los términos y condiciones, autorizando el tratamiento de mis datos bancarios según la Ley N° 19.628.
-      </ion-label>
+        <ion-label>
+          Acepto los términos y condiciones, autorizando el tratamiento de mis
+          datos bancarios según la Ley N° 19.628.
+        </ion-label>
       </ion-item>
 
       <div class="acciones">
