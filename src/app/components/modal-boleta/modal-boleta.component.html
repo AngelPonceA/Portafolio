@@ -50,6 +50,12 @@
         <p><strong>Total pagado:</strong> ${{ detalleBoleta.montoPagado | number }}</p>
         <p class="gracias">Gracias por tu compra 🧡</p>
       </div>
+
+      <ion-button expand="block" class="boton-descargar" (click)="descargarBoletaComoPDF()">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        Descargar Boleta en PDF
+      </ion-button>
+
     </ion-card-content>
   </ion-card>
 </ion-content>

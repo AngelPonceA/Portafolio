@@ -19,6 +19,14 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "allowedCommonJsDependencies": [
+              "html2pdf.js",
+              "canvg",
+              "raf",
+              "rgbcolor",
+              "html2canvas",
+              "core-js"
+            ],
             "assets": [
               {
                 "glob": "**/*",
@@ -85,7 +93,6 @@
               "buildTarget": "app:build:development"
             },
             "ci": {
-              "progress": false
             }
           },
           "defaultConfiguration": "development"

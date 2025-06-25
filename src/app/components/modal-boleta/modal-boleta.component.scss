@@ -25,6 +25,16 @@
         font-weight: bold;
         text-transform: uppercase;
       }
+
+      .boton-descargar {
+        --margin-top: 20px;
+        --background-color: #d1a15a;
+        color: white;
+        font-weight: bold;
+        border-radius: 20px;
+        text-transform: uppercase;
+        --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
     }
   }
 
