@@ -9,7 +9,7 @@ ion-content::part(scroll) {
 }
 
 .solicitudes-header-toolbar {
-  --background: #d2b48c;
+  --background: linear-gradient(to bottom, #d1a15a 0%, #e6c890 100% );
   color: white;
 
   ion-button {
