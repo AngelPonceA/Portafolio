@@ -37,17 +37,16 @@
   .boleta-card {
     --background: white;
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    padding: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    padding: 16px;
 
     ion-card-header {
-      padding-bottom: 0;
-
       .boleta-exito {
         color: #4caf50;
         font-size: 18px;
         font-weight: bold;
         text-align: center;
+        margin-bottom: 12px;
       }
     }
 
@@ -57,6 +56,32 @@
 
       p {
         margin: 4px 0;
+      }
+
+      h3 {
+        margin-top: 16px;
+        font-size: 16px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        margin: 16px 0;
+      }
+
+      .totales {
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 12px;
+
+        .gracias {
+          font-size: 15px;
+          color: #d1a15a;
+          margin-top: 8px;
+          text-align: center;
+        }
       }
 
       ion-list {

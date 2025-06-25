@@ -14,6 +14,7 @@ import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
 import { Region } from 'src/app/models/region.models';
 import { IonicService } from 'src/app/services/ionic/ionic.service';
 import { CostoDeEnvioService } from 'src/app/services/costo-de-envio/costo-de-envio.service';
+import { Boleta } from 'src/app/models/boleta/boleta.models';
 
 @Component({
   selector: 'app-carrito',
@@ -158,7 +159,6 @@ export class CarritoPage implements OnInit {
     await this.calculateTotalAmount();
   }
 
-
   async calcularCostosEnvio() {
     if (!this.direccionPrincipal || this.productos.length === 0) {
       this.subtotalEnvios = 0;
@@ -232,27 +232,38 @@ export class CarritoPage implements OnInit {
     form.submit();
   }
 
-  confirmarTransaccion(token: string) {
-    this.webpayService.confirmarTransaccion(token).subscribe((respuesta: any) => {
-      this.cartService.registrarCompra(this.productos, this.direccionPrincipal, respuesta);
-      console.log(respuesta);
-      
-      this.limpiarCarrito();
-      this.mostrarBoletaModal({
-        fecha: new Date(),
-        productos: this.productos,
-        monto: respuesta.amount,
-        autorizacion: respuesta.authorization_code,
+  async confirmarTransaccion(token: string) {
+    this.webpayService.confirmarTransaccion(token).subscribe(async(respuesta: any) => {
+      const productosBoleta = this.productos.map(p => ({
+        nombre: p.producto_titulo,
+        precio: p.precio_oferta || p.precio,
+        cantidad: p.cantidad,
+        costo_envio: p.costo_envio || 0
+      }));
+
+      const boleta: Boleta = {
+        usuario_id: this.usuario.id,
+        fecha_creacion: new Date(),
         ordenCompra: respuesta.buy_order,
-        transaccion: respuesta
-      });
-    });
+        montoPagado: respuesta.amount,
+        productos: productosBoleta,
+        direccion_envio: this.direccionPrincipal,
+        estado: 'pagada',
+        cod_autorizacion: respuesta.authorization_code,
+        metodoDePago: 'webpay'
+      };
+
+      await this.cartService.registrarCompra(this.productos, this.direccionPrincipal, respuesta);
+
+      this.limpiarCarrito();
+      this.mostrarBoletaModal(boleta);
+  });
   }
 
-  async mostrarBoletaModal(detalleBoleta: any) {
+  async mostrarBoletaModal(boleta: Boleta) {
     const modal = await this.modalCtrl.create({
       component: ModalBoletaComponent,
-      componentProps: { detalleBoleta },
+      componentProps: { detalleBoleta: boleta },
       cssClass: 'modal-boleta-clase'
     });
     await modal.present();

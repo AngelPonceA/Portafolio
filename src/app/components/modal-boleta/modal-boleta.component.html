@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title class="boleta-title">Boleta</ion-title>
+    <ion-title class="boleta-title">Detalle de Boleta</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="dismiss()">Cerrar</ion-button>
     </ion-buttons>
@@ -10,21 +10,46 @@
 <ion-content class="boleta-content">
   <ion-card class="boleta-card">
     <ion-card-header>
-      <ion-card-title class="boleta-exito">Pago exitoso</ion-card-title>
+      <ion-card-title class="boleta-exito">¡Pago realizado con éxito!</ion-card-title>
     </ion-card-header>
-    <ion-card-content>
-      <p><strong>Fecha:</strong> {{ detalleBoleta?.fecha | date : "short" }}</p>
-      <p><strong>Orden de compra:</strong> {{ detalleBoleta?.ordenCompra }}</p>
-      <p><strong>Código de autorización:</strong> {{ detalleBoleta?.autorizacion }}</p>
-      <p><strong>Monto:</strong> ${{ detalleBoleta?.monto }}</p>
 
+    <ion-card-content>
+      <p><strong>Fecha:</strong> {{ detalleBoleta.fecha_creacion | date: 'fullDate' }}</p>
+      <p><strong>Orden de compra:</strong> {{ detalleBoleta.ordenCompra }}</p>
+      <p><strong>Autorización:</strong> {{ detalleBoleta.cod_autorizacion }}</p>
+      <p><strong>Método de pago:</strong> {{ detalleBoleta.metodoDePago | titlecase }}</p>
+
+      <hr />
+
+      <h3>Dirección de envío</h3>
+      <p>{{ detalleBoleta.direccion_envio.nombres }} {{ detalleBoleta.direccion_envio.apellidos }}</p>
+      <p>
+        {{ detalleBoleta.direccion_envio.calle }} {{ detalleBoleta.direccion_envio.numero }},
+        {{ detalleBoleta.direccion_envio.departamento ? detalleBoleta.direccion_envio.departamento + ',' : '' }}
+        {{ detalleBoleta.direccion_envio.comuna }}, {{ detalleBoleta.direccion_envio.region }}
+      </p>
+      <p *ngIf="detalleBoleta.direccion_envio.telefono"><strong>Teléfono:</strong> {{ detalleBoleta.direccion_envio.telefono }}</p>
+      <p *ngIf="detalleBoleta.direccion_envio.descripcion"><strong>Referencia:</strong> {{ detalleBoleta.direccion_envio.descripcion }}</p>
+
+      <hr />
+
+      <h3>Productos</h3>
       <ion-list>
-        <ion-item *ngFor="let item of detalleBoleta?.productos" lines="none">
+        <ion-item *ngFor="let item of detalleBoleta.productos" lines="none">
           <ion-label>
-            {{ item.nombre }} - ${{ item.precio }} x {{ item.cantidad }}
+            <p><strong>{{ item.nombre }}</strong></p>
+            <p>${{ item.precio }} x {{ item.cantidad }}</p>
+            <p>Envío: ${{ item.costo_envio }}</p>
           </ion-label>
         </ion-item>
       </ion-list>
+
+      <hr />
+
+      <div class="totales">
+        <p><strong>Total pagado:</strong> ${{ detalleBoleta.montoPagado | number }}</p>
+        <p class="gracias">Gracias por tu compra 🧡</p>
+      </div>
     </ion-card-content>
   </ion-card>
 </ion-content>

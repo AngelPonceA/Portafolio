@@ -204,6 +204,9 @@ export class CarritoService {
 
       await this.authService.actualizarRecomendadosUsuario(lista);
       
+      await this.registrarBoleta(lista, direccion, detallesPago, uid);
+
+
       this.ionicService.mostrarAlerta('Compra exitosa', 'Compra registrada con éxito.');
     } catch (error: any) {
       this.ionicService.mostrarAlerta('Error', `Error al registrar la compra: ${error}`);
@@ -333,4 +336,38 @@ export class CarritoService {
     return costos;
   }
   
+  private async registrarBoleta(productos: any[], direccion: any, detallesPago: any, usuario_id: string): Promise<void> {
+    const productosBoleta = productos.map(p => ({
+      nombre: p.producto_titulo,
+      precio: p.precio_oferta || p.precio,
+      cantidad: p.cantidad,
+      costo_envio: p.costo_envio || 0
+    }));
+
+    const boleta = {
+      usuario_id: usuario_id,
+      fecha_creacion: new Date(),
+      ordenCompra: detallesPago.buy_order,
+      montoPagado: detallesPago.amount,
+      productos: productosBoleta,
+      direccion_envio: {
+        region: direccion.region,
+        comuna: direccion.comuna,
+        calle: direccion.calle,
+        numero: direccion.numero,
+        nombres: direccion.nombres,
+        apellidos: direccion.apellidos,
+        telefono: direccion.telefono,
+        departamento: direccion.departamento,
+        descripcion: direccion.descripcion
+      },
+      estado: 'pagada',
+      cod_autorizacion: detallesPago.authorization_code,
+      metodoDePago: 'webpay'
+    };
+
+    const ref = collection(this.firestore, 'boletas');
+    await addDoc(ref, boleta);
+  }
+
 }
