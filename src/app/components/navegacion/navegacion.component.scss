@@ -14,9 +14,8 @@
 }
 
 .contenido {
-  height: calc(100% - 16%);
-  overflow-y: auto; 
-  background-color: #f5f5f5;
+  flex: 1;
+  overflow-y: auto;
 }
 
 ion-header, ion-footer {
@@ -31,14 +30,14 @@ ion-header, ion-footer {
 }
 
 ion-header {
-  background: linear-gradient(to bottom, #d1a15a 0%, #e6c890 100% );
+  min-height: 60px;
   padding: 0 10px;
+  background: linear-gradient(to bottom, #d1a15a 0%, #e6c890 100%);
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
   position: relative;
-  z-index: 1;
-  overflow: hidden;
+  z-index: 2;
 }
 
 ion-footer {
@@ -51,7 +50,6 @@ ion-footer {
   border-top-left-radius: 16px;
   position: relative;
   z-index: 1;
-  clip-path: inset(0 0 -100px 0)
 }
 
 ion-footer::after {
@@ -177,6 +175,7 @@ ion-searchbar.searchbar {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .sugerencias-lista {
