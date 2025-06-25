@@ -1,5 +1,4 @@
 export interface Direccion {
-    id?: string;
     usuario_id?: string;
     producto_id?: string
     region: string;
