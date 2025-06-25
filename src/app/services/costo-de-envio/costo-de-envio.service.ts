@@ -7,16 +7,16 @@ import { UbicacionService } from '../ubicacion/ubicacion.service';
   providedIn: 'root'
 })
 export class CostoDeEnvioService {
-  private readonly BASE_ENVIO = 3000;
-  private readonly MULTIPLICADOR = 1000;
-
+  private readonly BASE_ENVIO = 1500;
+  private readonly MULTIPLICADOR = 500;
+  
   constructor(private ubicacionService: UbicacionService) {}
 
-  calcularTotalEnvio(items: { producto: Producto, cantidad: number }[], direccionDestino: Direccion): number {
+  calcularTotalEnvio(items: { producto: Producto }[], direccionDestino: Direccion): number {
     let total = 0;
 
     for (const item of items) {
-      const { producto, cantidad } = item;
+      const { producto } = item;
       const regionOrigen = producto.direccionOrigen?.region;
       const regionDestino = direccionDestino?.region;
 
@@ -28,7 +28,7 @@ export class CostoDeEnvioService {
       if (!origen || !destino) continue;
 
       const diferencia = Math.abs(origen.id - destino.id);
-      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR)) * cantidad;
+      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR));
 
       total += costo;
     }
@@ -37,7 +37,7 @@ export class CostoDeEnvioService {
   }
 
   getCostosEnvioPorProducto(
-    items: { producto: Producto, cantidad: number }[],
+    items: { producto: Producto}[],
     direccionDestino: Direccion
   ): { [producto_id: string]: number } {
     const resultado: { [producto_id: string]: number } = {};
@@ -55,7 +55,7 @@ export class CostoDeEnvioService {
       if (!origen || !destino) continue;
 
       const diferencia = Math.abs(origen.id - destino.id);
-      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR)) * item.cantidad;
+      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR));
 
       resultado[producto_id] = costo;
     }
@@ -64,9 +64,9 @@ export class CostoDeEnvioService {
   }
 
 
-  logEnvio(items: { producto: Producto, cantidad: number }[], direccionDestino: Direccion): void {
+  logEnvio(items: { producto: Producto }[], direccionDestino: Direccion): void {
     for (const item of items) {
-      const { producto, cantidad } = item;
+      const { producto } = item;
       const regionOrigen = producto.direccionOrigen?.region;
       const regionDestino = direccionDestino?.region;
 
@@ -78,9 +78,9 @@ export class CostoDeEnvioService {
       if (!origen || !destino) continue;
 
       const diferencia = Math.abs(origen.id - destino.id);
-      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR)) * cantidad;
+      const costo = (this.BASE_ENVIO + (diferencia * this.MULTIPLICADOR)) ;
 
-      console.log(`[${producto.titulo}] ${regionOrigen} ➜ ${regionDestino} x${cantidad} → $${costo}`);
+      console.log(`[${producto.titulo}] ${regionOrigen} ➜ ${regionDestino} → $${costo}`);
     }
   }
 }
