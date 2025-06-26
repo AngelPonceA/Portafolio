@@ -76,10 +76,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/prediccion-ventas/prediccion-ventas.module').then( m => m.PrediccionVentasPageModule)
   },
   {
-    path: 'boleta',
-    loadChildren: () => import('./pages/boleta/boleta.module').then( m => m.BoletaPageModule)
-  },
-  {
     path: 'soporte',
     loadChildren: () => import('./pages/soporte/soporte.module').then( m => m.SoportePageModule)
   },

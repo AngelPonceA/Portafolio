@@ -12,7 +12,6 @@ import {
 } from '@angular/fire/firestore';
 import { AuthService } from '../auth/auth.service';
 import { solicitudSoporte } from 'src/app/models/soporte/soporte.models';
-import { reporte } from 'src/app/models/soporte/reporte.models';
 import { Usuario } from 'src/app/models/usuario.models';
 
 @Injectable({
