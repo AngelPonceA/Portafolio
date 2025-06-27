@@ -223,6 +223,12 @@ export class CrudService {
     }
   }
 
+  obtenerProductosTienda(usuario_id: string): Observable<Producto[]> {
+    return this.obtenerProductosYOferta().pipe(
+      map(productos => productos.filter(producto => producto['usuario_id'] === usuario_id))
+    );
+  }
+
   obtenerFavoritosConDetalles(usuario_id: string) {
     const favoritosRef = collection(this.firestore, 'favoritos');
     const q = query(favoritosRef, where('usuario_id', '==', usuario_id));
@@ -520,6 +526,34 @@ export class CrudService {
     try {
       const calificacionRef = collection(this.firestore, 'calificaciones');
       const q = query(calificacionRef, where('producto_id', '==', producto_id));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return 0;
+      }
+
+      let suma = 0;
+      let total = 0;
+
+      querySnapshot.forEach(doc => { const data = doc.data();
+        if ( data['calificacion'] ) {
+          suma += data['calificacion'];
+          total++;
+        }
+      });
+      
+      return total > 0 ? (suma / total) : 0;
+
+    } catch (error) {
+      console.log('Error al obtener calificaciones', error);
+      return 0;
+    }
+  }
+
+  async obtenerPromedioCalificacionTienda(usuario_id: string) {
+    try {
+      const calificacionRef = collection(this.firestore, 'calificaciones');
+      const q = query(calificacionRef, where('usuario_id', '==', usuario_id));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {

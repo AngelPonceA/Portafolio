@@ -266,3 +266,39 @@ ion-button ion-icon {
   color: #000000;
   margin: 5px;
 }
+
+.tienda-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   
+  text-align: center;    
+  margin: 1rem 0;
+  padding: 1rem 0;
+  border-radius: 10px;
+  border: 2px solid #f0a500;
+}
+
+.tienda-info {
+  margin-top: 2.5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tienda-nombre {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: #222;
+}
+
+.tienda-calificacion{
+  color: #FFD700;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  
+  ion-icon{
+    font-size: 1.5rem;
+  }
+}

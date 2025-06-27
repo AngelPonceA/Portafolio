@@ -1,62 +1,44 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
 
 @Component({
-  selector: 'app-busqueda',
-  templateUrl: './busqueda.page.html',
-  styleUrls: ['./busqueda.page.scss'],
+  selector: 'app-tienda',
+  templateUrl: './tienda.page.html',
+  styleUrls: ['./tienda.page.scss'],
   standalone: false
 })
-export class BusquedaPage implements OnInit {
+export class TiendaPage implements OnInit {
 
+  tienda?: any;
   productos!: Observable<any[]>;
   productosRespaldo!: Observable<any[]>;
   hayProductos!: Observable<boolean>;
-  busqueda!: string;
   ordenActual: 'asc' | 'desc' | 'oferta' | 'nuevo' | 'segunda mano' | null = null;
 
-  botonOferta: boolean = true;
+  constructor( private router: Router, private crudService: CrudService, private authService: AuthService ) { }
 
-  constructor(private router: Router, private crudService: CrudService) { }
+  async ngOnInit() {
+    const tienda_id = this.router.getCurrentNavigation()?.extras?.state?.['tienda_id'];
+    if (tienda_id) {
+      this.tienda = await this.authService.obtenerDetallesTienda(tienda_id);
+      if (this.tienda) {
+        this.productos = this.crudService.obtenerProductosTienda(tienda_id);
 
-  ngOnInit() {
-    const state = this.router.getCurrentNavigation()?.extras?.state;
-    if (state?.['categoria']) {
-      this.productos = this.crudService.obtenerProductosCategoria(state['categoria']);
-      this.busqueda = `Categoría: ${state['categoria']}`;
-    } else if (state?.['busqueda']) {
-      this.productos = this.crudService.buscarProductosPorNombre(state['busqueda']);
-      this.busqueda = `Busqueda: ${state['busqueda']}`;
-    } else if (state?.['productos']) {
-      if (state['productos'] == 'sinOferta') {
-        this.productos = this.crudService.obtenerProductosYOferta();
-        this.busqueda = 'Todos los productos';
-      } else if (state['productos'] == 'conOferta') {
-        this.productos = this.crudService.obtenerProductosConOferta();
-        this.busqueda = 'Productos con oferta';
-        this.botonOferta = false;
-      } else if (state['productos'] == 'recomendados') {
-        this.productos = this.crudService.obtenerProductosRecomendados();
-        this.busqueda = 'Productos recomendados';
+        this.productosRespaldo = this.productos;    
+
+        this.tienda.calificacion = await this.crudService.obtenerPromedioCalificacionTienda(tienda_id)
+
+        this.hayProductos = this.productos.pipe(
+          map((productos) => productos.length > 0)
+        ); 
       }
     }
-    
-    this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
-    this.productosRespaldo = this.productos;      
-
-    window.addEventListener('actualizarBusqueda', (event: any) => {
-      const nuevaBusqueda = event.detail;
-      this.productos = this.crudService.buscarProductosPorNombre(nuevaBusqueda);
-      this.busqueda = `Busqueda: ${nuevaBusqueda}`;
-      this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
-      this.ordenActual = null;
-      this.botonOferta = true;
-    });
   }
 
-  verDetalle(producto_id: string){
+  verDetalle(producto_id: string) {
     this.router.navigate(['/producto'], { state: { producto_id } });
   }
 

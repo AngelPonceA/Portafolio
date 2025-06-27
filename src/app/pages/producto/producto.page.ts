@@ -20,6 +20,7 @@ declare const paypal: any;
 export class ProductoPage implements OnInit {
 
   usuario?: any;
+  tienda? : any;
   producto: any;
   miCalificacion?: number;
   comprado? : boolean;
@@ -36,18 +37,21 @@ export class ProductoPage implements OnInit {
     
     if (producto_id) {
       this.usuario = await this.authService.obtenerPerfil();
-
       if (this.usuario) {
         this.miCalificacion = await this.crudService.obtenerMiCalificacionProducto(producto_id);
         if (!this.miCalificacion) {
           this.comprado = await this.crudService.esComprado(producto_id)
         }
       }
+      
+      this.producto = await this.crudService.obtenerDetalleProducto(producto_id);
 
-      this.crudService.obtenerDetalleProducto(producto_id).then(data => {
-        this.producto = data;
+      if (this.producto) {
         this.cantidadOpciones = Array.from({ length: this.producto.stock }, (_, i) => i + 1);
-      });
+
+        this.tienda = await this.authService.obtenerDetallesTienda(this.producto.vendedor_id);
+        this.tienda.calificacion = await this.crudService.obtenerPromedioCalificacionTienda(this.producto.vendedor_id)
+      }
 
       this.esFavorito = await this.crudService.esFavorito(producto_id);
     }
@@ -92,6 +96,11 @@ export class ProductoPage implements OnInit {
 
   entero(calificacion: number){
     return Math.floor(calificacion || 0);
+  }
+
+  verTienda() {
+    let tienda_id = this.producto.vendedor_id;
+    this.router.navigate(['/tienda'], { state: { tienda_id } });
   }
 
   agregarAlCarrito(producto: any) {

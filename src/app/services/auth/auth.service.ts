@@ -91,6 +91,22 @@ export class AuthService {
       throw error;
     }
   }
+
+  async obtenerDetallesTienda(uid: string) {
+    try {
+      const ref = doc(this.firestore, `usuarios/${uid}`);
+      const snap = await getDoc(ref);
+      if (snap.exists()) {
+        let data = snap.data();
+        return data;
+      } else {
+        throw new Error('Tienda no encontrada');
+      }
+    } catch (error) {
+      console.error('Error al obtener la tienda:', error);
+      throw error;
+    }
+  }
   
   obtenerNotificacionesNav(usuario_id: string): Observable<number> {
     return new Observable<number>((observer) => {

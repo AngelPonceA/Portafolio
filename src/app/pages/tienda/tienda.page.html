@@ -1,8 +1,22 @@
 <app-navegacion>
 
-  <ion-content *ngIf="hayProductos | async; else sinProductos">
-      <div class="productos-grid-container">
-        <h2 class="titulo">{{ busqueda | titlecase }}</h2>
+  <div *ngIf="tienda">
+
+    <div class="tienda-header">
+      <img [src]="tienda.imagen" class="tienda-logo"/>
+      <div class="tienda-info">
+        <h2 class="tienda-nombre">{{ tienda.nombre }}</h2>
+        <p>Calificación Promedio</p>
+        <div class="tienda-calificacion">
+          <span *ngFor="let contador of [1,2,3,4,5]">
+            <ion-icon [name]="contador <= entero(tienda.calificacion) ? 'star' : 'star-outline'"></ion-icon>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="hayProductos | async" class="productos-grid-container">
+      <h3 class="productos-titulo">Productos de esta tienda</h3>
         <div class="ordenar-bar">
           <button class="ordenar-btn" [class.active]="ordenActual === 'asc'" (click)="ordenarPorPrecio('asc')">
             <ion-icon name="arrow-up-outline"></ion-icon> Menor precio
@@ -10,7 +24,7 @@
           <button class="ordenar-btn" [class.active]="ordenActual === 'desc'" (click)="ordenarPorPrecio('desc')">
             <ion-icon name="arrow-down-outline"></ion-icon> Mayor precio
           </button>
-          <button *ngIf="botonOferta" class="ordenar-btn" [class.active]="ordenActual === 'oferta'" (click)="ordenarPorOferta()">
+          <button class="ordenar-btn" [class.active]="ordenActual === 'oferta'" (click)="ordenarPorOferta()">
             <ion-icon name="pricetag-outline"></ion-icon> Ofertas
           </button>
           <button class="ordenar-btn" [class.active]="ordenActual === 'nuevo'" (click)="ordenarPorCondicion('nuevo')">
@@ -25,11 +39,15 @@
           <img [src]="producto.imagen[0]" />
           <ion-card-content>
             <ion-card-title class="nombre">{{ producto.titulo }}</ion-card-title>
-            <ion-card-subtitle class="descripcion">{{ producto.descripcion | titlecase }}</ion-card-subtitle>
-            <ion-card-subtitle class="descripcion">Stock: {{ producto.stock | number }}</ion-card-subtitle>
+            <ion-card-subtitle class="descripcion">{{ producto.descripcion }}</ion-card-subtitle>
+            <ion-card-subtitle class="descripcion">Stock: {{ producto.stock }}</ion-card-subtitle>
+
+            <!-- Precio / Oferta -->
             <ion-card-subtitle *ngIf="!producto.oferta" class="precio-original">{{ producto.precio | number }} CLP</ion-card-subtitle>
             <ion-card-subtitle *ngIf="producto.oferta" class="precio-original-tachado">{{ producto.precio | number }} CLP</ion-card-subtitle>
-            <ion-card-subtitle *ngIf="producto.oferta" class="precio-oferta">{{ producto.oferta.precio_oferta | number }} CLP</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="producto.oferta" class="precio-oferta">{{ producto.oferta?.precio_oferta | number }} CLP</ion-card-subtitle>          
+
+            <!-- Estrellas -->
             <div class="estrellas-general">
               <span *ngFor="let contador of [1,2,3,4,5]">
                 <ion-icon [name]="contador <= entero(producto.calificacion) ? 'star' : 'star-outline'"></ion-icon>
@@ -40,14 +58,7 @@
         </ion-card>
       </div>
     </div>
-  </ion-content>
 
-  <ng-template #sinProductos>
-    <div class="vacio-container">
-      <ion-icon name="sad-outline"></ion-icon>
-      <h2>No se han encontrado productos</h2>
-      <p>Agrega productos o espera que se publiquen algunos.</p>
-    </div>
-  </ng-template>
+  </div>
 
 </app-navegacion>

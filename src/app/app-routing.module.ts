@@ -94,7 +94,11 @@ const routes: Routes = [
   {
     path: 'mis-solicitudes-de-soporte',
     loadChildren: () => import('./pages/mis-solicitudes-de-soporte/mis-solicitudes-de-soporte.module').then( m => m.MisSolucitudesDeSoportePageModule)
+  },  {
+    path: 'tienda',
+    loadChildren: () => import('./pages/tienda/tienda.module').then( m => m.TiendaPageModule)
   },
+
 
 
 ];

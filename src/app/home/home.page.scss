@@ -77,10 +77,12 @@
 
 .productos-titulo {
   text-align: center;
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 2% 0 6% 0;
-  color: #000000; /* Color del texto */
+  font-size: 1.5rem;  
+  color: #000000;
+  margin: 2% 0 6% 0; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis;
 }
 
 .ver-mas-container {

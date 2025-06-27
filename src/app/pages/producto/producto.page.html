@@ -25,7 +25,7 @@
           <span>Tu calificación</span>
         </div>
 
-        <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }} ({{ producto.estado | titlecase }})</ion-card-title>
+        <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }}</ion-card-title>
 
         <ion-card-subtitle *ngIf="!producto.precio_oferta" class="producto-precio-original">
           Precio: {{ producto.precio | number }} CLP
@@ -63,13 +63,25 @@
           <ion-icon name="cart-outline" slot="start"></ion-icon>
           Carrito
         </ion-button>
-        
+      </div>
+
+      <div *ngIf="tienda" class="tienda-header" (click)="verTienda()">
+        <div class="tienda-info">
+          <h2 class="tienda-nombre">{{ tienda.nombre }}</h2>
+          <p>Calificación De Vendedor</p>
+          <div class="tienda-calificacion">
+            <span *ngFor="let contador of [1,2,3,4,5]">
+              <ion-icon [name]="contador <= entero(tienda.calificacion) ? 'star' : 'star-outline'"></ion-icon>
+            </span>
+          </div>
+        </div>
       </div>
       
       <div class="producto-detalles">
         <h3>Descripción del producto</h3>
         <p class="producto-descripcion">{{ producto.producto_descripcion }}</p>
-        
+        <h3>Estado del producto</h3>
+        <p class="producto-descripcion">{{ producto.estado | titlecase }}</p>
         <h3>Imágenes del producto</h3>
         <div class="imagenes-relacionadas">
           <div *ngFor="let img of producto.imagen" class="imagen-relacionada">
