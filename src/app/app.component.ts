@@ -35,7 +35,11 @@ export class AppComponent implements OnInit {
           '/home',
           '/soporte',
           '/mis-productos',
-          '/carrito'
+          '/carrito',
+          '/perfil',
+          '/admin',
+          '/solicitudes-de-soporte',
+          '/usuarios'
         ];
         const currentUrl = event.urlAfterRedirects;
         const rutaExcluida = excludedRoutes.includes(currentUrl);
@@ -46,19 +50,18 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
+
     this.authService.comprobarSesion();
 
     this.cartService.comprobarCarrito();
     
-    this.triggersService.escucharCambiosPedido();
+    // this.triggersService.escucharCambiosPedido();
 
-    this.triggersService.escucharCambiosDetallePedido();
+    // this.triggersService.escucharCambiosDetallePedido();
 
-    this.triggersService.escucharCambiosStock();
+    // this.triggersService.escucharCambiosStock();
 
-    this.triggersService.escucharCreacionPedido();
-
-    this.authService.comprobarSesion();
+    // this.triggersService.escucharCreacionPedido();
 
     try {
       const sesion = await this.authService.obtenerSesion();

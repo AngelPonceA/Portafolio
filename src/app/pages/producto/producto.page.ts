@@ -95,9 +95,6 @@ export class ProductoPage implements OnInit {
   }
 
   agregarAlCarrito(producto: any) {
-    this.ionicService.mostrarAlerta('Elemento', producto.producto_id)
-    this.ionicService.mostrarAlerta('Cantidad', this.opcionStock.toString())
-
     this.cartService.agregarProductoAlCarrito(producto.producto_id, this.opcionStock)
   }
 

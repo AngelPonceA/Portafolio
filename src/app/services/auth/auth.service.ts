@@ -30,11 +30,16 @@ export class AuthService {
   async comprobarSesion() {
     try {
       const sesion = await this.nativeStorage.getItem(this.usuarioStorage);
-      // this.ionicService.mostrarAlerta('Sesión existente:', JSON.stringify(sesion));
+      const uid = await this.obtenerSesion().then(sesion => sesion.id);
+      const usuario = await this.obtenerPerfil();
+      if (usuario && usuario.estaBloqueado) {
+        const motivo = usuario.motivoBloqueo || 'No especificado';
+        await this.ionicServe.mostrarAlertaPromesa('Alerta', 'Esta cuenta ha sido bloqueada por administración. Motivo: ' + motivo);
+        await this.logout();
+      }
     } catch {
       const sesion = { id: 0, rol: 'invitado' };
       await this.nativeStorage.setItem(this.usuarioStorage, sesion);
-      // this.ionicService.mostrarAlerta('Sesión invitado creada:', JSON.stringify(sesion));
     }
   }
 
@@ -57,8 +62,10 @@ export class AuthService {
       const snap = await getDoc(usuarioRef);
 
       if (snap.exists()) {
-        const { nombre, email, rol, membresia, imagen } = snap.data() as { nombre: string; email: string; rol: string, membresia: boolean, imagen: string };
-        return { nombre, email, rol, membresia, imagen: imagen ? imagen : null, id: uid };
+        const { nombre, email, rol, membresia, imagen, estaBloqueado, motivoBloqueo } = snap.data() as 
+        { nombre: string; email: string;  rol: string; membresia: boolean; imagen: string; estaBloqueado: boolean; motivoBloqueo: string; };
+        return { nombre, email, rol, membresia, imagen: imagen ? imagen : null, id: uid, 
+          estaBloqueado: estaBloqueado ? estaBloqueado : false, motivoBloqueo: motivoBloqueo ? motivoBloqueo : '' };
       } else {
         console.error('Usuario no encontrado en Firestore.');
         return null;
@@ -165,9 +172,17 @@ export class AuthService {
 
       const docRef = doc(this.firestore, 'usuarios', uid);
       const snap = await getDoc(docRef);
+      const usuario = await this.obtenerPerfil();
+
 
       if (!snap.exists()) {
         throw new Error('No se encontraron datos del usuario en Firestore.');
+      }
+
+      if (usuario && usuario.estaBloqueado) {
+        const motivo = usuario.motivoBloqueo || 'No especificado';
+        await this.ionicService.mostrarAlertaPromesa('Alerta', 'Esta cuenta ha sido bloqueada por administración. Motivo: ' + motivo);
+        return;
       }
 
       const { rol } = snap.data()!;

@@ -111,23 +111,29 @@ ion-content::part(scroll) {
 }
 
 .vacio-container {
+  height: 100%;
+  padding: 20px;
   text-align: center;
-  padding: 40px 16px;
-  color: #4e342e;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 
   ion-icon {
-    font-size: 3rem;
+    font-size: 3.5rem;
     color: #fbbf24;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 
   h2 {
     font-size: 1.3rem;
-    margin-bottom: 8px;
+    color: #374151;
+    margin-bottom: 12px;
   }
 
   p {
-    font-size: 1rem;
-    color: #777;
+    font-size: 0.95rem;
+    max-width: 300px;
   }
 }

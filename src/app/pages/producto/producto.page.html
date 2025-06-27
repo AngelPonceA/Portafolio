@@ -25,7 +25,7 @@
           <span>Tu calificación</span>
         </div>
 
-        <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }}</ion-card-title>
+        <ion-card-title class="producto-nombre">{{ producto.producto_titulo | titlecase }} ({{ producto.estado | titlecase }})</ion-card-title>
 
         <ion-card-subtitle *ngIf="!producto.precio_oferta" class="producto-precio-original">
           Precio: {{ producto.precio | number }} CLP

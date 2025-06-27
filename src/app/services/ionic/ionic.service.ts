@@ -39,6 +39,25 @@ export class IonicService {
     await alert.present();
   }
 
+  async mostrarAlertaPromesa(titulo: string, mensaje: string): Promise<void> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alerta.create({
+        header: titulo,
+        message: mensaje,
+        buttons: [
+          {
+            text: 'Aceptar',
+            handler: () => {
+              resolve(); 
+            }
+          }
+        ],
+        backdropDismiss: false
+      });
+      await alert.present();
+    });
+  }
+
   async mostrarAlertaConfirmacion(titulo: string, mensaje: string, onConfirm: () => void) {
     const alert = await this.alerta.create({
       header: titulo,

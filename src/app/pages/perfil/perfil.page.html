@@ -1,7 +1,7 @@
 <app-navegacion>
   <ion-content>
 
-    <div *ngIf="usuario && usuario.rol == 'usuario'; else comprobarVendedor" class="perfil-container">
+    <div *ngIf="usuario && usuario.rol == 'usuario' || usuario.rol == 'admin'; else comprobarVendedor" class="perfil-container">
 
       <div class="info-usuario">
         <h2 class="perfil-titulo">Mi Perfil</h2>
@@ -24,6 +24,11 @@
       </div>
 
       <div class="acciones">
+        <ion-button *ngIf="usuario.rol == 'admin' " expand="block" class="accion-btn" fill="outline" [routerLink]="['/admin-menu']">
+          <ion-icon name="settings-outline" slot="start"></ion-icon>
+          Panel de administrador
+        </ion-button>
+
         <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/cambio-clave']">
           <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
           Cambiar Contraseña
@@ -34,17 +39,17 @@
           Cambiar Nombre de Usuario
         </ion-button>
 
-        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/historial-compra']">
+        <ion-button *ngIf="usuario.rol == 'usuario' " expand="block" class="accion-btn" fill="outline" [routerLink]="['/historial-compra']">
           <ion-icon name="receipt-outline" slot="start"></ion-icon>
           Historial de Compras
         </ion-button>
 
-        <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/mis-solicitudes-de-soporte']">
+        <ion-button *ngIf="usuario.rol == 'usuario' " expand="block" class="accion-btn" fill="outline" [routerLink]="['/mis-solicitudes-de-soporte']">
           <ion-icon name="help-circle-outline" slot="start"></ion-icon>
           Mis solicitudes de soporte
         </ion-button>
 
-        <ion-button expand="block" class="accion-btn" fill="outline" (click)="convertirEnVendedor()">
+        <ion-button *ngIf="usuario.rol == 'usuario' " expand="block" class="accion-btn" fill="outline" (click)="convertirEnVendedor()">
           <ion-icon name="storefront-outline" slot="start"></ion-icon> 
           Transformarte en vendedor
         </ion-button>

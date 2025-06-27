@@ -13,7 +13,7 @@ import { solicitudSoporte } from '../../models/soporte/soporte.models';
 export class MisSolicitudesDeSoportePage implements OnInit {
 
   solicitudes: solicitudSoporte[] = [];
-
+  usuario: any;
   constructor(
               private soporteService: SoporteService,
               private authService: AuthService,
@@ -21,14 +21,12 @@ export class MisSolicitudesDeSoportePage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    // const sesion = await this.authService.obtenerSesion();
-    // const uid = sesion?.id;
-
-    const uid = "kCnjHs7m1fWHHnavK2qvv2lRy2L2"
-    if (uid) {
-      this.solicitudes = await this.soporteService.obtenerSolicitudesPorUsuario(uid);
+    this.usuario = await this.authService.obtenerPerfil();
+    if (this.usuario) {
+      this.solicitudes = await this.soporteService.obtenerSolicitudesPorUsuario(this.usuario.id);
       console.log('Solicitudes obtenidas:', this.solicitudes);
     }
+    
   }
 
   volverAtras() {

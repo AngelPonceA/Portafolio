@@ -58,6 +58,7 @@ export class CarritoService {
 
       await this.nativeStorage.setItem(this.carritoStorage, carrito);
       this.ionicService.mostrarToastAbajo(`Producto agregado al carrito, cantidad: ${cantidad}.`);
+      
       return true;
 
     } catch (error) {
