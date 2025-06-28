@@ -1,7 +1,7 @@
 <app-navegacion>
   <ion-content>
 
-    <div *ngIf="usuario && usuario.rol == 'usuario' || usuario.rol == 'admin'; else comprobarVendedor" class="perfil-container">
+    <div *ngIf="usuario && (usuario.rol == 'usuario' || usuario.rol == 'admin'); else comprobarVendedor" class="perfil-container">
 
       <div class="info-usuario">
         <h2 class="perfil-titulo">Mi Perfil</h2>
