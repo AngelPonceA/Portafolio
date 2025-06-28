@@ -126,4 +126,32 @@ async bloquearUsuario(usuario: Usuario) {
       await alert.present();
     });
   }
+
+  async desbloquearUsuario(usuario: Usuario) {
+    const confirmado = await this.mostrarAlerta(
+      '¿Desbloquear usuario?',
+      `¿Estás seguro de que deseas desbloquear a ${usuario.nombre}?`
+    );
+
+    if (!confirmado) return;
+
+    try {
+      await this.soporteService.actualizarUsuario(usuario.id, {
+        estaBloqueado: false,
+        motivoBloqueo: ''
+      });
+
+      this.usuarios = this.usuarios.map(u =>
+        u.id === usuario.id ? { ...u, estaBloqueado: false, motivoBloqueo: '' } : u
+      );
+
+      this.ionicService.mostrarToastAbajo('Usuario desbloqueado');
+    } catch (error) {
+      console.error('Error al desbloquear usuario:', error);
+      this.ionicService.mostrarToastAbajo('No se pudo desbloquear el usuario');
+    }
+  }
+
+
+
 }

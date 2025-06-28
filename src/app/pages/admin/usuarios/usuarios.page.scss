@@ -8,7 +8,7 @@ ion-content {
 }
 
 .header-toolbar {
-  --background: linear-gradient(to bottom, #d1a15a 0%, #e6c890 100% );
+  --background: linear-gradient(to bottom, #d1a15a 0%, #e6c890 100%);
   --color: white;
 }
 
@@ -80,6 +80,53 @@ ion-content {
       --background: #e57373;
       color: white;
     }
+  }
+}
+
+// 🔒 Estados visuales para usuarios
+ion-list {
+  --border-width: 0;
+  --ion-item-border-color: transparent;
+}
+
+ion-item {
+  --background: transparent;
+  --padding-start: 5px;
+  --inner-padding-end: 0;
+  --inner-padding-start: 0;
+  --padding-end: 0;
+  --min-height: auto;
+  --border-width: 0;
+  --inner-border-width: 0px;
+  border: none;
+  margin: 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+}
+
+
+ion-item.bloqueado {
+  border-left: 6px solid #e57373;
+  background-color: #fff5f5;
+}
+
+ion-item.activo {
+  border-left: 6px solid #81c784;
+  background-color: #f5fff7;
+}
+
+.motivo-bloqueo {
+  font-size: 13px;
+  color: #c62828;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+
+  ion-icon {
+    font-size: 1.2rem;
+    margin-right: 6px;
+    color: #c62828;
   }
 }
 

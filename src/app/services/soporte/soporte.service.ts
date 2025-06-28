@@ -88,11 +88,14 @@ export class SoporteService {
     return updateDoc(doc(this.firestore, 'solicitudes', id), data);
   }
 
-  // Recuperar todos los usuarios para página usuarios
+  // Obtener usuarios (excluyendo administradores)
   async obtenerUsuarios(): Promise<Usuario[]> {
     const ref = collection(this.firestore, 'usuarios');
     const snapshot = await getDocs(ref);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Usuario[];
+    
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() } as Usuario))
+      .filter(usuario => usuario.rol !== 'admin');
   }
 
   // Método para bloquear usuario

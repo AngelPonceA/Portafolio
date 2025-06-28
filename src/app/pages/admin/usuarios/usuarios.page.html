@@ -1,33 +1,20 @@
-<ion-header [translucent]="true">
-  <ion-toolbar class="header-toolbar">
-    <ion-buttons slot="start">
-      <ion-button class="back-button" fill="clear" (click)="volverAtras()">
-        <ion-icon name="arrow-back-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-    <ion-title>Usuarios registrados</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true" class="users-page">
-  <ion-list *ngIf="usuarios.length > 0; else noUsuarios">
-    <ion-item *ngFor="let user of usuarios">
-      <ion-label>
-        <h2>{{ user.nombre }}</h2>
-        <p>{{ user.email }}</p>
-        <small>{{ user.rol }}</small>
-      </ion-label>
-      <ion-buttons slot="end">
-        <ion-button fill="clear" color="danger" (click)="bloquearUsuario(user)">
-        <ion-icon name="lock-closed-outline"></ion-icon>
-        </ion-button>
-      </ion-buttons>
-    </ion-item>
-  </ion-list>
-
-  <ng-template #noUsuarios>
-    <div class="empty-state">
-      <p>No hay usuarios registrados.</p>
-    </div>
-  </ng-template>
-</ion-content>
+<div class="usuarios-grid">
+<ion-item *ngFor="let user of usuarios" [ngClass]="user.estaBloqueado ? 'bloqueado' : 'activo'">
+  <ion-label>
+    <h2>{{ user.nombre }}</h2>
+    <p>{{ user.email }}</p>
+    <small>{{ user.rol }}</small>
+    <p *ngIf="user.estaBloqueado" class="motivo-bloqueo">
+     <ion-icon name="lock-closed-outline"></ion-icon> Bloqueado: {{ user.motivoBloqueo }}
+    </p>
+  </ion-label>
+  <ion-buttons slot="end">
+    <ion-button fill="clear" color="danger" *ngIf="!user.estaBloqueado" (click)="bloquearUsuario(user)">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+    </ion-button>
+    <ion-button fill="clear" color="success" *ngIf="user.estaBloqueado" (click)="desbloquearUsuario(user)">
+      <ion-icon name="lock-open-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-item>
+</div>
