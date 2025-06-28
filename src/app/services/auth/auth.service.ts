@@ -229,7 +229,7 @@ export class AuthService {
         nombre: nombre,
         email: email,
         rol: 'usuario',
-        telefono: number,
+        telefono: `+569${number.replace(/\D/g, '')}`,
         membresia: false,
         miembroHasta: '',
         recomendacion: [],
