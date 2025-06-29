@@ -13,6 +13,7 @@ import {
 import { AuthService } from '../auth/auth.service';
 import { solicitudSoporte } from 'src/app/models/soporte/soporte.models';
 import { Usuario } from 'src/app/models/usuario.models';
+import { reporte } from 'src/app/models/soporte/reporte.models';
 
 @Injectable({
   providedIn: 'root'
@@ -101,5 +102,57 @@ export class SoporteService {
   // Método para bloquear usuario
   actualizarUsuario(id: string, data: Partial<Usuario>): Promise<void> {
     return updateDoc(doc(this.firestore, 'usuarios', id), data);
+  }
+
+  // ================ Metodos de reporte ================ 
+  // Enviar reporte de usuario
+  async enviarReporte(reporteData: Omit<reporte, 'usuarioId' | 'fechaCreacion' | 'estado'>): Promise<void> {
+    const usuarioId = await this.authService.getUserId();
+    const uid = doc(collection(this.firestore, 'reportes')).id;
+    const nuevoReporte: reporte = {
+      ...reporteData,
+      usuarioId,
+      fechaCreacion: new Date(),
+      estado: 'pendiente'
+    };
+    return setDoc(doc(this.firestore, 'reportes', uid), nuevoReporte);
+  }
+
+
+  // Obtener todos los reportes
+  async obtenerReportes(): Promise<reporte[]> {
+    const ref = collection(this.firestore, 'reportes');
+    const q = query(ref, orderBy('fechaCreacion', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as reporte);
+  }
+
+  // Obtener los reportes con estado == pendiente
+  async ObtenerReportesPendientes(): Promise<reporte[]>{
+    const ref = collection(this.firestore, 'reportes');
+    const q = query(ref, where('estado', '==' , 'pendiente'), orderBy('fechaCreacion', 'desc'))
+    const snapshot = await getDocs(q);
+
+    return snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        ...(data as reporte),
+        id: doc.id,
+        fechaCreacion: data['fechaCreacion']?.toDate ? data['fechaCreacion'].toDate() : data['fechaCreacion']
+      };
+    });
+  };
+
+    // Obtener reportes de un usuario
+  async obtenerReportesPorUsuario(usuarioId: string): Promise<reporte[]> {
+    const ref = collection(this.firestore, 'reportes');
+    const q = query(ref, where('usuarioId', '==', usuarioId), orderBy('fechaCreacion', 'desc'));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as reporte);
+  }
+
+  // Actualizar estado o justificación
+  actualizarReporte(id: string, data: Partial<reporte>): Promise<void> {
+    return updateDoc(doc(this.firestore, 'reportes', id), data);
   }
 }

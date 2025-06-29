@@ -8,5 +8,5 @@ export interface reporte {
     imagenes?: string[];
     estado: 'pendiente' | 'resuelto' | 'rechazado';
     usuarioReportado: string;
-    justificacion?: string;
+    justificacionRespuesta?: string;
 }
