@@ -461,7 +461,7 @@ export class UbicacionService {
 
   constructor(private firestore: Firestore) { }
 
-    getRegiones(): Region[] {
+  getRegiones(): Region[] {
     return this.regiones;
   }
 
