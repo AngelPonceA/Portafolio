@@ -377,4 +377,11 @@ export class AuthService {
     });
   }
 
+  async actualizarNumeroTelefono(nuevoNumero: string): Promise<void> {
+    const uid = await this.getUserId();
+    if (!uid) throw new Error('Usuario no autenticado');
+
+    const usuarioRef = doc(this.firestore, 'usuarios', uid);
+    await updateDoc(usuarioRef, { telefono: `+569${nuevoNumero}` });
+  }
 }
