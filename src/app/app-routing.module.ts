@@ -102,7 +102,11 @@ const routes: Routes = [
   {
     path: 'tienda',
     loadChildren: () => import('./pages/tienda/tienda.module').then( m => m.TiendaPageModule)
+  },  {
+    path: 'reportes-de-usuarios',
+    loadChildren: () => import('./pages/admin/reportes-de-usuarios/reportes-de-usuarios.module').then( m => m.ReportesDeUsuariosPageModule)
   },
+
 
 ];
 
