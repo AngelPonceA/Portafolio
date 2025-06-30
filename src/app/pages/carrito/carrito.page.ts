@@ -280,6 +280,7 @@ export class CarritoPage implements OnInit {
   }
 
   limpiarCarrito() {
+    this.cartService.limpiarCarrito();
     this.productos = []; 
     this.calculateTotalAmount();
   }

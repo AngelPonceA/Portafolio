@@ -550,10 +550,10 @@ export class CrudService {
     }
   }
 
-  async obtenerPromedioCalificacionTienda(usuario_id: string) {
+  async obtenerPromedioCalificacionTienda(vendedor_id: string) {
     try {
       const calificacionRef = collection(this.firestore, 'calificaciones');
-      const q = query(calificacionRef, where('usuario_id', '==', usuario_id));
+      const q = query(calificacionRef, where('vendedor_id', '==', vendedor_id));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
@@ -578,7 +578,7 @@ export class CrudService {
     }
   }
 
-  async actualizarCalificacionProducto(producto_id: string, calificacion: number) {
+  async actualizarCalificacionProducto(producto_id: string, vendedor_id: string, calificacion: number) {
     const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
 
     const calificacionRef = collection(this.firestore, 'calificaciones');
@@ -591,7 +591,7 @@ export class CrudService {
       await updateDoc(docRef, { calificacion });
 
     } else {
-      const nuevaCalificacion = {usuario_id: uid, producto_id: producto_id, calificacion: calificacion}
+      const nuevaCalificacion = {usuario_id: uid, vendedor_id: vendedor_id, producto_id: producto_id, calificacion: calificacion}
       const docRef = doc(calificacionRef);
       await setDoc(docRef, nuevaCalificacion);
     };

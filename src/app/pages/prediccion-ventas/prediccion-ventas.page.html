@@ -1,7 +1,8 @@
 <app-navegacion>
+
   <ion-content>
     <ion-spinner *ngIf="cargando"></ion-spinner>
-    <ng-container *ngIf="!cargando && productos.length > 0">
+    <ng-container *ngIf="!cargando && productos.length > 0; else sinPredicciones">
       <div *ngFor="let producto of productos; let i = index">
         <ion-card class="producto-card">
           <ion-card-header class="producto-header">
@@ -60,4 +61,13 @@
       No hay datos de ventas.
     </div>
   </ion-content>
+
+  <ng-template #sinPredicciones>
+    <div class="vacio-container">
+      <ion-icon name="trending-up-outline"></ion-icon>
+      <h2>Sin datos para las predicciones</h2>
+      <p>Cuando tengas ventas registradas, podrás ver sus predicciones y hacer tus propias estimaciones.</p>
+    </div>
+  </ng-template>
+  
 </app-navegacion>

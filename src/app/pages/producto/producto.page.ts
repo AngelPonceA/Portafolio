@@ -99,8 +99,9 @@ export class ProductoPage implements OnInit {
   async actualizarCalificacion(nuevaCalificacion: number) {
     if (!this.producto?.producto_id) return;
     try {
-      await this.crudService.actualizarCalificacionProducto(this.producto.producto_id, nuevaCalificacion);
+      await this.crudService.actualizarCalificacionProducto(this.producto.producto_id, this.producto.vendedor_id, nuevaCalificacion);
       this.producto.calificacion = await this.crudService.obtenerPromedioCalificacionProducto(this.producto.producto_id)
+      this.tienda.calificacion = await this.crudService.obtenerPromedioCalificacionTienda(this.producto.vendedor_id);
       this.miCalificacion = nuevaCalificacion;
     } catch (error) {
       this.ionicService.mostrarAlerta('Error al actualizar la calificación', 'error');
