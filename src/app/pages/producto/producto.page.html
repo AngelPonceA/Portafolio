@@ -95,6 +95,12 @@
       </div>
       
       <div class="producto-detalles">
+        <p class="producto-descripcion">
+          <ion-icon name="pin-outline"></ion-icon>
+          {{ producto.direccionOrigen?.calle }} {{ producto.direccionOrigen?.numero }},
+          {{ producto.direccionOrigen?.departamento ? producto.direccionOrigen.departamento + ',' : '' }}
+          {{ producto.direccionOrigen?.comuna }}, {{ producto.direccionOrigen?.region }}
+        </p>
         <h3>Descripción del producto</h3>
         <p class="producto-descripcion">{{ producto.producto_descripcion }}</p>
         <h3>Estado del producto</h3>
