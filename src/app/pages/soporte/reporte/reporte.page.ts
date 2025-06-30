@@ -4,6 +4,7 @@ import { AlertController, ToastController } from '@ionic/angular';
 import imageCompression from 'browser-image-compression';
 import { reporte } from 'src/app/models/soporte/reporte.models';
 import { SoporteService } from 'src/app/services/soporte/soporte.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-reporte',
@@ -20,7 +21,8 @@ export class ReportePage implements OnInit {
     private fb: FormBuilder,
     private soporteService: SoporteService,
     private toastController: ToastController,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private route: ActivatedRoute
   ) {
     this.formularioReporte = this.fb.group({
       titulo: ['', Validators.required],
@@ -30,7 +32,15 @@ export class ReportePage implements OnInit {
     });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      const nombreReportado = params['usuarioReportado'];
+      if (nombreReportado) {
+        this.formularioReporte.patchValue({ usuarioReportado: nombreReportado });
+      }
+    });
+  }
+
 
   // ========================= Enviar Reporte =========================
   async enviarReporte() {

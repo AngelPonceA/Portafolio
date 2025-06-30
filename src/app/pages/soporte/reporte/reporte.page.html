@@ -30,8 +30,13 @@
 
       <ion-item>
         <ion-label position="stacked">Usuario Reportado</ion-label>
-        <ion-input formControlName="usuarioReportado" required></ion-input>
+        <ion-input
+          formControlName="usuarioReportado"
+          [readonly]="true"
+          required
+        ></ion-input>
       </ion-item>
+
 
       <!-- Imagenes opcionales -->
       <ion-item>

@@ -58,7 +58,12 @@
         </ion-card>
       </div>
     </div>
-
   </div>
+
+  <ion-fab class="ubicacion-fab">
+    <ion-fab-button (click)="reportarTienda(tienda.id, tienda.nombre)">
+      <ion-icon name="flag-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 
 </app-navegacion>
