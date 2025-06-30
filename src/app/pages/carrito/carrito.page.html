@@ -46,6 +46,11 @@
         <div class="costo-envio">
           Stock: {{ producto.stock | number }}
         </div>
+        <div class="direccion-origen">
+          <ion-icon name="pin-outline"></ion-icon>
+          Origen: {{ producto.direccionOrigen?.comuna }}, {{ producto.direccionOrigen?.region }}
+       </div>
+
         <div class="costo-envio">
           <ion-icon name="car-outline"></ion-icon>
           Envío: ${{ obtenerCostoEnvio(producto.producto_id) | number }} CLP
