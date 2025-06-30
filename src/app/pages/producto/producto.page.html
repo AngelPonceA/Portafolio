@@ -65,6 +65,23 @@
         </ion-button>
       </div>
 
+      <!-- Acciones de administrador -->
+      <ion-card *ngIf="usuarioEsAdmin" class="acciones-admin-card">
+        <ion-card-header>
+          <ion-card-title>Acciones de administrador</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="acciones-admin">
+            <ion-button fill="clear" color="primary" (click)="abrirModalEditarProducto(producto)">
+              <ion-icon name="create-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" color="danger" (click)="eliminarProducto(producto.producto_id)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
       <div *ngIf="tienda" class="tienda-header" (click)="verTienda()">
         <div class="tienda-info">
           <h2 class="tienda-nombre">{{ tienda.nombre }}</h2>
