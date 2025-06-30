@@ -1,3 +1,14 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-button fill="clear" (click)="volverAtras()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <div class="usuarios-grid">
 <ion-item *ngFor="let user of usuarios" [ngClass]="user.estaBloqueado ? 'bloqueado' : 'activo'">
   <ion-label>

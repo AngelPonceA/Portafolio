@@ -129,14 +129,3 @@ ion-item.activo {
     color: #c62828;
   }
 }
-
-@media (max-width: 768px) {
-  .usuarios-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .usuario-card {
-    padding: 12px;
-    font-size: 14px;
-  }
-}
