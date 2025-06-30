@@ -85,6 +85,10 @@ export class CarritoPage implements OnInit {
         if (stockAjustado) {
           this.ionicService.mostrarAlerta('Stock ajustado', `Solo quedan ${stockDisponible} unidades de "${producto.producto_titulo}", del cual querías comprar ${cantidadDeseada}. Se ajustó la cantidad a ${cantidadFinal}.`);
         }
+
+        if (producto.stock <= 0 || producto.esta_eliminado) {
+          this.ionicService.mostrarAlerta('Sin disponibilidad', `El producto "${producto.producto_titulo}" no se encuentra disponible para su compra en este momento.`);
+        }
       }
     }
 
@@ -173,12 +177,16 @@ export class CarritoPage implements OnInit {
 
 
   obtenerCostoEnvio(producto_id: string): number {
+    const producto = this.productos.find(p => p.producto_id === producto_id);
+    if (!producto || producto.stock <= 0 || producto.esta_eliminado) {
+      return 0;
+    }
     return this.costosEnvio[producto_id] || 0;
   }
 
   calcularSubtotales() {
-    this.subtotalProductos = this.productos.reduce((total, p) => total + this.obtenerTotalProducto(p), 0);
-    this.subtotalEnvios = this.productos.reduce((total, p) => total + this.obtenerCostoEnvio(p.producto_id), 0);
+    this.subtotalProductos = this.productos.filter(p => p.stock > 0 && !p.esta_eliminado).reduce((total, p) => total + this.obtenerTotalProducto(p), 0);
+    this.subtotalEnvios = this.productos.filter(p => p.stock > 0 && !p.esta_eliminado).reduce((total, p) => total + this.obtenerCostoEnvio(p.producto_id), 0);
   }
 
   async calculateTotalAmount() {
@@ -234,7 +242,8 @@ export class CarritoPage implements OnInit {
 
   async confirmarTransaccion(token: string) {
     this.webpayService.confirmarTransaccion(token).subscribe(async(respuesta: any) => {
-      const productosBoleta = this.productos.map(p => ({
+      const productosValidos = this.productos.filter(p => p.stock > 0 && !p.esta_eliminado);
+      const productosBoleta = productosValidos.map(p => ({
         nombre: p.producto_titulo,
         precio: p.precio_oferta || p.precio,
         cantidad: p.cantidad,
@@ -254,11 +263,11 @@ export class CarritoPage implements OnInit {
         metodoDePago: 'webpay'
       };
 
-      await this.cartService.registrarCompra(this.productos, this.direccionPrincipal, respuesta);
+      await this.cartService.registrarCompra(productosValidos, this.direccionPrincipal, respuesta);
 
       this.limpiarCarrito();
       this.mostrarBoletaModal(boleta);
-  });
+    });
   }
 
   async mostrarBoletaModal(boleta: Boleta) {

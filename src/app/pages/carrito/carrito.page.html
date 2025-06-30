@@ -57,18 +57,18 @@
         </div>
 
         <div class="producto-controles">
-          <ion-button *ngIf="producto.stock > 0" fill="outline" color="medium" (click)="restarProducto(producto.producto_id)">
+          <ion-button *ngIf="producto.stock > 0 && !producto.esta_eliminado" fill="outline" color="medium" (click)="restarProducto(producto.producto_id)">
             <ion-icon name="remove-outline"></ion-icon>
           </ion-button>
-          <span *ngIf="producto.stock > 0; else sinStock" class="cantidad">{{ producto.cantidad }}
+          <span *ngIf="producto.stock > 0 && !producto.esta_eliminado; else noDisponible" class="cantidad">{{ producto.cantidad }}
             <ng-container *ngIf="producto.cantidadDeseada && producto.cantidadDeseada > producto.cantidad">
               <span class="cantidad-deseada">(Querías {{ producto.cantidadDeseada }})</span>
             </ng-container>
           </span>
-          <ng-template #sinStock>
-            <div class="cantidad">Producto sin stock</div>
+          <ng-template #noDisponible>
+            <div class="cantidad">Producto no disponible</div>
           </ng-template>
-          <ion-button *ngIf="producto.stock > 0" fill="outline" color="medium" (click)="sumarProducto(producto.producto_id)">
+          <ion-button *ngIf="producto.stock > 0 && !producto.esta_eliminado" fill="outline" color="medium" (click)="sumarProducto(producto.producto_id)">
             <ion-icon name="add-outline"></ion-icon>
           </ion-button>
           <ion-button class="cancel-button" fill="solid" color="danger" (click)="quitarProducto(producto.producto_id)">
@@ -90,7 +90,10 @@
           <div class="envios-desglosados">
             <div *ngFor="let p of productos" class="envio-desglose-item">
               <span class="titulo-producto">{{ p.producto_titulo }}</span>
-              <span class="valor-envio">${{ obtenerCostoEnvio(p.producto_id) | number }} CLP</span>
+              <span *ngIf="p.stock > 0 && !p.esta_eliminado; else noIncluido" class="valor-envio">${{ obtenerCostoEnvio(p.producto_id) | number }} CLP</span>
+              <ng-template #noIncluido>
+                <span class="valor-envio">No disponible</span>
+              </ng-template>
             </div>
           </div>
         </div>

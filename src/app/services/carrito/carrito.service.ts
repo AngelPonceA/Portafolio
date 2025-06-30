@@ -188,7 +188,7 @@ export class CarritoService {
     try {
       const uid = await this.authService.obtenerSesion().then(sesion => sesion.id);   
 
-      const lista = (Array.isArray(productos) ? productos : [productos]).filter((p: any) => p.cantidad > 0);
+      const lista = (Array.isArray(productos) ? productos : [productos]).filter((p: any) => p.cantidad > 0 && !p.esta_eliminado);
 
       if (lista.length === 0) {
         this.ionicService.mostrarAlerta('Error', 'No hay productos con cantidad mayor a 0 para registrar la compra.');
