@@ -81,8 +81,8 @@ export class ModalAgregarProductoComponent{
   }
 
   onRegionChange(event: any) {
-  const regionId = event.detail.value;
-  const region = this.regiones.find(r => r.id === regionId);
+  const regionName = event.detail.value;
+  const region = this.regiones.find(r => r.nombre.trim().toLowerCase() === regionName.trim().toLowerCase());
   this.comunas = region ? region.comunas : [];
   this.nuevoProductoForm.direccionOrigen.comuna = '';
 }

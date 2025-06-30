@@ -187,3 +187,27 @@ ion-button {
   color: black;
   border-color: black;
 }
+
+.ubicacion-fab {
+  position: fixed;
+  top: 10vh; 
+  left: 16px;
+  z-index: 1000;
+
+  ion-fab-button {
+    --background: #d1a15a;
+    --color: white;
+    --background-activated: #694936;
+    --background-hover: #694936;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    border: 1.5px solid rgb(161, 57, 57);
+  }
+
+  ion-icon {
+    font-size: 28px; 
+    color: white;
+  }
+}

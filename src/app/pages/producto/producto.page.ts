@@ -7,8 +7,8 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { IonicService } from 'src/app/services/ionic/ionic.service';
-
-declare const paypal: any;
+import { ModalController } from '@ionic/angular';
+import { ModalEditarProductoComponent } from 'src/app/components/mis-productos/modal-editar-producto/modal-editar-producto.component';
 
 @Component({
   selector: 'app-producto',
@@ -28,15 +28,28 @@ export class ProductoPage implements OnInit {
   esFavorito?: any;
   cantidadOpciones: number[] = [];
   opcionStock: number = 1;
+  usuarioEsAdmin: boolean = false;
 
-  constructor(private router: Router, private crudService: CrudService, private authService: AuthService, 
-    private cartService: CarritoService, private ionicService: IonicService) {}
+  constructor(private router: Router, 
+              private crudService: CrudService, 
+              private authService: AuthService, 
+              private cartService: CarritoService, 
+              private ionicService: IonicService,
+              private modalCtrl: ModalController
+            ) {}
     
   async ngOnInit() {
     const producto_id = this.router.getCurrentNavigation()?.extras?.state?.['producto_id'];
     
     if (producto_id) {
       this.usuario = await this.authService.obtenerPerfil();
+
+      this.usuario = await this.authService.obtenerPerfil();
+
+      if (this.usuario?.rol === 'admin') {
+        this.usuarioEsAdmin = true;
+      }
+
       if (this.usuario) {
         this.miCalificacion = await this.crudService.obtenerMiCalificacionProducto(producto_id);
         if (!this.miCalificacion) {
@@ -129,4 +142,39 @@ export class ProductoPage implements OnInit {
     }
   }
   
+  async abrirModalEditarProducto(producto: Producto) {
+    const p: any = producto; 
+
+    const productoAdaptado: Producto = {
+      ...producto,
+      titulo: producto.titulo || p.producto_titulo || '',
+      descripcion: producto.descripcion || p.producto_descripcion || ''
+    };
+
+    const modal = await this.modalCtrl.create({
+      component: ModalEditarProductoComponent,
+      componentProps: {
+        initialProductData: productoAdaptado,
+        userId: this.usuario?.uid || this.usuario?.id,
+      },
+    });
+
+    modal.onDidDismiss().then((resultado) => {
+      if (resultado.data?.actualizado) {
+        this.ionicService.mostrarToastAbajo('Producto actualizado correctamente');
+        this.ngOnInit();
+      }
+    });
+
+    await modal.present();
+  }
+
+  async eliminarProducto(productoId: string) {
+    const confirmar = await this.ionicService.confirmarAccion('¿Eliminar producto?', 'Esta acción no se puede deshacer.', );
+    if (confirmar) {
+      await this.crudService.eliminarProducto(productoId);
+      this.ionicService.mostrarToastAbajo('Producto eliminado');
+      this.router.navigate(['/home']);
+    }
+  }
 }

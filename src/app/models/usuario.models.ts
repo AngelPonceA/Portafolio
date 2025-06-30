@@ -8,4 +8,5 @@ export interface Usuario {
     miembroHasta: any;
     recomendacion: any[];
     estaBloqueado?: boolean;
+    motivoBloqueo?: string;
 }

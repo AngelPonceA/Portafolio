@@ -1,7 +1,7 @@
 <app-navegacion>
   <ion-content>
 
-    <div *ngIf="usuario && usuario.rol == 'usuario' || usuario.rol == 'admin'; else comprobarVendedor" class="perfil-container">
+    <div *ngIf="usuario && (usuario.rol == 'usuario' || usuario.rol == 'admin'); else comprobarVendedor" class="perfil-container">
 
       <div class="info-usuario">
         <h2 class="perfil-titulo">Mi Perfil</h2>
@@ -37,6 +37,11 @@
         <ion-button expand="block" class="accion-btn" fill="outline" [routerLink]="['/cambio-nombre-usuario']">
           <ion-icon name="pencil-outline" slot="start"></ion-icon> 
           Cambiar Nombre de Usuario
+        </ion-button>
+
+        <ion-button expand="block" class="accion-btn" fill="outline" (click)="cambiarNumeroTelefono()">
+          <ion-icon name="call-outline"></ion-icon>          
+          Cambiar número de teléfono
         </ion-button>
 
         <ion-button *ngIf="usuario.rol == 'usuario' " expand="block" class="accion-btn" fill="outline" [routerLink]="['/historial-compra']">
@@ -93,6 +98,11 @@
           <ion-button expand="block" fill="outline" routerLink="/cambio-nombre-usuario">
             <ion-icon name="pencil-outline" slot="start"></ion-icon>
             Cambiar Nombre de Usuario
+          </ion-button>
+
+          <ion-button expand="block" class="accion-btn" fill="outline" (click)="cambiarNumeroTelefono()">
+          <ion-icon name="call-outline"></ion-icon>          
+          Cambiar número de teléfono
           </ion-button>
 
           <ion-button expand="block" fill="outline" routerLink="/historial-ventas">

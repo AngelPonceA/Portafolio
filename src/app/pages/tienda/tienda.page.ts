@@ -18,7 +18,9 @@ export class TiendaPage implements OnInit {
   hayProductos!: Observable<boolean>;
   ordenActual: 'asc' | 'desc' | 'oferta' | 'nuevo' | 'segunda mano' | null = null;
 
-  constructor( private router: Router, private crudService: CrudService, private authService: AuthService ) { }
+  constructor(  private router: Router, 
+                private crudService: CrudService, 
+                private authService: AuthService ) { }
 
   async ngOnInit() {
     const tienda_id = this.router.getCurrentNavigation()?.extras?.state?.['tienda_id'];
@@ -101,4 +103,11 @@ export class TiendaPage implements OnInit {
     );
   }
 
+  reportarTienda(tiendaId: string, tiendaNombre: string) {
+    this.router.navigate(['/reporte'], {
+      queryParams: {
+        usuarioReportado: tiendaNombre
+      }
+    });
+  }
 }

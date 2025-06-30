@@ -8,6 +8,7 @@ import { PerfilPage } from './perfil.page';
 // Importar acá abajo para no confundirnos
 import { NavegacionComponent } from "../../components/navegacion/navegacion.component";
 import { ModalTarjetaDepositosComponent } from 'src/app/components/modal-tarjeta-depositos/modal-tarjeta-depositos.component';
+import { ModalNumeroComponent } from 'src/app/components/modal-numero/modal-numero.component';
 
 @NgModule({
   imports: [
@@ -16,8 +17,10 @@ import { ModalTarjetaDepositosComponent } from 'src/app/components/modal-tarjeta
     ReactiveFormsModule,
     IonicModule,
     PerfilPageRoutingModule,
-    NavegacionComponent
+    NavegacionComponent,
   ],
-  declarations: [PerfilPage, ModalTarjetaDepositosComponent],
+  declarations: [PerfilPage, 
+                ModalTarjetaDepositosComponent,
+                ModalNumeroComponent],
 })
 export class PerfilPageModule {}

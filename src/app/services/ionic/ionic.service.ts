@@ -77,6 +77,28 @@ export class IonicService {
     await alert.present();
   }
 
+  async confirmarAccion(titulo: string, mensaje: string): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alerta.create({
+        header: titulo,
+        message: mensaje,
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => resolve(false)
+          },
+          {
+            text: 'Confirmar',
+            handler: () => resolve(true)
+          }
+        ]
+      });
+      await alert.present();
+    });
+  }
+
+
   async mostrarCargando(mensaje: string = 'Cargando...') {
     if (this.loading) return;
 
@@ -96,4 +118,6 @@ export class IonicService {
       this.loading = null;
     }
   }
+
+
 }

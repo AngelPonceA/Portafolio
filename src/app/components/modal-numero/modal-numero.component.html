@@ -1,0 +1,31 @@
+<div class="overlay" role="dialog" aria-modal="true">
+  <div class="card-form" tabindex="0" role="document" aria-labelledby="titulo-modal">
+    <form [formGroup]="form" (ngSubmit)="confirmar()">
+      <h2 id="titulo-modal">Cambiar número de teléfono</h2>
+
+      <ion-item>
+        <ion-label position="floating">Número de teléfono</ion-label>
+        <ion-input
+          type="tel"
+          formControlName="telefono"
+          placeholder="12345678"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          (ionInput)="onInputTelefono($event)"
+        ></ion-input>
+      </ion-item>
+
+      <ion-text color="danger" *ngIf="form.get('telefono')?.invalid && form.get('telefono')?.touched">
+        <p *ngIf="form.get('telefono')?.errors?.['pattern']">Solo se permiten números.</p>
+        <p *ngIf="form.get('telefono')?.errors?.['minlength'] || form.get('telefono')?.errors?.['maxlength']">
+          El número debe tener exactamente 8 dígitos.
+        </p>
+      </ion-text>
+
+      <div class="acciones">
+        <ion-button color="medium" fill="clear" (click)="cancelar()">Cancelar</ion-button>
+        <ion-button class="brown-button" fill="clear" type="submit" [disabled]="!form.valid">Guardar</ion-button>
+      </div>
+    </form>
+  </div>
+</div>

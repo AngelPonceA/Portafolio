@@ -7,8 +7,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ModalTarjetaDepositosService } from 'src/app/services/modal-tarjeta-depositos/modal-tarjeta-depositos.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import imageCompression from 'browser-image-compression';
-import { ActionSheetController } from '@ionic/angular';
-
+import { ActionSheetController, ModalController } from '@ionic/angular';
+import { ModalNumeroComponent } from 'src/app/components/modal-numero/modal-numero.component';
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
@@ -23,9 +23,14 @@ export class PerfilPage implements OnInit {
   mostrarBotonWebpay: boolean = false;
   imagen_default: string = 'assets/img/profile-placeholder.jpg';
 
-  constructor(private router: Router, private authService: AuthService, private ionicService: IonicService, 
-    private webpayService: WebpayService, private route: ActivatedRoute, private modalTarjetaDepositos: ModalTarjetaDepositosService,
-    private actionSheetCtrl: ActionSheetController
+  constructor(private router: Router, 
+              private authService: AuthService, 
+              private ionicService: IonicService, 
+              private webpayService: WebpayService, 
+              private route: ActivatedRoute, 
+              private modalTarjetaDepositos: ModalTarjetaDepositosService,
+              private actionSheetCtrl: ActionSheetController,
+              private modalCtrl: ModalController,
   ) { }
 
   async ngOnInit() {
@@ -137,6 +142,30 @@ export class PerfilPage implements OnInit {
     this.ionicService.mostrarAlerta('Cancelado', 'No se modificó la tarjeta.');
   }
 }
+
+// Modal para cambiar el número de teléfono
+  async cambiarNumeroTelefono() {
+    const modal = await this.modalCtrl.create({
+      component: ModalNumeroComponent,
+    });
+
+    await modal.present();
+
+    const { data } = await modal.onDidDismiss();
+
+    if (data) {
+      try {
+        await this.authService.actualizarNumeroTelefono(data);
+        this.usuario.telefono = data;
+        this.ionicService.mostrarToastArriba('Teléfono actualizado con éxito');
+      } catch (error) {
+        this.ionicService.mostrarAlerta('Error', 'No se pudo actualizar el número.');
+      }
+    } else {
+      this.ionicService.mostrarToastArriba('No se modificó el número');
+    }
+  }
+
 
 // ====== Metodos de cámara y archivos para foto de perfil ======
 

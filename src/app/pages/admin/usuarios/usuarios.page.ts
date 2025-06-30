@@ -34,26 +34,72 @@ export class UsuariosPage implements OnInit {
     }
   }
 
-  async bloquearUsuario(usuario: Usuario) {
-    try {
-      const confirmado = await this.mostrarAlerta(
-        '¿Bloquear usuario?',
-        `¿Estás seguro de que deseas bloquear a ${usuario.nombre}?`
-      );
-      if (!confirmado) return;
+async bloquearUsuario(usuario: Usuario) {
+  try {
+    const alert = await this.alertController.create({
+      header: 'Motivo del bloqueo',
+      inputs: [
+        {
+          name: 'motivo',
+          type: 'radio',
+          label: 'Comportamiento inadecuado',
+          value: 'Comportamiento inadecuado',
+          checked: true
+        },
+        {
+          name: 'motivo',
+          type: 'radio',
+          label: 'Incumplimiento de normas',
+          value: 'Incumplimiento de normas'
+        },
+        {
+          name: 'motivo',
+          type: 'radio',
+          label: 'Uso fraudulento',
+          value: 'Uso fraudulento'
+        },
+        {
+          name: 'motivo',
+          type: 'radio',
+          label: 'Otro',
+          value: 'Otro'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Bloquear',
+          handler: async (motivoSeleccionado) => {
+            const confirmado = await this.mostrarAlerta(
+              '¿Bloquear usuario?',
+              `¿Estás seguro de que deseas bloquear a ${usuario.nombre}?\nMotivo: ${motivoSeleccionado}`
+            );
+            if (!confirmado) return;
 
-      await this.soporteService.actualizarUsuario(usuario.id, { estaBloqueado: true }); 
+            await this.soporteService.actualizarUsuario(usuario.id, {
+              estaBloqueado: true,
+              motivoBloqueo: motivoSeleccionado
+            });
 
-      this.usuarios = this.usuarios.map(u =>
-        u.id === usuario.id ? { ...u, estaBloqueado: true } : u
-      );
+            this.usuarios = this.usuarios.map(u =>
+              u.id === usuario.id ? { ...u, estaBloqueado: true } : u
+            );
 
-      this.ionicService.mostrarToastAbajo('Usuario bloqueado');
-    } catch (error) {
-      console.error('Error al bloquear usuario:', error);
-      this.ionicService.mostrarToastAbajo('No se pudo bloquear el usuario');
-    }
+            this.ionicService.mostrarToastAbajo('Usuario bloqueado');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  } catch (error) {
+    console.error('Error al bloquear usuario:', error);
+    this.ionicService.mostrarToastAbajo('No se pudo bloquear el usuario');
   }
+}
 
   volverAtras() {
     this.navCtrl.back();
@@ -80,4 +126,32 @@ export class UsuariosPage implements OnInit {
       await alert.present();
     });
   }
+
+  async desbloquearUsuario(usuario: Usuario) {
+    const confirmado = await this.mostrarAlerta(
+      '¿Desbloquear usuario?',
+      `¿Estás seguro de que deseas desbloquear a ${usuario.nombre}?`
+    );
+
+    if (!confirmado) return;
+
+    try {
+      await this.soporteService.actualizarUsuario(usuario.id, {
+        estaBloqueado: false,
+        motivoBloqueo: ''
+      });
+
+      this.usuarios = this.usuarios.map(u =>
+        u.id === usuario.id ? { ...u, estaBloqueado: false, motivoBloqueo: '' } : u
+      );
+
+      this.ionicService.mostrarToastAbajo('Usuario desbloqueado');
+    } catch (error) {
+      console.error('Error al desbloquear usuario:', error);
+      this.ionicService.mostrarToastAbajo('No se pudo desbloquear el usuario');
+    }
+  }
+
+
+
 }

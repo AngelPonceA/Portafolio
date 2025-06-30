@@ -77,7 +77,11 @@ const routes: Routes = [
   },
   {
     path: 'soporte',
-    loadChildren: () => import('./pages/soporte/soporte.module').then( m => m.SoportePageModule)
+    loadChildren: () => import('./pages/soporte/soporte/soporte.module').then( m => m.SoportePageModule)
+  },
+  {
+    path: 'reporte',
+    loadChildren: () => import('./pages/soporte/reporte/reporte.module').then( m => m.ReportePageModule)
   },
   {
     path: 'admin-menu',
@@ -94,11 +98,14 @@ const routes: Routes = [
   {
     path: 'mis-solicitudes-de-soporte',
     loadChildren: () => import('./pages/mis-solicitudes-de-soporte/mis-solicitudes-de-soporte.module').then( m => m.MisSolucitudesDeSoportePageModule)
-  },  {
+  },
+  {
     path: 'tienda',
     loadChildren: () => import('./pages/tienda/tienda.module').then( m => m.TiendaPageModule)
+  },  {
+    path: 'reportes-de-usuarios',
+    loadChildren: () => import('./pages/admin/reportes-de-usuarios/reportes-de-usuarios.module').then( m => m.ReportesDeUsuariosPageModule)
   },
-
 
 
 ];
