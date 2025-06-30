@@ -370,5 +370,4 @@ export class CarritoService {
     const ref = collection(this.firestore, 'boletas');
     await addDoc(ref, boleta);
   }
-
 }

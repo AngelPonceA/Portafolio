@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { IonicService } from 'src/app/services/ionic/ionic.service';
+import { ModalBoletaComponent } from 'src/app/components/modal-boleta/modal-boleta.component';
 
 @Component({
   selector: 'app-historial-compra',
@@ -17,9 +18,11 @@ export class HistorialCompraPage implements OnInit {
 
   detalleSeleccionado: any = null;
 
-  constructor(private router: Router, private navCtrl: NavController, private crudService: CrudService, 
-    private ionicService: IonicService) {}
-
+  constructor(private router: Router, 
+              private navCtrl: NavController,
+              private crudService: CrudService, 
+              private ionicService: IonicService,
+              private modalCtrl: ModalController) {}
   async ngOnInit() {
 
     const lista = await this.crudService.obtenerHistorialCompra();
@@ -73,5 +76,25 @@ export class HistorialCompraPage implements OnInit {
       this.router.navigate(['/producto'], { state: { producto_id } });
     }, 100);
   }
+
+async abrirModalBoleta(pedido: any) {
+  const boleta = await this.crudService.recuperarBoletaConOrdenCompra(pedido.detalles_pago.buy_order);
+
+  if (!boleta) {
+    this.ionicService.mostrarAlerta('Error', 'No se encontró la boleta para este pedido.');
+    return;
+  }
+
+  const modal = await this.modalCtrl.create({
+    component: ModalBoletaComponent,
+    componentProps: {
+      detalleBoleta: boleta
+    },
+    cssClass: 'modal-boleta-clase'
+  });
+
+  await modal.present();
+}
+
 
 }

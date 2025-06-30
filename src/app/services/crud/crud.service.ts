@@ -1,6 +1,6 @@
 import { Categoria } from './../../models/categoria.models';
 import { inject, Injectable, Injector } from '@angular/core';
-import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc, orderBy, onSnapshot, addDoc, serverTimestamp } from '@angular/fire/firestore';
+import { DocumentData, DocumentReference, Firestore, collection, collectionData, deleteDoc, doc, getDoc, getDocs, query, setDoc, where, updateDoc, orderBy, onSnapshot, addDoc, serverTimestamp, CollectionReference } from '@angular/fire/firestore';
 import { combineLatest, firstValueFrom, forkJoin, from, map, Observable, of, switchMap } from 'rxjs';
 import { Producto } from '../../models/producto.models';
 import { Oferta } from 'src/app/models/oferta.models';
@@ -868,4 +868,13 @@ async eliminarProducto(producto_id: string) {
     return mezclados.slice(0, limit);
   }
 
+  async recuperarBoletaConOrdenCompra(ordenCompra: string): Promise<any> {
+    const ref = collection(this.firestore, 'boletas');
+    const q = query(ref, where('ordenCompra', '==', ordenCompra));
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) return null;
+
+    return snapshot.docs[0].data();
+  }
 }
