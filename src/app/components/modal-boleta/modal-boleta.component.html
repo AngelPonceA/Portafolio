@@ -40,6 +40,10 @@
             <p><strong>{{ item.nombre }}</strong></p>
             <p>${{ item.precio }} x {{ item.cantidad }}</p>
             <p>Envío: ${{ item.costo_envio }}</p>
+            <p *ngIf="item.direccion_origen">
+              <ion-icon name="pin-outline"></ion-icon>
+              Desde: {{ item.direccion_origen.comuna }}, {{ item.direccion_origen.region }}
+            </p>
           </ion-label>
         </ion-item>
       </ion-list>

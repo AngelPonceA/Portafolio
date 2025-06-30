@@ -238,7 +238,8 @@ export class CarritoPage implements OnInit {
         nombre: p.producto_titulo,
         precio: p.precio_oferta || p.precio,
         cantidad: p.cantidad,
-        costo_envio: p.costo_envio || 0
+        costo_envio: p.costo_envio || 0,
+        direccion_origen: p.direccionOrigen || null
       }));
 
       const boleta: Boleta = {
