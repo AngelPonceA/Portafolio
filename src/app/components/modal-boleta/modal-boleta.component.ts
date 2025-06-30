@@ -26,49 +26,61 @@ export class ModalBoletaComponent implements OnInit {
   }
 
   async descargarBoletaComoPDF() {
-    this.ionicService.mostrarCargando('Generando PDF')
+    await this.ionicService.mostrarCargando('Generando PDF');
+
     const element = document.querySelector('.boleta-card') as HTMLElement;
 
     if (!element) {
+      await this.ionicService.ocultarCargando();
       console.error('No se encontró el elemento .boleta-card');
       return;
     }
 
-    // Captura visual
-    const canvas = await html2canvas(element, { scale: 2, useCORS: true });
-    const imgData = canvas.toDataURL('image/png');
+    try {
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+      const imgData = canvas.toDataURL('image/png');
 
-    // Crea PDF con jsPDF
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'pt',
-      format: 'a4'
-    });
+      const pdf = new jsPDF('p', 'pt', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgProps = pdf.getImageProperties(imgData);
-    const imgRatio = imgProps.width / imgProps.height;
-    const pdfWidth = pageWidth;
-    const pdfHeight = pageWidth / imgRatio;
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    pdf.addImage(imgData, 'PNG', 0, 20, pdfWidth, pdfHeight);
+      let heightLeft = imgHeight;
+      let position = 0;
 
-    // Exporta a base64
-    const pdfOutput = pdf.output('datauristring');
-    const base64 = pdfOutput.split(',')[1]; // quitar "data:application/pdf;base64,"
+      // Primera página
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
 
-    const fileName = `boleta-${this.detalleBoleta.ordenCompra}.pdf`;
+      // Páginas adicionales si es necesario
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
 
-    // Guarda en filesystem
-    await Filesystem.writeFile({
-      path: fileName,
-      data: base64,
-      directory: Directory.Documents
-    });
+      const pdfOutput = pdf.output('datauristring');
+      const base64 = pdfOutput.split(',')[1];
+      const fileName = `boleta-${this.detalleBoleta.ordenCompra}.pdf`;
 
+      await Filesystem.writeFile({
+        path: fileName,
+        data: base64,
+        directory: Directory.Documents
+      });
 
-    console.log('Boleta PDF guardada en:', fileName);
+      await this.ionicService.ocultarCargando();
+      this.ionicService.mostrarToastAbajo('Boleta descargada correctamente');
+      console.log('Boleta PDF guardada en:', fileName);
+
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      await this.ionicService.ocultarCargando();
+      this.ionicService.mostrarAlerta('Error', 'No se pudo generar la boleta');
+    }
   }
 
   ngOnInit() {}
