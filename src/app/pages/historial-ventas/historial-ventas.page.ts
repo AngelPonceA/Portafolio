@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { CrudService } from 'src/app/services/crud/crud.service';
 import { IonicService } from 'src/app/services/ionic/ionic.service';
+import * as QRCode from 'qrcode';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-historial-ventas',
@@ -16,6 +18,7 @@ export class HistorialVentasPage implements OnInit {
 
   detalleSeleccionado: any = null;
 
+  qrGenerado: string = '';
 
   constructor(private router: Router, private crudService: CrudService, private navCtrl: NavController,
     private ionicService: IonicService ) {}
@@ -57,4 +60,58 @@ export class HistorialVentasPage implements OnInit {
   volverAtras() {
     this.navCtrl.back();
   }
+
+  async generarYMostrarQR(venta: any) {
+    const direccion = `${venta.nombres} ${venta.apellidos}, ${venta.calle} ${venta.numero}, ${venta.comuna}, ${venta.region}`;
+    this.qrGenerado = await this.generarQR(direccion);
+  }
+
+  async generarQR(direccion: string): Promise<string> {
+    try {
+      const qrDataURL = await QRCode.toDataURL(direccion, {
+        width: 256,
+        margin: 1,
+      });
+      return qrDataURL;
+    } catch (err) {
+      console.error('Error generando QR:', err);
+      return '';
+    }
+  }
+
+  async descargarQR(venta: any) {
+    const direccionTexto = `
+  ${venta.nombres || ''} ${venta.apellidos || ''}
+  ${venta.calle || ''} #${venta.numero || ''} ${venta.departamento || ''}
+  ${venta.comuna || ''}, ${venta.region || ''}
+  Tel: ${venta.telefono || ''}
+    `.trim();
+
+    await this.ionicService.mostrarCargando('Generando QR...');
+
+    try {
+      const qrDataURL = await this.generarQR(direccionTexto);
+
+      if (!qrDataURL) throw new Error('QR vacío');
+
+      // Extraer solo el base64 sin el encabezado "data:image/png;base64,"
+      const base64Data = qrDataURL.split(',')[1];
+
+      const filename = `qr-envio-${venta.fecha_creacion?.seconds || Date.now()}.png`;
+
+      await Filesystem.writeFile({
+        path: filename,
+        data: base64Data,
+        directory: Directory.Documents,
+      });
+
+      await this.ionicService.ocultarCargando();
+      this.ionicService.mostrarToastAbajo('QR guardado correctamente en Archivos/Documentos');
+    } catch (error) {
+      console.error('Error al guardar QR:', error);
+      await this.ionicService.ocultarCargando();
+      this.ionicService.mostrarToastAbajo('Error al guardar el QR');
+    }
+  }
+
 }

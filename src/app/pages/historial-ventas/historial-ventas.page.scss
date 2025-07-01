@@ -392,3 +392,21 @@ ion-content {
     max-width: 300px;
   }
 }
+
+.etiqueta-envio {
+  background: white;
+  padding: 16px;
+  width: 300px;
+  border: 1px dashed #ccc;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  color: #000;
+}
+
+  ion-button {
+  --border-radius: 1rem;
+  --background: #D1A15A;
+  --color: #ffffff;
+  --border-color: #9a73399e;
+  font-weight: bold;
+}
