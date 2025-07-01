@@ -20,15 +20,23 @@ export class HistorialVentasPage implements OnInit {
 
   qrGenerado: string = '';
 
-  constructor(private router: Router, private crudService: CrudService, private navCtrl: NavController,
-    private ionicService: IonicService ) {}
+  constructor(private router: Router, 
+              private crudService: CrudService, 
+              private navCtrl: NavController,
+              private ionicService: IonicService ) {}
 
   async ngOnInit() {
+    await this.ionicService.mostrarCargando('Cargando historial...');
 
-    const lista = await this.crudService.obtenerHistorialVentas();
-    this.historialVentas = Array.isArray(lista) ? lista : [];
-
-   }
+    try {
+      const lista = await this.crudService.obtenerHistorialVentas();
+      this.historialVentas = Array.isArray(lista) ? lista : [];
+    } catch (error) {
+      console.error('Error al cargar historial de ventas:', error);
+    } finally {
+      await this.ionicService.ocultarCargando();
+    }
+  }
 
   calcularTotal(venta: any): number {
     if (!venta.detalles || !Array.isArray(venta.detalles)) {
