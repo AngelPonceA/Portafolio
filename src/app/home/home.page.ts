@@ -23,6 +23,8 @@ export class HomePage {
   categorias!: Observable<any[]>;
   productosInfinitos: any[] = [];
   cargando = false;
+  sinMasProductos = false;
+
 
   constructor( private router: Router, private crudService: CrudService, private authService : AuthService ) { }
 
@@ -66,18 +68,28 @@ export class HomePage {
   }
 
   async cargarMasProductos() {
-    if (this.cargando) return; // Previene múltiples llamadas
+    if (this.cargando || this.sinMasProductos) return;
     this.cargando = true;
 
     try {
-      const nuevos = await this.crudService.obtenerProductosAleatorios(10);
+      const idsMostrados = this.productosInfinitos.map(p => p.producto_id);
+      const nuevos = await this.crudService.obtenerProductosAleatorios(10, idsMostrados);
+
+      if (nuevos.length === 0) {
+        console.log('No hay más productos únicos disponibles.');
+        this.sinMasProductos = true;
+        return;
+      }
+
       this.productosInfinitos.push(...nuevos);
     } catch (err) {
       console.error('Error cargando productos aleatorios:', err);
     } finally {
-      this.cargando = false; // Asegura que vuelva a estar listo
+      this.cargando = false;
     }
   }
+
+
 
   entero(calificacion: number){
     return Math.floor(calificacion || 0);

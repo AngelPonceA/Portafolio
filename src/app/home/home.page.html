@@ -115,12 +115,13 @@
     </div>
 
     <!-- Scroll infinito -->
-    <ion-infinite-scroll threshold="100px" position="bottom" (ionInfinite)="cargarMas($event)">
-      <ion-infinite-scroll-content
-        loadingSpinner="dots"
-        loadingText="Cargando más productos...">
-      </ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+<ion-infinite-scroll 
+  threshold="100px" 
+  (ionInfinite)="cargarMas($event)"
+  [disabled]="sinMasProductos"
+  position="bottom">
+  <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando más productos..."></ion-infinite-scroll-content>
+</ion-infinite-scroll>
 
   </ion-content>
 </app-navegacion>

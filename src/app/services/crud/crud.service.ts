@@ -852,14 +852,18 @@ async eliminarProducto(producto_id: string) {
     return nuevaDireccion;
   }
 
-  async obtenerProductosAleatorios(limit: number): Promise<Producto[]> {
+  async obtenerProductosAleatorios(limit: number, excluirIds: string[] = []): Promise<Producto[]> {
     const productosRef = collection(this.firestore, 'productos');
     const snap = await getDocs(productosRef);
 
     const productos: Producto[] = snap.docs
       .map(doc => ({ producto_id: doc.id, ...doc.data() } as Producto))
-      .filter(producto => producto.stock > 0 && !producto.esta_eliminado);
-
+      .filter(producto =>
+        producto.stock > 0 &&
+        !producto.esta_eliminado &&
+        producto.producto_id &&
+        !excluirIds.includes(producto.producto_id) 
+      )
     const mezclados = productos
       .map(p => ({ p, r: Math.random() }))
       .sort((a, b) => a.r - b.r)
@@ -867,6 +871,7 @@ async eliminarProducto(producto_id: string) {
 
     return mezclados.slice(0, limit);
   }
+
 
   async recuperarBoletaConOrdenCompra(ordenCompra: string): Promise<any> {
     const ref = collection(this.firestore, 'boletas');
