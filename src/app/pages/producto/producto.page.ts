@@ -40,10 +40,12 @@ export class ProductoPage implements OnInit {
     
   async ngOnInit() {
     const producto_id = this.router.getCurrentNavigation()?.extras?.state?.['producto_id'];
-    
-    if (producto_id) {
-      this.usuario = await this.authService.obtenerPerfil();
 
+    if (!producto_id) return;
+
+    await this.ionicService.mostrarCargando('Cargando producto...');
+
+    try {
       this.usuario = await this.authService.obtenerPerfil();
 
       if (this.usuario?.rol === 'admin') {
@@ -53,20 +55,24 @@ export class ProductoPage implements OnInit {
       if (this.usuario) {
         this.miCalificacion = await this.crudService.obtenerMiCalificacionProducto(producto_id);
         if (!this.miCalificacion) {
-          this.comprado = await this.crudService.esComprado(producto_id)
+          this.comprado = await this.crudService.esComprado(producto_id);
         }
       }
-      
+
       this.producto = await this.crudService.obtenerDetalleProducto(producto_id);
 
       if (this.producto) {
         this.cantidadOpciones = Array.from({ length: this.producto.stock }, (_, i) => i + 1);
 
         this.tienda = await this.authService.obtenerDetallesTienda(this.producto.vendedor_id);
-        this.tienda.calificacion = await this.crudService.obtenerPromedioCalificacionTienda(this.producto.vendedor_id)
+        this.tienda.calificacion = await this.crudService.obtenerPromedioCalificacionTienda(this.producto.vendedor_id);
       }
 
       this.esFavorito = await this.crudService.esFavorito(producto_id);
+    } catch (error) {
+      console.error('Error al cargar producto:', error);
+    } finally {
+      await this.ionicService.ocultarCargando();
     }
   }
 

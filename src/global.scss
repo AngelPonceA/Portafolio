@@ -36,6 +36,16 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 // @import "@ionic/angular/css/palettes/dark.system.css"; //Reactivar para tener paleta oscura
 
+::ng-deep .custom-loading {
+  --background: rgba(255, 255, 255, 0.95);
+  --spinner-color: #D1A15A;
+
+  border-radius: 16px !important;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+}
+
 .custom-loading {
  --background: rgba(255, 255, 255, 0.95); // Fondo claro, pero no blanco duro
   --spinner-color: #D1A15A;
