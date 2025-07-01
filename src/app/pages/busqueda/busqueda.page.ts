@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, tap } from 'rxjs';
 import { CrudService } from 'src/app/services/crud/crud.service';
+import { IonicService } from 'src/app/services/ionic/ionic.service';
+
 
 @Component({
   selector: 'app-busqueda',
@@ -19,36 +21,53 @@ export class BusquedaPage implements OnInit {
 
   botonOferta: boolean = true;
 
-  constructor(private router: Router, private crudService: CrudService) { }
+  constructor(private router: Router, 
+              private crudService: CrudService,
+              private ionicService: IonicService) { }
 
   ngOnInit() {
+    this.ionicService.mostrarCargando('Buscando productos...');
+
     const state = this.router.getCurrentNavigation()?.extras?.state;
+
     if (state?.['categoria']) {
-      this.productos = this.crudService.obtenerProductosCategoria(state['categoria']);
+      this.productos = this.crudService.obtenerProductosCategoria(state['categoria']).pipe(
+        tap(() => this.ionicService.ocultarCargando())
+      );
       this.busqueda = `Categoría: ${state['categoria']}`;
     } else if (state?.['busqueda']) {
-      this.productos = this.crudService.buscarProductosPorNombre(state['busqueda']);
+      this.productos = this.crudService.buscarProductosPorNombre(state['busqueda']).pipe(
+        tap(() => this.ionicService.ocultarCargando())
+      );
       this.busqueda = `Busqueda: ${state['busqueda']}`;
     } else if (state?.['productos']) {
-      if (state['productos'] == 'sinOferta') {
-        this.productos = this.crudService.obtenerProductosYOferta();
+      if (state['productos'] === 'sinOferta') {
+        this.productos = this.crudService.obtenerProductosYOferta().pipe(
+          tap(() => this.ionicService.ocultarCargando())
+        );
         this.busqueda = 'Todos los productos';
-      } else if (state['productos'] == 'conOferta') {
-        this.productos = this.crudService.obtenerProductosConOferta();
+      } else if (state['productos'] === 'conOferta') {
+        this.productos = this.crudService.obtenerProductosConOferta().pipe(
+          tap(() => this.ionicService.ocultarCargando())
+        );
         this.busqueda = 'Productos con oferta';
         this.botonOferta = false;
-      } else if (state['productos'] == 'recomendados') {
-        this.productos = this.crudService.obtenerProductosRecomendados();
+      } else if (state['productos'] === 'recomendados') {
+        this.productos = this.crudService.obtenerProductosRecomendados().pipe(
+          tap(() => this.ionicService.ocultarCargando())
+        );
         this.busqueda = 'Productos recomendados';
       }
     }
-    
-    this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
-    this.productosRespaldo = this.productos;      
+
+    this.hayProductos = this.productos.pipe(map(productos => productos.length > 0));
+    this.productosRespaldo = this.productos;
 
     window.addEventListener('actualizarBusqueda', (event: any) => {
       const nuevaBusqueda = event.detail;
-      this.productos = this.crudService.buscarProductosPorNombre(nuevaBusqueda);
+      this.productos = this.crudService.buscarProductosPorNombre(nuevaBusqueda).pipe(
+        tap(() => this.ionicService.ocultarCargando())
+      );
       this.busqueda = `Busqueda: ${nuevaBusqueda}`;
       this.hayProductos = this.productos.pipe(map((productos) => productos.length > 0));
       this.ordenActual = null;
