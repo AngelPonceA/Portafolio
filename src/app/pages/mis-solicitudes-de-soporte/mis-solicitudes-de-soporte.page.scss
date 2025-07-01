@@ -102,12 +102,6 @@ ion-content::part(scroll) {
     border: 1px solid #ccc;
     object-fit: contain; // ✅ sin recortes
   }
-
-  @media screen and (max-width: 360px) {
-    .imagenes {
-      grid-template-columns: 1fr;
-    }
-  }
 }
 
 .vacio-container {

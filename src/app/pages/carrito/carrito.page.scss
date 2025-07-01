@@ -200,16 +200,6 @@ ion-button:hover {
   transform: scale(1.1);
 }
 
-@media (max-width: 768px) {
-  .productos-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .paypal-container {
-    padding: 8px;
-  }
-}
-
 .vacio-container {
   height: 100%;
   padding: 20px;
