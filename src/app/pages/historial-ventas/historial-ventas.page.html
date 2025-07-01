@@ -70,7 +70,7 @@
         </div>
       </div>
 
-      <ion-button color="tertiary" (click)="descargarQR(venta)">Descargar QR</ion-button>
+      <ion-button (click)="descargarQR(venta)">Descargar QR</ion-button>
       <canvas #canvasQR style="display: none;"></canvas>
       <img *ngIf="qrGenerado" [src]="qrGenerado" alt="Código QR" />
     </div>

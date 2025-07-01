@@ -25,7 +25,8 @@
               "raf",
               "rgbcolor",
               "html2canvas",
-              "core-js"
+              "core-js",
+              "qrcode"
             ],
             "assets": [
               {
