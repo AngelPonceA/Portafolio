@@ -23,11 +23,18 @@ export class HistorialCompraPage implements OnInit {
               private crudService: CrudService, 
               private ionicService: IonicService,
               private modalCtrl: ModalController) {}
+
   async ngOnInit() {
+    await this.ionicService.mostrarCargando('Cargando historial de compras...');
 
-    const lista = await this.crudService.obtenerHistorialCompra();
-    this.historialCompra = Array.isArray(lista) ? lista : [];
-
+    try {
+      const lista = await this.crudService.obtenerHistorialCompra();
+      this.historialCompra = Array.isArray(lista) ? lista : [];
+    } catch (error) {
+      console.error('Error al cargar historial de compras:', error);
+    } finally {
+      await this.ionicService.ocultarCargando();
+    }
   }
 
   volverAtras() {
