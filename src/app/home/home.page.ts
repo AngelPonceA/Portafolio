@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CrudService } from '../services/crud/crud.service';
 import { map, Observable } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
+import { IonicService } from '../services/ionic/ionic.service';
 
 @Component({
   selector: 'app-home',
@@ -26,41 +27,57 @@ export class HomePage {
   sinMasProductos = false;
 
 
-  constructor( private router: Router, private crudService: CrudService, private authService : AuthService ) { }
+  constructor(  private router: Router, 
+                private crudService: CrudService, 
+                private authService : AuthService,
+                private ionicService: IonicService
+              ) { }
 
   async ionViewWillEnter() {
     this.cargarContenidoHome();
   }
 
- async cargarContenidoHome() {
-    this.cargarMasProductos();
-    this.usuario = await this.authService.obtenerPerfil();
-    
-    if (this.usuario) {
-      this.productosRecomendados = this.crudService.obtenerProductosRecomendados().pipe(
+  async cargarContenidoHome() {
+    await this.ionicService.mostrarCargando('Cargando contenido...');
+
+    try {
+      await this.cargarMasProductos(); // ← ahora sí espera
+
+      this.usuario = await this.authService.obtenerPerfil();
+
+      if (this.usuario) {
+        this.productosRecomendados = this.crudService.obtenerProductosRecomendados().pipe(
+          map(productos => productos.slice(0, 8))
+        );
+        this.hayRecomendados = this.productosRecomendados.pipe(
+          map((productos) => productos.length > 0)
+        );
+      }
+
+      this.productosConOferta = this.crudService.obtenerProductosConOferta().pipe(
         map(productos => productos.slice(0, 8))
       );
-      this.hayRecomendados = this.productosRecomendados.pipe(
+
+      this.productosGenerales = this.crudService.obtenerProductosYOferta().pipe(
+        map(productos => productos.slice(0, 8))
+      );
+
+      this.hayProductos = this.productosGenerales.pipe(
         map((productos) => productos.length > 0)
       );
+
+      this.hayOfertas = this.productosConOferta.pipe(
+        map((productos) => productos.length > 0)
+      );
+
+      this.categorias = this.crudService.obtenerCategorias();
+    } catch (error) {
+      console.error('Error al cargar contenido de la home:', error);
+    } finally {
+      await this.ionicService.ocultarCargando();
     }
-
-    this.productosConOferta = this.crudService.obtenerProductosConOferta().pipe(
-      map(productos => productos.slice(0, 8))
-    );
-    this.productosGenerales = this.crudService.obtenerProductosYOferta().pipe(
-      map(productos => productos.slice(0, 8))
-    );
-
-    this.hayProductos = this.productosGenerales.pipe(
-      map((productos) => productos.length > 0)
-    );
-    this.hayOfertas = this.productosConOferta.pipe(
-      map((productos) => productos.length > 0)
-    );
-
-    this.categorias = this.crudService.obtenerCategorias();
   }
+
 
   async ionViewDidEnter() {
     this.productosInfinitos = [];
@@ -88,8 +105,6 @@ export class HomePage {
       this.cargando = false;
     }
   }
-
-
 
   entero(calificacion: number){
     return Math.floor(calificacion || 0);

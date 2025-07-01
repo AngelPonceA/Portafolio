@@ -37,11 +37,13 @@
 // @import "@ionic/angular/css/palettes/dark.system.css"; //Reactivar para tener paleta oscura
 
 .custom-loading {
-  --background: #ffffff;
-  --spinner-color: #d1a15a;
-  color: #333;
-  font-weight: bold;
-  font-size: 16px;
+ --background: rgba(255, 255, 255, 0.95); // Fondo claro, pero no blanco duro
+  --spinner-color: #D1A15A;
+
+  --border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
 }
 
 ion-content {
