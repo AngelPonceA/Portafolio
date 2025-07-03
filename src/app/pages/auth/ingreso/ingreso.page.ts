@@ -12,14 +12,19 @@ export class IngresoPage implements OnInit {
   email: string = '';
   password: string = '';
 
+  emailTouched: boolean = false;
+  passwordTouched: boolean = false;
+
   constructor(private router: Router, private authService: AuthService) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
-  iniciarSesion(email:string, password:string) {
-    this.authService.login(email, password);
+  iniciarSesion(email: string, password: string) {
+    this.emailTouched = true;
+    this.passwordTouched = true;
+
+    if (this.email.trim() && this.password.trim()) {
+      this.authService.login(email, password);
+    }
   }
-  
 }
-

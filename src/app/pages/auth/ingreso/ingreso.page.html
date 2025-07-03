@@ -5,7 +5,6 @@
     <img src="assets/img/logo.png" alt="Flea Market Logo" class="logo-img" />
   </div>
 
-  <!-- Formulario de inicio de sesión -->
   <div class="login-box">
     <ion-item>
       <ion-icon name="mail-outline" slot="start"></ion-icon>
@@ -13,8 +12,12 @@
         placeholder="Correo electrónico"
         type="email"
         [(ngModel)]="email"
+        (ionBlur)="emailTouched = true"
       ></ion-input>
     </ion-item>
+    <div *ngIf="emailTouched && email.trim() === ''" class="error-text">
+      El correo es obligatorio
+    </div>
 
     <ion-item>
       <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
@@ -22,15 +25,20 @@
         placeholder="Contraseña"
         type="password"
         [(ngModel)]="password"
+        (ionBlur)="passwordTouched = true"
       ></ion-input>
     </ion-item>
+    <div *ngIf="passwordTouched && password.trim() === ''" class="error-text">
+      La contraseña es obligatoria
+    </div>
 
     <div class="forgot-password">
       <ion-button fill="clear" routerLink="/recuperar-clave" class="link-cafe">
         ¿Olvidaste tu contraseña?
       </ion-button>
     </div>
-    <ion-button expand="block" class="login-button" (click)="iniciarSesion(this.email, this.password)">
+
+    <ion-button expand="block" class="login-button" (click)="iniciarSesion(email, password)">
       Iniciar sesión
     </ion-button>
 
@@ -42,5 +50,4 @@
     </div>
   </div>
 </ion-content>
-
 </app-navegacion>
