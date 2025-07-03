@@ -1,140 +1,143 @@
 <app-navegacion>
-  <div class="productos-header">
-    <h1>Mis Productos</h1>
-    <ion-button (click)="abrirModalAgregarProducto()" class="add-button">
-      <ion-icon name="add" slot="start"></ion-icon>
-      Nuevo Producto
-    </ion-button>
-  </div>
+  <div class="pagina-mis-productos">
 
-  <ion-content>
-    <div *ngIf="productos.length === 0" class="empty-state">
-      <h3>No hay productos registrados</h3>
-      <p>Comienza agregando tu primer producto</p>
-      <ion-button (click)="abrirModalAgregarProducto()" fill="outline">
+    <div class="productos-header">
+      <h1>Mis Productos</h1>
+      <ion-button (click)="abrirModalAgregarProducto()" class="add-button">
         <ion-icon name="add" slot="start"></ion-icon>
-        Agregar Producto
+        Nuevo Producto
       </ion-button>
     </div>
-  </ion-content>
 
-  <!-- Sección de productos -->
-  <div class="productos-grid">
-    <ion-card *ngFor="let producto of productos" class="producto-card">
-      <!-- Sección de imágenes -->
-      <div class="imagen-container">
-        <swiper-container slides-per-view="1" style="width: 100%; height: auto">
-          <swiper-slide *ngFor="let img of producto.imagen">
-            <div class="slide-image">
-              <img
-                [src]="img || 'assets/img/placeholder.png'"
-                alt="Imagen del producto"
-              />
-            </div>
-          </swiper-slide>
-        </swiper-container>
+    <div class="contenido-scroll">
+      <div *ngIf="productos.length === 0" class="empty-state">
+        <h3>No hay productos registrados</h3>
+        <p>Comienza agregando tu primer producto</p>
+        <ion-button (click)="abrirModalAgregarProducto()" fill="outline">
+          <ion-icon name="add" slot="start"></ion-icon>
+          Agregar Producto
+        </ion-button>
       </div>
 
-      <!-- Sección datos -->
-      <ion-card-header>
-        <ion-card-title>{{ producto.titulo }}</ion-card-title>
-        <ion-card-subtitle>
-          <ion-icon name="pricetags-outline"></ion-icon>
-          {{ producto.categoria }}
-        </ion-card-subtitle>
-      </ion-card-header>
+      <div class="productos-grid">
+        <ion-card *ngFor="let producto of productos" class="producto-card">
+          <!-- Sección de imágenes -->
+          <div class="imagen-container">
+            <swiper-container slides-per-view="1" style="width: 100%; height: auto">
+              <swiper-slide *ngFor="let img of producto.imagen">
+                <div class="slide-image">
+                  <img
+                    [src]="img || 'assets/img/placeholder.png'"
+                    alt="Imagen del producto"
+                  />
+                </div>
+              </swiper-slide>
+            </swiper-container>
+          </div>
 
-      <ion-card-content class="detalle-producto">
-        <p class="descripcion">
-          {{ producto.descripcion || 'Sin descripción' }}
-        </p>
-        <div class="etiquetas" *ngIf="producto.etiquetas?.length">
-          <ion-chip
-            *ngFor="let etiqueta of producto.etiquetas"
-            [color]="etiqueta === 'Rebaja' ? 'danger' : 'primary'"
-          >
-            {{ etiqueta }}
-          </ion-chip>
-        </div>
-
-        <!-- Datos principales -->
-        <div class="datos-principales">
-          <p>Precio: {{ producto.precio }}</p>
-          <p>Stock: {{ producto.stock }}</p>
-          <p *ngIf="producto.inventario_minimo">
-            Stock Mínimo: {{ producto.inventario_minimo }}
-          </p>
-          <p>Estado: {{ producto.estado }}</p>
-        </div>
-
-        <!-- Oferta Display -->
-        <ion-card *ngIf="producto.oferta" class="oferta-display-card">
+          <!-- Sección datos -->
           <ion-card-header>
-            <ion-card-title>Oferta Especial</ion-card-title>
+            <ion-card-title>{{ producto.titulo }}</ion-card-title>
+            <ion-card-subtitle>
+              <ion-icon name="pricetags-outline"></ion-icon>
+              {{ producto.categoria }}
+            </ion-card-subtitle>
           </ion-card-header>
 
-          <ion-card-content>
-            <p>
-              <strong>Precio de oferta:</strong>
-              {{ producto.oferta.precio_oferta | currency:'CLP':'symbol':'1.0-0'
-              }}
+          <ion-card-content class="detalle-producto">
+            <p class="descripcion">
+              {{ producto.descripcion || 'Sin descripción' }}
             </p>
-            <p *ngIf="producto.oferta.fecha_inicio">
-              <strong>Fecha de inicio:</strong>
-              {{ producto.oferta.fecha_inicio.toDate() | date:'dd/MM/yyyy HH:mm'
-              }}
-            </p>
-            <p *ngIf="producto.oferta.fecha_fin">
-              <strong>Fecha de término:</strong>
-              {{ producto.oferta.fecha_fin.toDate() | date:'dd/MM/yyyy HH:mm' }}
-            </p>
+            <div class="etiquetas" *ngIf="producto.etiquetas?.length">
+              <ion-chip
+                *ngFor="let etiqueta of producto.etiquetas"
+                [color]="etiqueta === 'Rebaja' ? 'danger' : 'primary'"
+              >
+                {{ etiqueta }}
+              </ion-chip>
+            </div>
 
+            <!-- Datos principales -->
+            <div class="datos-principales">
+              <p>Precio: {{ producto.precio }}</p>
+              <p>Stock: {{ producto.stock }}</p>
+              <p *ngIf="producto.inventario_minimo">
+                Stock Mínimo: {{ producto.inventario_minimo }}
+              </p>
+              <p>Estado: {{ producto.estado }}</p>
+            </div>
+
+            <!-- Oferta Display -->
+            <ion-card *ngIf="producto.oferta" class="oferta-display-card">
+              <ion-card-header>
+                <ion-card-title>Oferta Especial</ion-card-title>
+              </ion-card-header>
+
+              <ion-card-content>
+                <p>
+                  <strong>Precio de oferta:</strong>
+                  {{ producto.oferta.precio_oferta | currency:'CLP':'symbol':'1.0-0'
+                  }}
+                </p>
+                <p *ngIf="producto.oferta.fecha_inicio">
+                  <strong>Fecha de inicio:</strong>
+                  {{ producto.oferta.fecha_inicio.toDate() | date:'dd/MM/yyyy HH:mm'
+                  }}
+                </p>
+                <p *ngIf="producto.oferta.fecha_fin">
+                  <strong>Fecha de término:</strong>
+                  {{ producto.oferta.fecha_fin.toDate() | date:'dd/MM/yyyy HH:mm' }}
+                </p>
+
+                <div class="acciones">
+                  <ion-button
+                    fill="clear"
+                    color="danger"
+                    (click)="eliminarOferta(producto.oferta.id!)"
+                  >
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-button>
+                </div>
+              </ion-card-content>
+            </ion-card>
+
+            <!-- Acciones sobre el producto -->
             <div class="acciones">
               <ion-button
                 fill="clear"
                 color="danger"
-                (click)="eliminarOferta(producto.oferta.id!)"
+                (click)="eliminarProducto(producto.producto_id!)"
               >
                 <ion-icon name="trash-outline"></ion-icon>
+              </ion-button>
+              <ion-button
+                fill="clear"
+                color="warning"
+                (click)="abrirModalAlertaStock(producto)"
+              >
+                <ion-icon name="notifications-outline"></ion-icon>
+              </ion-button>
+
+              <ion-button
+                fill="clear"
+                color="success"
+                (click)="abrirModalOferta(producto)"
+              >
+                <ion-icon name="pricetags-outline"></ion-icon>
+              </ion-button>
+
+              <ion-button
+                fill="clear"
+                color="primary"
+                (click)="abrirModalEditarProducto(producto)"
+              >
+                <ion-icon name="create-outline"></ion-icon>
               </ion-button>
             </div>
           </ion-card-content>
         </ion-card>
+      </div>
+    </div>
 
-        <!-- Acciones sobre el producto -->
-        <div class="acciones">
-          <ion-button
-            fill="clear"
-            color="danger"
-            (click)="eliminarProducto(producto.producto_id!)"
-          >
-            <ion-icon name="trash-outline"></ion-icon>
-          </ion-button>
-          <ion-button
-            fill="clear"
-            color="warning"
-            (click)="abrirModalAlertaStock(producto)"
-          >
-            <ion-icon name="notifications-outline"></ion-icon>
-          </ion-button>
-
-          <ion-button
-            fill="clear"
-            color="success"
-            (click)="abrirModalOferta(producto)"
-          >
-            <ion-icon name="pricetags-outline"></ion-icon>
-          </ion-button>
-
-          <ion-button
-            fill="clear"
-            color="primary"
-            (click)="abrirModalEditarProducto(producto)"
-          >
-            <ion-icon name="create-outline"></ion-icon>
-          </ion-button>
-        </div>
-      </ion-card-content>
-    </ion-card>
   </div>
 </app-navegacion>
