@@ -12,7 +12,6 @@
   }
 }
 
-/* Estilo del encabezado del modal */
 ion-header {
   flex-shrink: 0;
   height: 48px;
@@ -28,32 +27,50 @@ ion-header {
     color: #333;
   }
 
-  ion-buttons {
-    ion-button {
-      --color: #d1a15a;
-    }
+  ion-buttons ion-button {
+    --color: #d1a15a;
   }
 }
 
-/* Formulario de nuevo producto */
 form.form-producto {
-  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
   ion-item {
-    margin-bottom: 10px;
+    --background: transparent;
+    --highlight-color-focused: #8B5E3C;
+    --color: #333;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    --padding-start: 10px;
+    --inner-padding-end: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    border: 1px solid #8B5E3C;
   }
 
   ion-label {
-    font-weight: bold;
+    font-weight: 600;
     font-size: 14px;
+    color: #444;
   }
 
-  ion-chip {
-    margin: 4px 4px 0 0;
+  ion-input, ion-textarea, ion-select {
+    font-size: 14px;
+    color: #333;
   }
 }
 
-/* Etiquetas con scroll horizontal */
+ion-list-header {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #000;
+  padding-left: 5px;
+}
+
 .etiquetas-scroll {
   width: 100%;
   overflow-x: auto;
@@ -77,17 +94,17 @@ ion-chip {
 }
 
 .hidden-file-input {
-  position: absolute; /* Take it out of normal flow */
-  width: 1px; /* Make it tiny */
-  height: 1px; /* Make it tiny */
-  padding: 0; /* No padding */
-  margin: -1px; /* No margin */
-  overflow: hidden; /* Hide overflow content */
-  clip: rect(0, 0, 0, 0); /* Clip it to be invisible */
-  border: 0; /* No border */
-  white-space: nowrap; /* Prevent text wrapping */
-  -webkit-appearance: none; /* Remove default browser styling */
-  appearance: none; /* Remove default browser styling */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+  white-space: nowrap;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .custom-file-button {
@@ -97,21 +114,49 @@ ion-chip {
   color: white;
   border-radius: 20px;
   cursor: pointer;
-  text-align: center;
   font-weight: bold;
   font-size: 14px;
-  margin-left: auto;
+  margin: 10px 0 0 auto;
+  text-align: center;
 }
 
 .custom-file-button:hover {
-  background-color: #b88c3e; /* Cambio de color al pasar el ratón */
+  background-color: #b88c3e;
 }
 
-.custom-file-button {
-  margin-left: 15px; /* Se asegura de que el botón esté alineado a la derecha */
+.imagenes-grid {
+  margin-top: 10px;
+
+  ion-col {
+    padding: 5px;
+
+    .imagen-container {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .imagen-preview {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border: 2px solid #d1a15a;
+      border-radius: 10px;
+    }
+
+    .boton-eliminar-imagen {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background-color: rgba(255, 255, 255, 0.7);
+      color: #d9534f;
+      font-size: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+  }
 }
 
-/* Botones */
 ion-button {
   --background: #d1a15a;
   --color: white;
@@ -134,4 +179,29 @@ ion-button {
     --background: #e0c8a1;
     --border-color: #d1b89e;
   }
+}
+
+.modal-titulo-contenedor {
+  width: 100%;
+  background: linear-gradient(to bottom, #d1a15a 0%, #e6c890 100%);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-titulo {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.seccion-contenedor {
+  background-color: white;
+  border: 2px solid #f0a500;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }

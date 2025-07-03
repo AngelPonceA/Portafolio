@@ -299,6 +299,10 @@ cargarDatosProducto() {
     }
   }
 
+  eliminarImagen(index: number) {
+    this.nuevoProductoEditadoForm.imagen.splice(index, 1);
+  }
+
   async cerrarModal(actualizado = false) {
     await this.modalController.dismiss({
       actualizado,
