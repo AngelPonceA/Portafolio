@@ -15,8 +15,10 @@ export class IonicService {
   async mostrarToastAbajo(mensaje: string) {
     const toast = await this.toast.create({
       message: mensaje,
-      duration: 5000,
+      duration: 3000,
       position: 'bottom',
+      mode: 'ios',
+      swipeGesture: "vertical",
     });
     await toast.present();
   }
@@ -24,8 +26,10 @@ export class IonicService {
   async mostrarToastArriba(mensaje: string) {
     const toast = await this.toast.create({
       message: mensaje,
-      duration: 5000,
+      duration: 3000,
       position: 'top',
+      mode: 'ios',
+      swipeGesture: "vertical",
     });
     await toast.present();
   }

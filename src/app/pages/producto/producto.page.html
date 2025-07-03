@@ -51,18 +51,26 @@
       <div class="botones-container">
         <ion-button expand="block" color="success" (click)="mensajeWhatsApp()">
           <ion-icon name="logo-whatsapp" slot="start"></ion-icon>
-          WhatsApp
+          Contactar por WhatsApp
         </ion-button>
 
         <ion-button *ngIf="usuario && usuario != 'invitado'" expand="block" color="danger" (click)="manejarFavorito(producto)">
           <ion-icon [name]="esFavorito ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
-          {{ esFavorito ? 'Quitar favorito' : 'Favorito' }}
+          {{ esFavorito ? 'Quitar favorito' : 'Agregar favorito' }}
         </ion-button>
         
-        <ion-button expand="block" color="primary" (click)="agregarAlCarrito(producto)">
+        <ion-button *ngIf="!enCarrito; else estaEnCarrito" expand="block" color="primary" (click)="agregarAlCarrito(producto)">
           <ion-icon name="cart-outline" slot="start"></ion-icon>
-          Carrito
+          Agregar al carrito
         </ion-button>
+
+        <ng-template #estaEnCarrito>
+          <ion-button expand="block" color="primary" (click)="agregarAlCarrito(producto)">
+            <ion-icon name="cart-outline" slot="start"></ion-icon>
+            Producto ya en carrito
+          </ion-button>
+        </ng-template>
+
       </div>
 
       <!-- Acciones de administrador -->

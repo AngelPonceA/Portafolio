@@ -29,6 +29,8 @@ export class ProductoPage implements OnInit {
   cantidadOpciones: number[] = [];
   opcionStock: number = 1;
   usuarioEsAdmin: boolean = false;
+  carrito: any[] = [];
+  enCarrito?: boolean;
 
   constructor(private router: Router, 
               private crudService: CrudService, 
@@ -67,8 +69,20 @@ export class ProductoPage implements OnInit {
         this.tienda = await this.authService.obtenerDetallesTienda(this.producto.vendedor_id);
         this.tienda.calificacion = await this.crudService.obtenerPromedioCalificacionTienda(this.producto.vendedor_id);
       }
+      
+      this.carrito = await this.cartService.obtenerCarrito() || [];
+      
+      if (producto_id) {
+        const productoEnCarrito = this.carrito.some((p: any) => p.producto_id === producto_id);
+        if (productoEnCarrito) {
+          this.enCarrito = true;
+        } else {
+          this.enCarrito = false;
+        }
+      }
 
       this.esFavorito = await this.crudService.esFavorito(producto_id);
+
     } catch (error) {
       console.error('Error al cargar producto:', error);
     } finally {
@@ -109,8 +123,8 @@ export class ProductoPage implements OnInit {
       this.producto.calificacion = await this.crudService.obtenerPromedioCalificacionProducto(this.producto.producto_id)
       this.tienda.calificacion = await this.crudService.obtenerPromedioCalificacionTienda(this.producto.vendedor_id);
       this.miCalificacion = nuevaCalificacion;
-    } catch (error) {
-      this.ionicService.mostrarAlerta('Error al actualizar la calificación', 'error');
+    } catch (error: any) {
+      this.ionicService.mostrarAlerta('Error al actualizar la calificación', error.message || 'Ocurrió un error al actualizar la calificación.');
     }
   }
 
@@ -124,7 +138,12 @@ export class ProductoPage implements OnInit {
   }
 
   agregarAlCarrito(producto: any) {
-    this.cartService.agregarProductoAlCarrito(producto.producto_id, this.opcionStock)
+    try {
+      this.cartService.agregarProductoAlCarrito(producto.producto_id, this.opcionStock)
+      this.enCarrito = true;
+    } catch (error: any) {
+      this.ionicService.mostrarAlerta('Error', error.message || 'Ocurrió un error al agregar el producto al carrito.');
+    }
   }
 
   async eliminarFavorito(producto_id: string) {
