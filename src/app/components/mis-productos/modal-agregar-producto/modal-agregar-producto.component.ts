@@ -113,17 +113,20 @@ export class ModalAgregarProductoComponent{
   }
 
   async validarProducto(producto: Producto): Promise<boolean> {
-    if (typeof producto.titulo !== 'string' || producto.titulo.trim().length < 3) {
-      this.mostrarToast('El título debe tener al menos 3 caracteres', 'warning');
+    const textoValido = (txt: string, min: number = 1) =>
+      typeof txt === 'string' && txt.trim().length >= min;
+
+    if (!textoValido(producto.titulo, 3)) {
+      this.mostrarToast('El título debe tener al menos 3 caracteres válidos', 'warning');
       return false;
     }
 
-    if (typeof producto.descripcion !== 'string' || producto.descripcion.trim().length < 10) {
-      this.mostrarToast('La descripción debe tener al menos 10 caracteres', 'warning');
+    if (!textoValido(producto.descripcion, 10)) {
+      this.mostrarToast('La descripción debe tener al menos 10 caracteres válidos', 'warning');
       return false;
     }
 
-    if (typeof producto.categoria !== 'string' || producto.categoria.trim() === '') {
+    if (!textoValido(producto.categoria)) {
       this.mostrarToast('La categoría es obligatoria', 'warning');
       return false;
     }
@@ -149,7 +152,7 @@ export class ModalAgregarProductoComponent{
     }
 
     const estadosValidos = ['nuevo', 'segunda mano'];
-    if (typeof producto.estado !== 'string' || !estadosValidos.includes(producto.estado.trim().toLowerCase())) {
+    if (!textoValido(producto.estado) || !estadosValidos.includes(producto.estado.trim().toLowerCase())) {
       this.mostrarToast('El estado debe ser "nuevo" o "segunda mano"', 'warning');
       return false;
     }
@@ -157,9 +160,9 @@ export class ModalAgregarProductoComponent{
     const dir = producto.direccionOrigen;
     if (
       !dir ||
-      typeof dir.region !== 'string' || dir.region.trim() === '' ||
-      typeof dir.comuna !== 'string' || dir.comuna.trim() === '' ||
-      typeof dir.calle !== 'string' || dir.calle.trim() === '' ||
+      !textoValido(dir.region) ||
+      !textoValido(dir.comuna) ||
+      !textoValido(dir.calle) ||
       typeof dir.numero !== 'number' || isNaN(dir.numero) || dir.numero <= 0
     ) {
       this.mostrarToast('Completa correctamente la dirección de origen', 'warning');
@@ -172,11 +175,13 @@ export class ModalAgregarProductoComponent{
 
   // Métodos para etiquetas
   agregarEtiqueta() {
-    if (this.nuevaEtiqueta.trim() !== '' && !this.nuevoProductoForm.etiquetas.includes(this.nuevaEtiqueta.trim())) {
-      this.nuevoProductoForm.etiquetas.push(this.nuevaEtiqueta.trim());
+    const etiqueta = this.nuevaEtiqueta.trim();
+    if (etiqueta && !this.nuevoProductoForm.etiquetas.includes(etiqueta)) {
+      this.nuevoProductoForm.etiquetas.push(etiqueta);
       this.nuevaEtiqueta = '';
     }
   }
+
 
   eliminarEtiqueta(etiqueta: string) {
     this.nuevoProductoForm.etiquetas = this.nuevoProductoForm.etiquetas.filter((e) => e !== etiqueta);
@@ -219,6 +224,10 @@ export class ModalAgregarProductoComponent{
     }
   }
 
+  eliminarImagen(index: number) {
+    this.nuevoProductoForm.imagen.splice(index, 1);
+  }
+
   // Métodos de categorías
   async obtenerCategorias() {
     try {
@@ -229,7 +238,7 @@ export class ModalAgregarProductoComponent{
         error: (error) => {
           console.error('Error al obtener las categorías:', error);
           this.mostrarToast('Error al cargar las categorías', 'danger');
-        },
+        }
       });
     } catch (error) {
       console.error('Error al obtener las categorías:', error);
