@@ -68,9 +68,11 @@
           <span class="label">Ganancia total: </span>
           <span class="venta-monto">${{ calcularTotal(venta) | number }}</span>
         </div>
+        
+        <ion-button (click)="descargarQR(venta)">
+          Descargar QR
+        </ion-button>
       </div>
-
-      <ion-button (click)="descargarQR(venta)">Descargar QR</ion-button>
       <canvas #canvasQR style="display: none;"></canvas>
       <img *ngIf="qrGenerado" [src]="qrGenerado" alt="Código QR" />
     </div>

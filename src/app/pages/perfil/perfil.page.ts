@@ -9,6 +9,8 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import imageCompression from 'browser-image-compression';
 import { ActionSheetController, ModalController } from '@ionic/angular';
 import { ModalNumeroComponent } from 'src/app/components/modal-numero/modal-numero.component';
+import { Location } from '@angular/common';
+
 @Component({
   selector: 'app-perfil',
   templateUrl: './perfil.page.html',
@@ -31,6 +33,7 @@ export class PerfilPage implements OnInit {
               private modalTarjetaDepositos: ModalTarjetaDepositosService,
               private actionSheetCtrl: ActionSheetController,
               private modalCtrl: ModalController,
+              private location: Location,
   ) { }
 
   async ngOnInit() {
@@ -102,13 +105,20 @@ export class PerfilPage implements OnInit {
   confirmarTransaccion(token: string) {
     this.ionicService.mostrarCargando('Confirmando membresía...');
 
-    this.webpayService.confirmarTransaccion(token).subscribe({
-      next: async (respuesta: any) => {
+    this.webpayService.confirmarTransaccion(token).subscribe({next: async (respuesta: any) => {
+
+      if (respuesta.status != 'AUTHORIZED' || respuesta.status == 'FAILED') {
+        this.ionicService.ocultarCargando();
+        this.ionicService.mostrarAlertaPromesa('Pago rechazado', 'La transacción fue rechazada por Webpay.');
+        return;
+      }
+
         await this.authService.actualizarMembresia(true);
         this.ionicService.ocultarCargando();
         this.usuario.membresia = true;
         this.mostrarBotonWebpay = false;
         this.ionicService.mostrarAlerta('¡Membresía activa!', 'Ya puedes ver tus predicciones de venta 🧠');
+        this.location.replaceState('/perfil');
       },
       error: (err) => {
         this.ionicService.ocultarCargando();

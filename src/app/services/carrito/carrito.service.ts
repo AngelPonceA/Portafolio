@@ -154,7 +154,6 @@ export class CarritoService {
     try {
       await this.nativeStorage.remove(this.carritoStorage);
       this.comprobarCarrito();
-      this.ionicService.mostrarToastAbajo('Carrito limpiado.');
     } catch (error) {
       this.ionicService.mostrarAlerta('Error', `Error al limpiar el carrito: ${error}`);
     }

@@ -15,6 +15,7 @@ import { Region } from 'src/app/models/region.models';
 import { IonicService } from 'src/app/services/ionic/ionic.service';
 import { CostoDeEnvioService } from 'src/app/services/costo-de-envio/costo-de-envio.service';
 import { Boleta } from 'src/app/models/boleta/boleta.models';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-carrito',
@@ -43,7 +44,7 @@ export class CarritoPage implements OnInit {
   constructor(private router: Router, private crudService: CrudService, private authService: AuthService,
     private cartService: CarritoService, private webpayService: WebpayService, private route: ActivatedRoute, private http: HttpClient, 
     private modalCtrl: ModalController, private ubicacionService: UbicacionService, private ionicService: IonicService,
-    private costoDeEnvioService: CostoDeEnvioService
+    private costoDeEnvioService: CostoDeEnvioService, private location: Location
   ) {}
   
   async ngOnInit() {
@@ -242,6 +243,12 @@ export class CarritoPage implements OnInit {
 
   async confirmarTransaccion(token: string) {
     this.webpayService.confirmarTransaccion(token).subscribe(async(respuesta: any) => {
+
+      if (respuesta.status != 'AUTHORIZED' || respuesta.status == 'FAILED') {
+        this.ionicService.mostrarAlertaPromesa('Pago rechazado', 'La transacción fue rechazada por Webpay.');
+        return;
+      }
+
       const productosValidos = this.productos.filter(p => p.stock > 0 && !p.esta_eliminado);
       const productosBoleta = productosValidos.map(p => ({
         nombre: p.producto_titulo,
@@ -267,6 +274,7 @@ export class CarritoPage implements OnInit {
 
       this.limpiarCarrito();
       this.mostrarBoletaModal(boleta);
+      this.location.replaceState('/carrito');
     });
   }
 

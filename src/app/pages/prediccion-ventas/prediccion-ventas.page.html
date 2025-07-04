@@ -1,6 +1,7 @@
 <app-navegacion>
 
   <ion-content>
+    
     <ion-spinner *ngIf="cargando"></ion-spinner>
     <ng-container *ngIf="!cargando && productos.length > 0; else sinPredicciones">
       <div *ngFor="let producto of productos; let i = index">
@@ -57,9 +58,7 @@
         </ion-card>
       </div>
     </ng-container>
-    <div *ngIf="!cargando && productos.length === 0" class="no-datos">
-      No hay datos de ventas.
-    </div>
+
   </ion-content>
 
   <ng-template #sinPredicciones>
