@@ -6,6 +6,7 @@ import { IonicService } from "src/app/services/ionic/ionic.service";
 import { AuthService } from '../auth/auth.service';
 import { UbicacionService } from '../ubicacion/ubicacion.service';
 import { CostoDeEnvioService } from '../costo-de-envio/costo-de-envio.service';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ import { CostoDeEnvioService } from '../costo-de-envio/costo-de-envio.service';
 export class CarritoService {
 
   private carritoStorage = 'carrito';
+  private carritoCantidad = new BehaviorSubject<number>(0);
 
   constructor(  private nativeStorage: NativeStorage, 
                 private crudService: CrudService, 
@@ -25,11 +27,26 @@ export class CarritoService {
   async comprobarCarrito() {
     try {
       const carrito = await this.nativeStorage.getItem(this.carritoStorage);
-
+      await this.inicializarCantidad();
     } catch (error) {
       const carritoVacio: any[] = [];
       await this.nativeStorage.setItem(this.carritoStorage, carritoVacio);
+      await this.inicializarCantidad();
     }
+  }
+
+  async inicializarCantidad() {
+    const carrito = await this.obtenerCarrito();
+    this.carritoCantidad.next(Array.isArray(carrito) ? carrito.length : 0);
+  }
+
+  obtenerCantidadCarritoObservable(): Observable<number> {
+    return this.carritoCantidad.asObservable();
+  }
+
+  async actualizarCantidadObservable() {
+    const carrito = await this.obtenerCarrito();
+    this.carritoCantidad.next(Array.isArray(carrito) ? carrito.length : 0);
   }
 
   async agregarProductoAlCarrito(producto_id: string, cantidad: number) {
@@ -57,6 +74,7 @@ export class CarritoService {
       }
 
       await this.nativeStorage.setItem(this.carritoStorage, carrito);
+      await this.actualizarCantidadObservable();
       this.ionicService.mostrarToastAbajo(`Producto agregado al carrito, cantidad: ${cantidad}.`);
       
       return true;
@@ -66,7 +84,6 @@ export class CarritoService {
       return false;
     }
   }
-
 
   async obtenerCarrito() {
     try {
@@ -78,20 +95,12 @@ export class CarritoService {
     }
   }
 
-  async obtenerCantidadCarrito() {
-    try {
-      const carrito = await this.obtenerCarrito();
-      return Array.isArray(carrito) ? carrito.length : 0;
-    } catch (error) {
-      return 0;
-    }
-  }
-
   async eliminarProductoDelCarrito(producto_id: string) {
     try {
       const carrito = (await this.nativeStorage.getItem(this.carritoStorage)) || [];
       const nuevoCarrito = carrito.filter((item: any) => item.producto_id !== producto_id);
       await this.nativeStorage.setItem(this.carritoStorage, nuevoCarrito);
+      await this.actualizarCantidadObservable();
     } catch (error) {
       this.ionicService.mostrarAlerta('Error', `Error al eliminar producto del carrito: ${error}`);
     }
@@ -140,7 +149,6 @@ export class CarritoService {
     }
   }
 
-
   async guardarCarrito(productos: any) {
     try {
       await this.nativeStorage.setItem('carritoStorage', productos);
@@ -153,7 +161,8 @@ export class CarritoService {
   async limpiarCarrito() {
     try {
       await this.nativeStorage.remove(this.carritoStorage);
-      this.comprobarCarrito();
+      await this.comprobarCarrito();
+      await this.actualizarCantidadObservable();
     } catch (error) {
       this.ionicService.mostrarAlerta('Error', `Error al limpiar el carrito: ${error}`);
     }

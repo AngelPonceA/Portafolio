@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 //Imports acá abajo para no confundirnos
 import { IonicModule, NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { Location } from '@angular/common';
 import { CarritoService } from 'src/app/services/carrito/carrito.service';
 import { Keyboard } from '@capacitor/keyboard'
 import { Renderer2 } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navegacion',
@@ -17,29 +18,31 @@ import { Renderer2 } from '@angular/core';
   templateUrl: './navegacion.component.html',
   styleUrls: ['./navegacion.component.scss'],
 })
-export class NavegacionComponent  implements OnInit {
+export class NavegacionComponent implements OnInit, OnDestroy {
   keyboardAbierto = false;
   usuario: any;
   notificaciones?: number ;
-  carrito: any;
+  carrito: number = 0;
   busqueda: string = '';
   sugerencias: any[] = [];
-  constructor(  private router: Router, 
-                private navCtrl: NavController, 
-                private authService: AuthService, 
-                private crudService: CrudService,
-                private location: Location, 
-                private cartService: CarritoService,
-                private renderer: Renderer2 ) { }
+  carritoObservable?: Subscription;
+
+  constructor(  private router: Router, private navCtrl: NavController, private authService: AuthService,
+    private crudService: CrudService, private location: Location, private cartService: CarritoService,
+    private renderer: Renderer2 ) { }
                 
   async ngOnInit() {
     this.usuario = await this.authService.obtenerPerfil();
+    
     if (this.usuario) {
       this.authService.obtenerNotificacionesNav(this.usuario.id).subscribe((notificacionesEntrantes) => {
         this.notificaciones = notificacionesEntrantes;    
       });
     }
-    this.carrito = this.obtenerCantidadCarrito();
+
+    this.carritoObservable = this.cartService.obtenerCantidadCarritoObservable().subscribe(cantidad => {
+      this.carrito = cantidad;
+    });
 
     Keyboard.addListener('keyboardWillShow', () => {
       this.renderer.addClass(document.body, 'keyboard-is-open');
@@ -48,6 +51,13 @@ export class NavegacionComponent  implements OnInit {
     Keyboard.addListener('keyboardWillHide', () => {
       this.renderer.removeClass(document.body, 'keyboard-is-open');
     });
+    
+  }
+  
+  ngOnDestroy() {
+    if (this.carritoObservable) {
+      this.carritoObservable.unsubscribe();
+    }
   }
   
   enHome(): boolean {
@@ -88,15 +98,6 @@ export class NavegacionComponent  implements OnInit {
 
   retroceder() {
     this.navCtrl.back();
-  }  
-
-  async obtenerCantidadCarrito() {
-    try {
-      this.carrito = await this.cartService.obtenerCantidadCarrito();
-      return this.carrito;
-    } catch (error) {
-      return 0;
-    }
   }
 
 }
