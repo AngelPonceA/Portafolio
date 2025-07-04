@@ -1,0 +1,214 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title class="text-lg font-bold">Términos y Condiciones</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item button (click)="toggleSection('introduccion')">
+      <ion-label>1. Introducción y Aceptación de Términos</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.introduccion">
+      <ion-card-content>
+        <p>
+          <strong>FleaMarket Chile SpA</strong> (en adelante “FleaMarket” o “la
+          Plataforma”), RUT 77.654.321‑0, correo
+          <strong>contacto&#64;fleamarket.cl</strong>, pone a disposición de
+          visitantes, usuarios, vendedores y administradores esta aplicación de
+          compraventa de productos entre particulares en Chile. Al registrarse,
+          navegar o utilizar cualquier servicio de FleaMarket, el usuario acepta
+          plena y voluntariamente estos
+          <strong>Términos y Condiciones</strong> (en adelante, “T&C”),
+          incluyendo nuestras Políticas y Avisos Legales.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('definiciones')">
+      <ion-label>2. Definiciones y Roles</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.definiciones">
+      <ion-card-content>
+        <p>
+          <strong>Visitante:</strong> puede explorar, buscar y ver productos.<br />
+          <strong>Usuario Registrado (Comprador):</strong> puede registrarse,
+          comprar y gestionar su perfil.<br />
+          <strong>Usuario-Vendedor:</strong> puede publicar productos y
+          gestionar ventas.<br />
+          <strong>Administrador:</strong> tiene acceso a funciones de moderación
+          y soporte.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('datosPersonales')">
+      <ion-label>3. Registro y Datos Personales</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.datosPersonales">
+      <ion-card-content>
+        <p>
+          El usuario acepta proporcionar datos personales veraces. Para ser
+          vendedor, se requieren datos bancarios adicionales. Según
+          <strong>Ley N° 19.628</strong>, los datos se usan exclusivamente para
+          los fines declarados. Derechos ARCO: escribiendo a
+          <strong>legal&#64;fleamarket.cl</strong>.
+        </p>
+        <br />
+        <p>
+          <strong>Tratamiento de Datos Bancarios de Vendedores:</strong><br />
+          - Finalidad: Pago de ventas legítimas.<br />
+          - Datos: Nombre, RUT, Banco, Tipo y número de cuenta.<br />
+          - No se almacenan datos de tarjetas.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('contratos')">
+      <ion-label>4. Contratos y Compras</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.contratos">
+      <ion-card-content>
+        <p>
+          La relación contractual se perfecciona con el pago vía Webpay. El
+          usuario acepta los <strong>T&C</strong> antes de finalizar la compra y
+          recibe confirmación por pantalla o correo.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('pagos')">
+      <ion-label>5. Precios, Pagos y Fraude</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.pagos">
+      <ion-card-content>
+        <p>
+          El único método de pago es <strong>Webpay</strong>. FleaMarket no
+          almacena datos de tarjetas. En caso de fraude, se puede abrir un
+          ticket para gestionar la reversa con Transbank.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('envios')">
+      <ion-label>6. Envíos y Devoluciones</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.envios">
+      <ion-card-content>
+        <p>
+          Los envíos son gestionados por el vendedor o servicios externos. Plazo
+          estimado: <strong>3 a 7 días hábiles</strong>. Las devoluciones se
+          gestionan mediante tickets.
+        </p>
+        <p>
+          <strong>Protección de datos en envíos:</strong> datos personales del
+          comprador se comparten solo para la entrega.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('obligaciones')">
+      <ion-label>7. Obligaciones y Responsabilidades</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.obligaciones">
+      <ion-card-content>
+        <p>
+          <strong>Vendedor:</strong> cumplir con lo publicado.<br />
+          <strong>Comprador:</strong> aceptar los términos y dar información
+          veraz.<br />
+          <strong>FleaMarket:</strong> actuar como intermediario legal.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('propiedad')">
+      <ion-label>8. Propiedad Intelectual</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.propiedad">
+      <ion-card-content>
+        <p>
+          Los vendedores deben garantizar que su contenido no infringe derechos
+          de terceros. FleaMarket puede eliminar contenido no autorizado.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('seguridad')">
+      <ion-label>9. Seguridad y Delitos Informáticos</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.seguridad">
+      <ion-card-content>
+        <p>
+          Los usuarios se comprometen a no usar la plataforma para fraudes o
+          delitos digitales. Cualquier abuso será denunciado.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('reportes')">
+      <ion-label>10. Gestión de Reportes y Soporte</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.reportes">
+      <ion-card-content>
+        <p>
+          Los usuarios pueden reportar tiendas o vendedores. El vendedor puede
+          apelar en <strong>5 días hábiles</strong>. FleaMarket resolverá en un
+          máximo de <strong>7 días hábiles</strong>.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('responsabilidad')">
+      <ion-label>11. Responsabilidad</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.responsabilidad">
+      <ion-card-content>
+        <p>
+          FleaMarket no es parte de los contratos entre usuarios. Puede retener
+          pagos en casos sospechosos.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('modificaciones')">
+      <ion-label>12. Modificaciones de los T&C</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.modificaciones">
+      <ion-card-content>
+        <p>
+          Cualquier cambio a los T&C será notificado con al menos
+          <strong>30 días</strong> de anticipación.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('ley')">
+      <ion-label>13. Ley Aplicable y Jurisdicción</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.ley">
+      <ion-card-content>
+        <p>
+          Aplican leyes chilenas. Tribunales competentes:
+          <strong>Santiago de Chile</strong>.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('contacto')">
+      <ion-label>14. Contacto</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.contacto">
+      <ion-card-content>
+        <p>
+          <strong>FleaMarket Chile SpA</strong>
+          <br />
+          RUT: 77.654.321-0
+          <br />
+          Email: <strong>contacto&#64;fleamarket.cl</strong>
+          <br />
+          Última actualización: 29/06/2025
+        </p>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+</ion-content>

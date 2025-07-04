@@ -8,7 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-modal-tarjeta-depositos',
   templateUrl: './modal-tarjeta-depositos.component.html',
@@ -52,7 +52,9 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
   ];
   tiposCuenta: { label: string; valor: string }[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,
+              private router: Router
+  ) {
     this.form = this.fb.group({
       titular: ['', Validators.required],
       numeroCuenta: [
@@ -101,6 +103,11 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
         this.filtrarTiposCuenta();
       }
     }
+  }
+
+  irATerminos() {
+    this.cancelar();
+    this.router.navigate(['/terminos-ycondiciones']);
   }
 
   confirmar() {

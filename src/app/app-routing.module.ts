@@ -106,6 +106,10 @@ const routes: Routes = [
     path: 'reportes-de-usuarios',
     loadChildren: () => import('./pages/admin/reportes-de-usuarios/reportes-de-usuarios.module').then( m => m.ReportesDeUsuariosPageModule)
   },
+  {
+    path: 'terminos-ycondiciones',
+    loadChildren: () => import('./pages/terminos-ycondiciones/terminos-ycondiciones.module').then( m => m.TerminosYCondicionesPageModule)
+  },
 
 
 ];
