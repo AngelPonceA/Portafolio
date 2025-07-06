@@ -8,3 +8,10 @@ a {
   color: var(--ion-color-primary);
   text-decoration: underline;
 }
+ion-button {
+  --border-radius: 1rem;
+  --background: #d1a15a;
+  --color: #ffffff;
+  --border-color: #9a73399e;
+  font-weight: bold;
+}

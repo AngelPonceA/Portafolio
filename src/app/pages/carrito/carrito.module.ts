@@ -6,6 +6,7 @@ import { CarritoPage } from './carrito.page';
 import { CarritoPageRoutingModule } from './carrito-routing.module';
 import { ModalBoletaComponent } from 'src/app/components/modal-boleta/modal-boleta.component';
 import { ModalFormNuevaDireccionComponent } from 'src/app/components/modal-form-nueva-direccion/modal-form-nueva-direccion.component';
+import { ModalConsentimientoInformadoComponent } from 'src/app/components/modal-consentimiento.informado/modal-consentimiento.informado.component';
 
 
 @NgModule({
@@ -17,7 +18,7 @@ import { ModalFormNuevaDireccionComponent } from 'src/app/components/modal-form-
     ModalBoletaComponent,
     ModalFormNuevaDireccionComponent
   ],
-declarations: [CarritoPage],
+declarations: [CarritoPage, ModalConsentimientoInformadoComponent],
 })
 
 export class CarritoPageModule {}

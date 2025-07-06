@@ -16,6 +16,7 @@ import { IonicService } from 'src/app/services/ionic/ionic.service';
 import { CostoDeEnvioService } from 'src/app/services/costo-de-envio/costo-de-envio.service';
 import { Boleta } from 'src/app/models/boleta/boleta.models';
 import { Location } from '@angular/common';
+import { ModalConsentimientoInformadoComponent } from 'src/app/components/modal-consentimiento.informado/modal-consentimiento.informado.component';
 
 @Component({
   selector: 'app-carrito',
@@ -203,28 +204,39 @@ export class CarritoPage implements OnInit {
     return this.totalAmount;
   }
 
-  async iniciarPagoWebpay() {
-    if (!this.direccionPrincipal) {
-      this.ionicService.mostrarToastArriba('Necesitas agregar una dirección para pagar');
-      await this.abrirModalDirecciones(); 
-      if (!this.direccionPrincipal) return; 
-    }
-
-    const data = {
-      amount: this.totalAmount,
-      session_id: 'sesion-' + Date.now(),
-      buy_order: 'orden-' + Date.now(),
-      return_url: 'fleamarket://transaction'
-    };
-
-    this.webpayService.crearTransaccion(data).subscribe((res: any) => {
-      if (res.url && res.token) {
-        window.open(`${res.url}?token_ws=${res.token}`, '_system');
-      } else {
-        this.ionicService.mostrarAlerta('Error', 'No se pudo iniciar el pago.');
-      }
-    });
+async iniciarPagoWebpay() {
+  if (!this.direccionPrincipal) {
+    this.ionicService.mostrarToastArriba('Necesitas agregar una dirección para pagar');
+    await this.abrirModalDirecciones(); 
+    if (!this.direccionPrincipal) return; 
   }
+
+  const modal = await this.modalCtrl.create({
+    component: ModalConsentimientoInformadoComponent,
+    breakpoints: [0, 0.85, 1],
+    initialBreakpoint: 0.85
+  });
+
+  await modal.present();
+  const { data } = await modal.onWillDismiss();
+
+  if (!data?.aceptado) return;  // Solo continúa si aceptó
+
+  const dataPago = {
+    amount: this.totalAmount,
+    session_id: 'sesion-' + Date.now(),
+    buy_order: 'orden-' + Date.now(),
+    return_url: 'fleamarket://transaction'
+  };
+
+  this.webpayService.crearTransaccion(dataPago).subscribe((res: any) => {
+    if (res.url && res.token) {
+      window.open(`${res.url}?token_ws=${res.token}`, '_system');
+    } else {
+      this.ionicService.mostrarAlerta('Error', 'No se pudo iniciar el pago.');
+    }
+  });
+}
 
   redirigirAWebpay(url: string, token: string) {
     const form = document.createElement('form');
