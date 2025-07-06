@@ -55,13 +55,13 @@ export class AppComponent implements OnInit {
 
     this.cartService.comprobarCarrito();
     
-    // this.triggersService.escucharCambiosPedido();
+    this.triggersService.escucharCambiosPedido();
 
-    // this.triggersService.escucharCambiosDetallePedido();
+    this.triggersService.escucharCambiosDetallePedido();
 
-    // this.triggersService.escucharCambiosStock();
+    this.triggersService.escucharCambiosStock();
 
-    // this.triggersService.escucharCreacionPedido();
+    this.triggersService.escucharCreacionPedido();
 
     try {
       const sesion = await this.authService.obtenerSesion();

@@ -23,7 +23,6 @@ export class AuthService {
   auth: Auth = inject(Auth);
   storage: Storage = inject(Storage);
 
-
   constructor(private nativeStorage: NativeStorage, private router: Router, private ionicService: IonicService,
     private crudService: CrudService, private ionicServe: IonicService, private navCtrl: NavController) { }
 

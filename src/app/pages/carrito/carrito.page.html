@@ -100,15 +100,15 @@
 
         <div class="total-final">Total a pagar: ${{ obtenerTotalCarrito() | number }} CLP</div>
         <div *ngIf="!usuario || usuario.rol == 'invitado'" class="total-final">Inicia sesión para poder realizar la compra</div>
+        <div *ngIf="usuario && usuario.rol == 'admin'" class="total-final">No puedes realizar compras siendo administrador</div>
       </div>
     </div>
 
-    <button *ngIf="usuario && usuario.rol != 'invitado'" class="webpay-button" (click)="iniciarPagoWebpay()">
+    <button *ngIf="usuario && usuario.rol != 'invitado' && usuario.rol != 'admin'" class="webpay-button" (click)="iniciarPagoWebpay()">
       <span>Pagar con WebPay</span>
     </button>
   </div>
 
-  <!-- BLOQUE VACÍO -->
   <ng-template #vacio>
     <div class="vacio-container">
       <ion-icon name="cart-outline"></ion-icon>

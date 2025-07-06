@@ -410,6 +410,9 @@ export class CrudService {
     const productos = new Set<string>();
     const anios = new Set<number>();
 
+    const anioActual = new Date().getFullYear();
+    let hayDatosEnAnioActual = false;
+
     ventasSnapshot.docs.forEach(docSnap => {
       const data = docSnap.data();
       const producto_id = data['producto_id'];
@@ -424,6 +427,10 @@ export class CrudService {
       const key = `${producto_id}_${anio}_${mes}`;
       if (!agrupadas[key]) agrupadas[key] = { producto_id, anio, mes, cantidad: 0 };
       agrupadas[key].cantidad += cantidad;
+
+      if (anio === anioActual) {
+        hayDatosEnAnioActual = true;
+      }
     });
 
     const detalles: { [producto_id: string]: { titulo: string, imagen: any } } = {};
@@ -436,6 +443,9 @@ export class CrudService {
     }));
 
     const ventas: { producto_id: string, titulo: string, anio: number, mes: number, cantidad: number, imagen: any }[] = [];
+
+    anios.add(anioActual);
+
     productos.forEach(producto_id => {
       anios.forEach(anio => {
         for (let mes = 1; mes <= 12; mes++) {

@@ -312,6 +312,7 @@ export class CarritoService {
         await addDoc(collection(this.firestore, `ventas/${vendedorId}/detalle`), {
           pedido_id: pedidoId,
           producto_id: producto.producto_id,
+          vendedor_id: vendedorId,
           comprador_id: compradorId,
           cantidad: producto.cantidad,
           fecha: {
