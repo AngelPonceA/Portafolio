@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Consentimiento Informado</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar(false)">Cerrar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <p>
+    Al presionar <strong>"Aceptar y Pagar"</strong>, declaras estar de acuerdo
+    con lo siguiente:
+  </p>
+
+  <ul>
+    <li>
+      He revisado los productos seleccionados, sus precios, costos de envío y
+      dirección de despacho.
+    </li>
+    <li>
+      Entiendo que FleaMarket actúa como intermediario entre vendedores y
+      compradores.
+    </li>
+    <li>
+      Acepto que, una vez realizada la compra, esta será procesada y se generará
+      un comprobante.
+    </li>
+    <li>
+      Autorizo el tratamiento de mis datos conforme a la
+      <strong>Ley 19.628 sobre Protección de Datos Personales</strong>.
+    </li>
+  </ul>
+
+  <p>
+    Para más detalles revisa nuestros
+    <a href="/terminos-y-condiciones" target="_blank">Términos y Condiciones</a
+    >.
+  </p>
+
+  <ion-button expand="block" (click)="cerrar(true)">Aceptar y Pagar</ion-button>
+</ion-content>
