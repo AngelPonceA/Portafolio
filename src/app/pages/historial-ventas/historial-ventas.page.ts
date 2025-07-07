@@ -122,4 +122,11 @@ export class HistorialVentasPage implements OnInit {
     }
   }
 
+  mostrarInstruccionesEnvio() {
+    this.ionicService.mostrarAlerta(
+      'Instrucciones de Envío',
+      `Primero, empaqueta bien el producto en una caja o bolsa de burbujas. Luego, descarga el código QR y pégalo en la caja. Después, lleva el paquete a una sucursal de la empresa de envío. Finalmente, asegúrate de realizar el envío dentro del plazo de 3 a 7 días hábiles.`
+    );
+  }
+
 }
