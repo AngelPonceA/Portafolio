@@ -1,36 +1,59 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-registro',
   templateUrl: './registro.page.html',
   styleUrls: ['./registro.page.scss'],
-  standalone: false
+  standalone: false,
 })
 export class RegistroPage implements OnInit {
   registerForm: FormGroup;
   passwordType: string = 'password';
   confirmPasswordType: string = 'password';
 
-
-  constructor(private router: Router, private fb: FormBuilder, private authService: AuthService) {
-    this.registerForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'), Validators.maxLength(30)]],
-      username: ['', [Validators.required, Validators.maxLength(30)]],
-      email: ['', [Validators.required, Validators.email, Validators.maxLength(30)]],
-      number: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$'),
-        ]
-      ],
-      confirmPassword: ['', Validators.required]
-    }, { validators: this.passwordsMatch });
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private authService: AuthService
+  ) {
+    this.registerForm = this.fb.group(
+      {
+        name: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern('^[a-zA-ZÀ-ÿ\\s]+$'),
+            Validators.maxLength(30),
+          ],
+        ],
+        username: ['', [Validators.required, Validators.maxLength(30)]],
+        email: [
+          '',
+          [Validators.required, Validators.email, Validators.maxLength(30)],
+        ],
+        number: ['', [Validators.required, Validators.pattern('^[0-9]{8}$')]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).+$'),
+          ],
+        ],
+        confirmPassword: ['', Validators.required],
+        aceptaTerminos: [false, Validators.requiredTrue],
+      },
+      { validators: this.passwordsMatch }
+    );
   }
 
   ngOnInit() {}
@@ -39,8 +62,9 @@ export class RegistroPage implements OnInit {
   }
 
   toggleConfirmPasswordType() {
-    this.confirmPasswordType = this.confirmPasswordType === 'password' ? 'text' : 'password';
-  }  
+    this.confirmPasswordType =
+      this.confirmPasswordType === 'password' ? 'text' : 'password';
+  }
 
   passwordsMatch(formGroup: AbstractControl): ValidationErrors | null {
     const password = formGroup.get('password')?.value;
@@ -59,5 +83,10 @@ export class RegistroPage implements OnInit {
 
     this.authService.registrar(username, email, password, number);
     this.registerForm.reset();
+  }
+
+  irATerminos(event?: Event) {
+    if (event) event.preventDefault();
+    this.router.navigate(['/terminos-ycondiciones']);
   }
 }
