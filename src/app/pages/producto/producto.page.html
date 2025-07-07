@@ -42,6 +42,19 @@
         <ion-card-subtitle class="producto-stock">
           <ion-icon name="pricetag" slot="start"></ion-icon> Stock disponible: {{ producto.stock | number }}
         </ion-card-subtitle>
+
+        <div class="producto-envio-info">
+          <div class="plazo-envio">
+            <ion-icon name="car-outline"></ion-icon>
+            <span><b>Plazo de despacho estimado:</b> 3 a 7 días hábiles</span>
+          </div>
+          <div class="nota-legal-envio">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>
+              <b>Nota legal:</b> El despacho de este producto es responsabilidad exclusiva del vendedor y/o del servicio externo de envío.
+            </span>
+          </div>
+        </div>
       </ion-card-header>
       
       <ion-select class="select-stock" label="Cantidad deseada" label-placement="floating" fill="outline" [(ngModel)]="opcionStock">
