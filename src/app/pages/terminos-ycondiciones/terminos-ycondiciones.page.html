@@ -9,7 +9,6 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
   <ion-list>
     <ion-item button (click)="toggleSection('introduccion')">
@@ -213,6 +212,66 @@
           Email: <strong>contacto&#64;fleamarket.cl</strong>
           <br />
           Última actualización: 29/06/2025
+        </p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-item button (click)="toggleSection('tributario')">
+      <ion-label>15. Aspecto Tributario y Rol de Intermediario</ion-label>
+    </ion-item>
+    <ion-card *ngIf="sections.tributario">
+      <ion-card-content>
+        <p>
+          <strong>Modelo de Intermediación:</strong> FleaMarket opera como
+          plataforma de intermediación entre compradores y vendedores
+          particulares. No se emiten boletas ni facturas automáticas desde la
+          plataforma. La aplicación no aplica IVA sobre el precio final de los
+          productos.
+        </p>
+        <p><strong>Obligaciones Tributarias de los Vendedores:</strong></p>
+        <table
+          style="width: 100%; border-collapse: collapse; margin-bottom: 12px"
+        >
+          <tr>
+            <th style="text-align: left; border-bottom: 1px solid #eee">
+              Tipo de vendedor
+            </th>
+            <th style="text-align: left; border-bottom: 1px solid #eee">
+              Aplicación de IVA
+            </th>
+            <th style="text-align: left; border-bottom: 1px solid #eee">
+              Boleta o factura
+            </th>
+          </tr>
+          <tr>
+            <td>Persona Natural (Particular)</td>
+            <td>No aplica IVA</td>
+            <td>No obligado a emitir boleta</td>
+          </tr>
+          <tr>
+            <td>Empresa o Persona Jurídica</td>
+            <td>Debe incluir IVA</td>
+            <td>Debe emitir boleta o factura</td>
+          </tr>
+        </table>
+        <p>
+          <strong>Comisiones y Servicio Digital:</strong> En caso de aplicar
+          comisión por venta, esta correspondería a un servicio digital y
+          debería incluir IVA.
+        </p>
+        <p>
+          <strong>Límites y Contexto Actual:</strong> La aplicación no contempla
+          integración automática con el Servicio de Impuestos Internos (SII).
+          Las gestiones tributarias son responsabilidad de cada vendedor.
+          FleaMarket no actúa como vendedor directo, sino solo como
+          intermediario.
+        </p>
+        <p>
+          <strong>En Resumen:</strong> FleaMarket facilita la conexión entre
+          partes pero no interviene en la emisión de documentos tributarios. En
+          futuras versiones se podrá evaluar la incorporación de comisiones con
+          IVA o integraciones tributarias si se formaliza la actividad
+          comercial.
         </p>
       </ion-card-content>
     </ion-card>

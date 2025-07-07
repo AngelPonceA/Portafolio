@@ -17,7 +17,8 @@ type SectionKey =
   | 'responsabilidad'
   | 'modificaciones'
   | 'ley'
-  | 'contacto';
+  | 'contacto'
+  | 'tributario';
 
 @Component({
   selector: 'app-terminos-ycondiciones',
@@ -41,7 +42,8 @@ export class TerminosYCondicionesPage implements OnInit {
     responsabilidad: false,
     modificaciones: false,
     ley: false,
-    contacto: false
+    contacto: false,
+    tributario: false
   };
 
   usuario: any = null;
