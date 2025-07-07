@@ -383,4 +383,22 @@ export class AuthService {
     const usuarioRef = doc(this.firestore, 'usuarios', uid);
     await updateDoc(usuarioRef, { telefono: `+569${nuevoNumero}` });
   }
+
+  obtenerUsuarioPorId(uid: string): Promise<Usuario | null> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const usuarioRef = doc(this.firestore, `usuarios/${uid}`);
+        const snap = await getDoc(usuarioRef);
+        if (snap.exists()) {
+          const data = snap.data() as Usuario;
+          resolve(data);
+        } else {
+          resolve(null);
+        }
+      } catch (error) {
+        console.error('Error al obtener el usuario por ID:', error);
+        reject(error);
+      }
+    });
+  }
 }
