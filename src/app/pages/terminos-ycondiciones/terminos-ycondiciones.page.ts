@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 type SectionKey = 
   | 'introduccion'
@@ -45,7 +47,10 @@ export class TerminosYCondicionesPage implements OnInit {
   usuario: any = null;
   rol: string = 'invitado';
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService,
+              private navCtrl: NavController,
+              private router: Router
+  ) {}
 
   async ngOnInit() {
     this.usuario = await this.authService.obtenerPerfil();
@@ -61,4 +66,11 @@ export class TerminosYCondicionesPage implements OnInit {
     this.sections[section] = !this.sections[section];
   }
 
+  cerrarTerminos() {
+    if (window.history.length > 1) {
+      this.navCtrl.back();
+    } else {
+      this.router.navigate(['/home']);
+    }
+  }
 }
