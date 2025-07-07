@@ -248,7 +248,9 @@ export class CarritoPage implements OnInit {
     await modal.present();
     const { data } = await modal.onWillDismiss();
 
-    if (!data?.aceptado) return; // Solo continúa si aceptó
+    if (!data?.aceptado) return;
+
+    this.ionicService.mostrarCargando('Redirigiendo a WebPay...');
 
     const dataPago = {
       amount: this.totalAmount,
@@ -257,12 +259,29 @@ export class CarritoPage implements OnInit {
       return_url: 'fleamarket://transaction',
     };
 
-    this.webpayService.crearTransaccion(dataPago).subscribe((res: any) => {
-      if (res.url && res.token) {
-        window.open(`${res.url}?token_ws=${res.token}`, '_system');
-      } else {
-        this.ionicService.mostrarAlerta('Error', 'No se pudo iniciar el pago.');
-      }
+    this.webpayService.crearTransaccion(dataPago).subscribe({
+      next: (res: any) => {
+        this.ionicService.ocultarCargando();
+
+        if (res.url && res.token) {
+          window.open(`${res.url}?token_ws=${res.token}`, '_system');
+        } else {
+          this.ionicService.mostrarAlerta(
+            'Error',
+            'No se pudo iniciar el pago.'
+          );
+        }
+      },
+      error: (err) => {
+        this.ionicService.ocultarCargando();
+        this.ionicService.mostrarAlerta(
+          'Error',
+          'No se pudo conectar con WebPay.'
+        );
+      },
+      complete: () => {
+        this.ionicService.ocultarCargando();
+      },
     });
   }
 
