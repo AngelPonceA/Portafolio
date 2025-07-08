@@ -1,13 +1,7 @@
 <div class="overlay" role="dialog" aria-modal="true">
-  <div
-    class="card-form"
-    tabindex="0"
-    role="document"
-    aria-labelledby="titulo-modal"
-  >
+  <div class="card-form" tabindex="0" role="document" aria-labelledby="titulo-modal">
     <ion-note color="medium">
-      Esta información es utilizada exclusivamente para transferencias de pago
-      por tus ventas. Nunca solicitaremos datos de tarjetas para cobros.
+      Esta información es utilizada exclusivamente para transferencias de pago por tus ventas. Nunca solicitaremos datos de tarjetas para cobros.
     </ion-note>
 
     <form [formGroup]="form" (ngSubmit)="confirmar()">
@@ -17,29 +11,25 @@
         <ion-label position="floating">Titular de la Tarjeta</ion-label>
         <ion-input formControlName="titular"></ion-input>
       </ion-item>
+      <ion-text color="danger" *ngIf="form.get('titular')?.invalid && form.get('titular')?.touched">
+        <p>El titular es obligatorio.</p>
+      </ion-text>
 
       <ion-item>
         <ion-label position="floating">Banco</ion-label>
-        <ion-input
-          formControlName="banco"
-          (ionInput)="filtrarBancos($event)"
-          [value]="form.value.banco"
-        >
-        </ion-input>
+        <ion-input formControlName="banco" (ionInput)="filtrarBancos($event)" [value]="form.value.banco"></ion-input>
       </ion-item>
-
       <ion-list *ngIf="bancosFiltrados.length > 0">
-        <ion-item
-          *ngFor="let banco of bancosFiltrados"
-          (click)="seleccionarBanco(banco)"
-        >
+        <ion-item *ngFor="let banco of bancosFiltrados" (click)="seleccionarBanco(banco)">
           {{ banco }}
         </ion-item>
       </ion-list>
+      <ion-text color="danger" *ngIf="form.get('banco')?.invalid && form.get('banco')?.touched">
+        <p>Selecciona un banco.</p>
+      </ion-text>
 
       <ng-container *ngIf="tiposCuenta.length > 0">
         <div class="titulo-tipo-cuenta">Tipo de Cuenta</div>
-
         <div class="tipo-cuenta-lista">
           <ion-item
             button
@@ -49,15 +39,13 @@
             [class.activo]="form.value.tipoCuenta === tipo.valor"
           >
             <ion-label>{{ tipo.label }}</ion-label>
-            <ion-icon
-              *ngIf="form.value.tipoCuenta === tipo.valor"
-              name="checkmark-circle"
-              color="success"
-              slot="end"
-            ></ion-icon>
+            <ion-icon *ngIf="form.value.tipoCuenta === tipo.valor" name="checkmark-circle" color="success" slot="end"></ion-icon>
           </ion-item>
         </div>
       </ng-container>
+      <ion-text color="danger" *ngIf="form.get('tipoCuenta')?.invalid && form.get('tipoCuenta')?.touched">
+        <p>Selecciona el tipo de cuenta.</p>
+      </ion-text>
 
       <ion-item>
         <ion-label position="floating">Número de cuenta</ion-label>
@@ -66,18 +54,12 @@
           formControlName="numeroCuenta"
           inputmode="numeric"
           pattern="[0-9]*"
+          maxlength="12"
           (ionInput)="onInputNumeroCuenta($event)"
         ></ion-input>
       </ion-item>
-      <ion-text
-        color="danger"
-        *ngIf="
-          form.get('numeroCuenta')?.invalid && form.get('numeroCuenta')?.touched
-        "
-      >
-        <p
-          *ngIf="form.get('numeroCuenta')?.errors?.['minlength'] || form.get('numeroCuenta')?.errors?.['maxlength']"
-        >
+      <ion-text color="danger" *ngIf="form.get('numeroCuenta')?.invalid && form.get('numeroCuenta')?.touched">
+        <p *ngIf="form.get('numeroCuenta')?.errors?.['minlength'] || form.get('numeroCuenta')?.errors?.['maxlength']">
           El número de cuenta debe tener
           {{
             form.value.tipoCuenta === "rut"
@@ -91,36 +73,20 @@
       </ion-text>
 
       <ion-item lines="none">
-        <ion-checkbox
-          slot="start"
-          formControlName="aceptarTerminos"
-        ></ion-checkbox>
+        <ion-checkbox slot="start" formControlName="aceptarTerminos"></ion-checkbox>
         <ion-label>
           Acepto los
           <a (click)="irATerminos()" style="text-decoration: underline;">términos y condiciones</a>, autorizando el tratamiento de mis datos bancarios según la Ley N° 19.628.
         </ion-label>
       </ion-item>
+      <ion-text color="danger" *ngIf="form.get('aceptarTerminos')?.invalid && form.get('aceptarTerminos')?.touched">
+        <p>Debes aceptar los términos y condiciones.</p>
+      </ion-text>
 
       <div class="acciones">
-        <ion-button color="medium" fill="clear" (click)="cancelar()">
-          Cancelar
-        </ion-button>
-        <ion-button
-          color="danger"
-          fill="clear"
-          (click)="limpiarFormulario()"
-          type="button"
-        >
-          Limpiar
-        </ion-button>
-        <ion-button
-          class="brown-button"
-          fill="clear"
-          type="submit"
-          [disabled]="!form.valid"
-        >
-          Guardar
-        </ion-button>
+        <ion-button color="medium" fill="clear" (click)="cancelar()">Cancelar</ion-button>
+        <ion-button color="danger" fill="clear" (click)="limpiarFormulario()" type="button">Limpiar</ion-button>
+        <ion-button class="brown-button" fill="clear" type="submit" [disabled]="form.invalid">Guardar</ion-button>
       </div>
     </form>
   </div>

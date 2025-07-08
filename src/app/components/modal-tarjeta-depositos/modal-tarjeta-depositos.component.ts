@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-modal-tarjeta-depositos',
   templateUrl: './modal-tarjeta-depositos.component.html',
@@ -42,18 +43,12 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
     'HSBC Bank',
     'Rabobank Chile',
   ];
-
   bancosFiltrados: string[] = [];
-
-  tiposCuentaBase = [
-    { valor: 'vista', label: 'Cuenta Vista' },
-    { valor: 'corriente', label: 'Cuenta Corriente' },
-    { valor: 'rut', label: 'Cuenta RUT' },
-  ];
   tiposCuenta: { label: string; valor: string }[] = [];
 
-  constructor(private fb: FormBuilder,
-              private router: Router
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
   ) {
     this.form = this.fb.group({
       titular: ['', Validators.required],
@@ -83,20 +78,13 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
     if (changes['datosIniciales'] && this.datosIniciales) {
       let init = this.datosIniciales;
       if (typeof init === 'string') {
-        try {
-          init = JSON.parse(init);
-        } catch {
-          init = null;
-        }
+        try { init = JSON.parse(init); } catch { init = null; }
       }
-
       if (init) {
         this.form.patchValue({
           titular: init.titular || '',
           banco: init.banco || '',
           numeroCuenta: init.numeroCuenta || '',
-          vencimiento: init.vencimiento || '',
-          cvv: init.cvv || '',
           tipoCuenta: init.tipoCuenta || null,
           aceptarTerminos: false,
         });
@@ -131,28 +119,23 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
   seleccionarBanco(banco: string) {
     this.form.patchValue({ banco });
     this.bancosFiltrados = [];
+    this.filtrarTiposCuenta();
   }
 
   filtrarTiposCuenta() {
     const banco = this.form.value.banco?.toLowerCase().trim() || '';
-
     this.tiposCuenta = [
       { label: 'Cuenta Vista', valor: 'vista' },
       { label: 'Cuenta Corriente', valor: 'corriente' },
     ];
-
     if (banco === 'banco estado') {
-      this.tiposCuenta.unshift({
-        label: 'Cuenta RUT',
-        valor: 'rut',
-      });
+      this.tiposCuenta.unshift({ label: 'Cuenta RUT', valor: 'rut' });
     }
-
+    // Reset tipo si ya no corresponde
     const tipoActual = this.form.value.tipoCuenta;
     const existeTipo = this.tiposCuenta.find((t) => t.valor === tipoActual);
-    if (!existeTipo) {
-      this.form.patchValue({ tipoCuenta: null });
-    }
+    if (!existeTipo) this.form.patchValue({ tipoCuenta: null });
+    this.ajustarValidacionNumeroCuenta(this.form.value.tipoCuenta);
   }
 
   seleccionarTipoCuenta(tipo: { valor: string; label: string }) {
@@ -166,13 +149,8 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
     let valor = input.value.replace(/\D/g, '');
 
     let max = 12;
-    if (tipoCuenta === 'rut') {
-      max = 8;
-    }
-
-    if (valor.length > max) {
-      valor = valor.slice(0, max);
-    }
+    if (tipoCuenta === 'rut') max = 8;
+    if (valor.length > max) valor = valor.slice(0, max);
 
     this.form.patchValue({ numeroCuenta: valor }, { emitEvent: false });
   }
@@ -180,12 +158,10 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
   ajustarValidacionNumeroCuenta(tipoCuenta: string) {
     let min = 12;
     let max = 12;
-
     if (tipoCuenta === 'rut') {
       min = 7;
       max = 8;
     }
-
     this.form
       .get('numeroCuenta')
       ?.setValidators([
@@ -194,7 +170,6 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
         Validators.minLength(min),
         Validators.maxLength(max),
       ]);
-
     this.form.get('numeroCuenta')?.updateValueAndValidity();
   }
 
@@ -203,12 +178,9 @@ export class ModalTarjetaDepositosComponent implements OnInit, OnChanges {
       titular: '',
       banco: '',
       numeroCuenta: '',
-      vencimiento: '',
-      cvv: '',
       tipoCuenta: null,
       aceptarTerminos: false,
     });
-
     this.bancosFiltrados = [];
     this.tiposCuenta = [];
   }
