@@ -10,6 +10,9 @@
       <ion-text color="danger" *ngIf="formularioReporte.get('titulo')?.touched && formularioReporte.get('titulo')?.hasError('required')">
         El título es obligatorio.
       </ion-text>
+      <ion-text color="danger" *ngIf="formularioReporte.get('titulo')?.touched && formularioReporte.get('titulo')?.hasError('soloEspacios')">
+        El título no puede estar vacío o ser solo espacios.
+      </ion-text>
 
       <!-- Motivo -->
       <ion-item>
@@ -42,6 +45,9 @@
       <ion-text color="danger" *ngIf="formularioReporte.get('descripcion')?.touched && formularioReporte.get('descripcion')?.hasError('required')">
         Debes ingresar una descripción.
       </ion-text>
+      <ion-text color="danger" *ngIf="formularioReporte.get('descripcion')?.touched && formularioReporte.get('descripcion')?.hasError('soloEspacios')">
+        La descripción no puede estar vacía o ser solo espacios.
+      </ion-text>
       <ion-text color="danger" *ngIf="formularioReporte.get('descripcion')?.touched && formularioReporte.get('descripcion')?.hasError('maxlength')">
         La descripción no puede superar los 300 caracteres.
       </ion-text>
@@ -58,8 +64,11 @@
       <ion-text color="danger" *ngIf="formularioReporte.get('usuarioReportado')?.touched && formularioReporte.get('usuarioReportado')?.hasError('required')">
         Falta el usuario reportado.
       </ion-text>
+      <ion-text color="danger" *ngIf="formularioReporte.get('usuarioReportado')?.touched && formularioReporte.get('usuarioReportado')?.hasError('soloEspacios')">
+        El usuario reportado no puede estar vacío o ser solo espacios.
+      </ion-text>
 
-      <!-- Imágenes opcionales -->
+      <!-- Imágenes opcionales (igual que antes) -->
       <ion-item>
         <ion-label position="stacked">Imágenes (opcional)</ion-label>
         <label class="custom-file-button" for="upload">Seleccionar imágenes</label>

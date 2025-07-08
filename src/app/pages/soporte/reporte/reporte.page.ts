@@ -1,10 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { AlertController, ToastController } from '@ionic/angular';
 import imageCompression from 'browser-image-compression';
 import { reporte } from 'src/app/models/soporte/reporte.models';
 import { SoporteService } from 'src/app/services/soporte/soporte.service';
 import { ActivatedRoute } from '@angular/router';
+
+function noSoloEspacios(control: AbstractControl): ValidationErrors | null {
+  return control.value && control.value.trim() !== ''
+    ? null
+    : { soloEspacios: true };
+}
 
 @Component({
   selector: 'app-reporte',
@@ -24,23 +36,27 @@ export class ReportePage implements OnInit {
     private alertController: AlertController,
     private route: ActivatedRoute
   ) {
-      this.formularioReporte = this.fb.group({
-        titulo: ['', Validators.required],
-        descripcion: ['', [Validators.required, Validators.maxLength(300)]],
-        motivo: ['', Validators.required],
-        usuarioReportado: ['', Validators.required],
-      });
-  }
-
-  ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      const nombreReportado = params['usuarioReportado'];
-      if (nombreReportado) {
-        this.formularioReporte.patchValue({ usuarioReportado: nombreReportado });
-      }
+    this.formularioReporte = this.fb.group({
+      titulo: ['', [Validators.required, noSoloEspacios]],
+      descripcion: [
+        '',
+        [Validators.required, Validators.maxLength(300), noSoloEspacios],
+      ],
+      motivo: ['', Validators.required],
+      usuarioReportado: ['', [Validators.required, noSoloEspacios]],
     });
   }
 
+  ngOnInit() {
+    this.route.queryParams.subscribe((params) => {
+      const nombreReportado = params['usuarioReportado'];
+      if (nombreReportado) {
+        this.formularioReporte.patchValue({
+          usuarioReportado: nombreReportado,
+        });
+      }
+    });
+  }
 
   // ========================= Enviar Reporte =========================
   async enviarReporte() {
@@ -64,17 +80,16 @@ export class ReportePage implements OnInit {
       reporteData.imagenes = this.imagenesProcesadas;
     }
 
-      try {
-        await this.soporteService.enviarReporte(reporteData);
-        this.mostrarToast('Reporte enviado correctamente');
-        this.formularioReporte.reset();
-        this.imagenesProcesadas = [];
-        this.imagenesSeleccionadas = []; 
-      } catch (error) {
-        console.error('Error al enviar reporte:', error);
-        this.mostrarToast('Error al enviar el reporte', 'danger');
-      }
-
+    try {
+      await this.soporteService.enviarReporte(reporteData);
+      this.mostrarToast('Reporte enviado correctamente');
+      this.formularioReporte.reset();
+      this.imagenesProcesadas = [];
+      this.imagenesSeleccionadas = [];
+    } catch (error) {
+      console.error('Error al enviar reporte:', error);
+      this.mostrarToast('Error al enviar el reporte', 'danger');
+    }
   }
 
   // ========================= Métodos de imagenes =========================
@@ -100,29 +115,29 @@ export class ReportePage implements OnInit {
     }
   }
 
-procesarImagenes(event: any) {
-  const files: FileList = event.target.files;
+  procesarImagenes(event: any) {
+    const files: FileList = event.target.files;
 
-  this.imagenesSeleccionadas = [];
-  this.imagenesProcesadas = []; 
+    this.imagenesSeleccionadas = [];
+    this.imagenesProcesadas = [];
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
 
-    const reader = new FileReader();
+      const reader = new FileReader();
 
-    reader.onload = (e: any) => {
-      this.imagenesSeleccionadas.push({
-        file: file,
-        preview: e.target.result,
-      });
-    };
+      reader.onload = (e: any) => {
+        this.imagenesSeleccionadas.push({
+          file: file,
+          preview: e.target.result,
+        });
+      };
 
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
 
-    this.compressAndReadImage(file);
+      this.compressAndReadImage(file);
+    }
   }
-}
 
   eliminarImagen(index: number) {
     this.imagenesSeleccionadas.splice(index, 1);
@@ -162,4 +177,3 @@ procesarImagenes(event: any) {
     return Array.isArray(val);
   }
 }
-
