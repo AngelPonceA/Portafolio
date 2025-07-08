@@ -14,8 +14,10 @@
     #ofertaForm="ngForm"
     (ngSubmit)="guardarOferta(ofertaForm)"
     class="form-oferta"
+    novalidate
   >
     <ng-container *ngIf="nuevaOfertaForm">
+      <!-- PRECIO OFERTA -->
       <ion-item>
         <ion-label position="floating">Precio oferta</ion-label>
         <ion-input
@@ -24,41 +26,60 @@
           name="precio_oferta"
           min="1"
           required
+          (ionBlur)="tocarCampo('precio_oferta')"
         ></ion-input>
       </ion-item>
+      <ion-text
+        color="danger"
+        *ngIf="tocado.precio_oferta && !precioOfertaValido()"
+      >
+        El precio de la oferta debe ser mayor a 0 y menor o igual al precio
+        original (${{ initialProductData?.precio }}).
+      </ion-text>
 
+      <!-- FECHA INICIO -->
       <ion-item>
         <ion-label position="floating">Fecha de inicio</ion-label>
         <ion-datetime
           [(ngModel)]="nuevaOfertaForm.fecha_inicio"
           name="fecha_inicio"
           locale="es-CL"
-          display-format="DD [de] MMMM [de] YYYY, HH:mm"
+          display-format="dd/MM/yyyy HH:mm"
           picker-format="DD MM YYYY HH mm"
           presentation="date-time"
           [showDefaultTimeLabel]="false"
           required
-        >
-        </ion-datetime>
+          (ionBlur)="tocarCampo('fecha_inicio')"
+        ></ion-datetime>
       </ion-item>
+      <ion-text
+        color="danger"
+        *ngIf="tocado.fecha_inicio && !fechaInicioValida()"
+      >
+        La fecha de inicio debe ser igual o posterior a ahora.
+      </ion-text>
 
+      <!-- FECHA FIN -->
       <ion-item>
         <ion-label position="floating">Fecha de fin</ion-label>
         <ion-datetime
           [(ngModel)]="nuevaOfertaForm.fecha_fin"
           name="fecha_fin"
           locale="es-CL"
-          display-format="DD [de] MMMM [de] YYYY, HH:mm"
+          display-format="dd/MM/yyyy HH:mm"
           picker-format="DD MM YYYY HH mm"
           presentation="date-time"
           [showDefaultTimeLabel]="false"
           required
-        >
-        </ion-datetime>
+          (ionBlur)="tocarCampo('fecha_fin')"
+        ></ion-datetime>
       </ion-item>
+      <ion-text color="danger" *ngIf="tocado.fecha_fin && !fechaFinValida()">
+        La fecha de fin debe ser igual o posterior a la de inicio.
+      </ion-text>
     </ng-container>
 
-    <ion-button expand="block" type="submit" [disabled]="ofertaForm.invalid">
+    <ion-button expand="block" type="submit" [disabled]="!formularioValido()">
       <ion-icon name="save-outline" slot="start"></ion-icon>
       Guardar Oferta
     </ion-button>

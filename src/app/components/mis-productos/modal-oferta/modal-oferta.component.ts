@@ -53,6 +53,12 @@ export class ModalOfertaComponent implements OnInit {
     this.inicializarFormularioOferta();
   }
 
+  tocado: any = {};
+
+  tocarCampo(campo: string) {
+    this.tocado[campo] = true;
+  }
+
   async guardarOferta(form: NgForm) {
     if (!form.valid || !this.initialProductData) {
       this.mostrarToast('Complete todos los campos', 'warning');
@@ -210,5 +216,27 @@ export class ModalOfertaComponent implements OnInit {
       fecha_inicio: fechaInicio,
       fecha_fin: fechaInicio,
     };
+  }
+
+  precioOfertaValido(): boolean {
+    const v = Number(this.nuevaOfertaForm.precio_oferta);
+    const precioOriginal = this.initialProductData?.precio ?? 0;
+    return v > 0 && v <= precioOriginal;
+  }
+  fechaInicioValida(): boolean {
+    const inicio = new Date(this.nuevaOfertaForm.fecha_inicio);
+    return inicio >= new Date();
+  }
+  fechaFinValida(): boolean {
+    const inicio = new Date(this.nuevaOfertaForm.fecha_inicio);
+    const fin = new Date(this.nuevaOfertaForm.fecha_fin);
+    return fin >= inicio && fin >= new Date();
+  }
+  formularioValido(): boolean {
+    return (
+      this.precioOfertaValido() &&
+      this.fechaInicioValida() &&
+      this.fechaFinValida()
+    );
   }
 }

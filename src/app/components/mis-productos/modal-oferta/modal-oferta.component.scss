@@ -83,3 +83,10 @@ ion-button {
     --border-color: #d1b89e;
   }
 }
+
+ion-text[color="danger"] {
+  font-size: 13px;
+  margin-left: 8px;
+  margin-bottom: 6px;
+  display: block;
+}
