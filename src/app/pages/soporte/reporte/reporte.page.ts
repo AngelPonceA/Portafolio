@@ -24,12 +24,12 @@ export class ReportePage implements OnInit {
     private alertController: AlertController,
     private route: ActivatedRoute
   ) {
-    this.formularioReporte = this.fb.group({
-      titulo: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      motivo: ['', Validators.required],
-      usuarioReportado: ['', Validators.required],
-    });
+      this.formularioReporte = this.fb.group({
+        titulo: ['', Validators.required],
+        descripcion: ['', [Validators.required, Validators.maxLength(300)]],
+        motivo: ['', Validators.required],
+        usuarioReportado: ['', Validators.required],
+      });
   }
 
   ngOnInit() {
@@ -45,6 +45,7 @@ export class ReportePage implements OnInit {
   // ========================= Enviar Reporte =========================
   async enviarReporte() {
     if (this.formularioReporte.invalid) {
+      this.formularioReporte.markAllAsTouched();
       this.mostrarToast('Por favor completa todos los campos', 'danger');
       return;
     }

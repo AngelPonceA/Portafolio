@@ -2,23 +2,35 @@
   <ion-content class="ion-padding">
     <ion-title>Reportar Usuario</ion-title>
     <form [formGroup]="formularioReporte" (ngSubmit)="enviarReporte()">
+      <!-- Título -->
       <ion-item>
         <ion-label position="stacked">Título</ion-label>
         <ion-input formControlName="titulo" required></ion-input>
       </ion-item>
+      <ion-text color="danger" *ngIf="formularioReporte.get('titulo')?.touched && formularioReporte.get('titulo')?.hasError('required')">
+        El título es obligatorio.
+      </ion-text>
 
+      <!-- Motivo -->
       <ion-item>
         <ion-label position="stacked">Motivo</ion-label>
-        <ion-select formControlName="motivo" interface="popover" required>
+        <ion-select 
+          formControlName="motivo"
+          interface="popover"
+          required
+          (ionChange)="formularioReporte.get('motivo')?.markAsTouched()"
+        >
           <ion-select-option value="acoso">Acoso</ion-select-option>
-          <ion-select-option value="contenido inapropiado"
-            >Contenido inapropiado</ion-select-option
-          >
+          <ion-select-option value="contenido inapropiado">Contenido inapropiado</ion-select-option>
           <ion-select-option value="spam">Spam</ion-select-option>
           <ion-select-option value="otro">Otro</ion-select-option>
         </ion-select>
       </ion-item>
+      <ion-text color="danger" *ngIf="formularioReporte.get('motivo')?.touched && formularioReporte.get('motivo')?.hasError('required')">
+        Debes seleccionar un motivo.
+      </ion-text>
 
+      <!-- Descripción -->
       <ion-item>
         <ion-label position="stacked">Descripción</ion-label>
         <ion-textarea
@@ -27,7 +39,14 @@
           required
         ></ion-textarea>
       </ion-item>
+      <ion-text color="danger" *ngIf="formularioReporte.get('descripcion')?.touched && formularioReporte.get('descripcion')?.hasError('required')">
+        Debes ingresar una descripción.
+      </ion-text>
+      <ion-text color="danger" *ngIf="formularioReporte.get('descripcion')?.touched && formularioReporte.get('descripcion')?.hasError('maxlength')">
+        La descripción no puede superar los 300 caracteres.
+      </ion-text>
 
+      <!-- Usuario Reportado -->
       <ion-item>
         <ion-label position="stacked">Usuario Reportado</ion-label>
         <ion-input
@@ -36,14 +55,14 @@
           required
         ></ion-input>
       </ion-item>
+      <ion-text color="danger" *ngIf="formularioReporte.get('usuarioReportado')?.touched && formularioReporte.get('usuarioReportado')?.hasError('required')">
+        Falta el usuario reportado.
+      </ion-text>
 
-
-      <!-- Imagenes opcionales -->
+      <!-- Imágenes opcionales -->
       <ion-item>
         <ion-label position="stacked">Imágenes (opcional)</ion-label>
-        <label class="custom-file-button" for="upload"
-          >Seleccionar imágenes</label
-        >
+        <label class="custom-file-button" for="upload">Seleccionar imágenes</label>
         <input
           id="upload"
           class="input-img"
@@ -56,10 +75,7 @@
 
       <!-- Mostrar miniaturas y botón de eliminar -->
       <div class="preview-container" *ngIf="imagenesSeleccionadas.length > 0">
-        <div
-          class="preview-image"
-          *ngFor="let img of imagenesSeleccionadas; let i = index"
-        >
+        <div class="preview-image" *ngFor="let img of imagenesSeleccionadas; let i = index">
           <img [src]="img.preview" alt="Imagen seleccionada" />
           <button class="delete-btn" (click)="eliminarImagen(i)">×</button>
         </div>
@@ -67,9 +83,7 @@
 
       <!-- Contador -->
       <div class="imagenes-info" *ngIf="imagenesSeleccionadas.length > 0">
-        {{ imagenesSeleccionadas.length }} imagen{{ imagenesSeleccionadas.length
-        > 1 ? 'es' : '' }} seleccionada{{ imagenesSeleccionadas.length > 1 ? 's'
-        : '' }}
+        {{ imagenesSeleccionadas.length }} imagen{{ imagenesSeleccionadas.length > 1 ? 'es' : '' }} seleccionada{{ imagenesSeleccionadas.length > 1 ? 's' : '' }}
       </div>
 
       <ion-button
