@@ -46,19 +46,16 @@
         expand="block"
         class="login-button"
         (click)="iniciarSesion(email, password)"
+        [disabled]="email.trim() === '' || password.trim() === ''"
+        >
       >
         Iniciar sesión
       </ion-button>
 
       <div class="register-link">
         <h6>¿No tienes una cuenta?</h6>
-        <ion-button
-          expand="block"
-          class="login-button"
-          (click)="iniciarSesion(email, password)"
-          [disabled]="email.trim() === '' || password.trim() === ''"
-        >
-          Iniciar sesión
+        <ion-button fill="clear" routerLink="/registro" class="link-cafe">
+          Regístrate
         </ion-button>
       </div>
     </div>
