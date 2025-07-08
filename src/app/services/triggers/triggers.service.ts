@@ -79,7 +79,7 @@ export class TriggersService {
               const detalleProducto = await this.crudService.obtenerDetalleProducto(producto_id);
               const imagen = detalleProducto?.imagen;
 
-              const estadosNotificables = ['en despacho', 'recibido', 'en proceso', 'cancelado', 'reembolsado'];
+              const estadosNotificables = ['en despacho', 'recibido', 'en proceso', 'cancelado', 'reembolsado', 'enviado'];
 
               if (estadosNotificables.includes(estadoActual)) {
 
@@ -99,6 +99,8 @@ export class TriggersService {
                 } else if (estadoActual == 'cancelado') {
                   descripcion = `Tu pedido ${detalle_producto} ha sido ${estadoActual}.`
                 } else if (estadoActual == 'reembolsado') {
+                  descripcion = `Tu pedido ${detalle_producto} ha sido ${estadoActual}.`
+                } else if (estadoActual == 'enviado') {
                   descripcion = `Tu pedido ${detalle_producto} ha sido ${estadoActual}.`
                 }
 

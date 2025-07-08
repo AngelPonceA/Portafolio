@@ -107,11 +107,25 @@ export class PerfilPage implements OnInit {
 
     this.webpayService.confirmarTransaccion(token).subscribe({next: async (respuesta: any) => {
 
-      if (respuesta.status != 'AUTHORIZED' || respuesta.status == 'FAILED') {
-        this.ionicService.ocultarCargando();
-        this.ionicService.mostrarAlertaPromesa('Pago rechazado', 'La transacción fue rechazada por Webpay.');
+      if (respuesta && respuesta.status == 'FAILED') {
+        await this.ionicService.mostrarAlertaPromesa(
+          'Pago rechazado',
+          'La transacción fue rechazada por Webpay.'
+        );
         return;
-      }
+      } else if (respuesta && respuesta.status == 'CANCELLED') {
+          await this.ionicService.mostrarAlertaPromesa(
+            'Pago cancelado',
+            'La transacción ha sido cancelada.'
+          );
+          return;
+        } else if (respuesta && respuesta.status == 'EXPIRED') {
+            await this.ionicService.mostrarAlertaPromesa(
+              'Pago expirado',
+              'La sesión de pago expiró antes de completarse.'
+            );
+            return;
+          }
 
         await this.authService.actualizarMembresia(true);
         this.ionicService.ocultarCargando();
