@@ -229,3 +229,10 @@ ion-button {
     z-index: 10;
   }
 }
+
+ion-text[color="danger"] {
+  font-size: 13px;
+  margin-left: 8px;
+  margin-bottom: 6px;
+  display: block;
+}

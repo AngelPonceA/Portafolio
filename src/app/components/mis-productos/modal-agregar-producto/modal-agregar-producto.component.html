@@ -1,192 +1,242 @@
-
-    <ion-header translucent>
-      <ion-toolbar>
-        <ion-title>Nuevo producto</ion-title>
-        <ion-buttons slot="end">
-          <ion-button (click)="cerrarModal()">
-            <ion-icon name="close-outline"></ion-icon>
-          </ion-button>
-        </ion-buttons>
-      </ion-toolbar>
-    </ion-header>
-    
-  <ion-content fullscreen>
-    <form (ngSubmit)="guardarProducto()" class="form-producto">
-      <div class="seccion-contenedor">
-        <ion-list-header>
-          <ion-label>Información Básica</ion-label>
-        </ion-list-header>
-
-        <ion-item>
-          <ion-label position="floating">Nombre del Producto</ion-label>
-          <ion-input [(ngModel)]="nuevoProductoForm.titulo" name="titulo" required></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Descripción</ion-label>
-          <ion-textarea [(ngModel)]="nuevoProductoForm.descripcion" name="descripcion" rows="3"></ion-textarea>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Estado</ion-label>
-          <ion-select [(ngModel)]="nuevoProductoForm.estado" name="estado" required>
-            <ion-select-option *ngFor="let estado of estados" [value]="estado">{{ estado }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-label>Categoría</ion-label>
-          <ion-select [(ngModel)]="nuevoProductoForm.categoria" name="categoria">
-            <ion-select-option *ngFor="let categoria of categorias" [value]="categoria.nombre">
-              {{ categoria.nombre }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-label>Etiquetas</ion-label>
-        <div class="etiquetas-scroll">
-          <div class="chip-wrapper">
-            <ion-chip *ngFor="let etiqueta of nuevoProductoForm.etiquetas">
-              <ion-label>{{ etiqueta }}</ion-label>
-              <ion-icon name="close" (click)="eliminarEtiqueta(etiqueta)" class="close-icon"></ion-icon>
-            </ion-chip>
-          </div>
-        </div>
-
-        <ion-item>
-          <ion-input
-            placeholder="Nueva Etiqueta"
-            [(ngModel)]="nuevaEtiqueta"
-            name="nuevaEtiqueta"
-            (keyup.enter)="agregarEtiqueta()"
-          ></ion-input>
-          <ion-button slot="end" (click)="agregarEtiqueta()" [disabled]="nuevoProductoForm.etiquetas.length >= 10">
-            Agregar
-          </ion-button>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Precio (CLP)</ion-label>
-          <ion-input
-            type="number"
-            [(ngModel)]="nuevoProductoForm.precio"
-            name="precio"
-            min="1"
-            required
-          ></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Stock disponible</ion-label>
-          <ion-input
-            type="number"
-            [(ngModel)]="nuevoProductoForm.stock"
-            name="stock"
-            min="1"
-            required
-          ></ion-input>
-        </ion-item>
-      </div>
-
-      <div class="seccion-contenedor">
-        <ion-list-header>
-          <ion-label>Dirección de Origen</ion-label>
-        </ion-list-header>
-
-        <ion-item>
-          <ion-label position="stacked">Región</ion-label>
-          <ion-select [(ngModel)]="nuevoProductoForm.direccionOrigen.region" (ionChange)="onRegionChange($event)">
-            <ion-select-option *ngFor="let region of regiones" [value]="region.nombre">
-              {{ region.nombre }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="stacked">Comuna</ion-label>
-          <ion-select
-            [(ngModel)]="nuevoProductoForm.direccionOrigen.comuna"
-            name="comuna"
-            [disabled]="!nuevoProductoForm.direccionOrigen.region"
-          >
-            <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</ion-select-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Calle</ion-label>
-          <ion-input [(ngModel)]="nuevoProductoForm.direccionOrigen.calle" name="calle" required></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Número</ion-label>
-          <ion-input
-            type="number"
-            [(ngModel)]="nuevoProductoForm.direccionOrigen.numero"
-            name="numero"
-            required
-          ></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="floating">Departamento (Opcional)</ion-label>
-          <ion-input [(ngModel)]="nuevoProductoForm.direccionOrigen.departamento" name="departamento"></ion-input>
-        </ion-item>
-
-        <ion-item>
-          <ion-label position="stacked">Descripción (Opcional)</ion-label>
-          <ion-textarea
-            [(ngModel)]="nuevoProductoForm.direccionOrigen.descripcion"
-            name="descripcion"
-            rows="2"
-          ></ion-textarea>
-        </ion-item>
-      </div>
-
-      <div class="seccion-contenedor">
-        <ion-list-header>
-          <ion-label>Imágenes del Producto</ion-label>
-        </ion-list-header>
-
-        <ion-item>
-          <ion-label>Selecciona Imágenes</ion-label>
-          <input
-            id="fileEditInput"
-            type="file"
-            multiple
-            accept="image/*"
-            class="hidden-file-input"
-            (change)="procesarImagenes($event)"
-          />
-          <label for="fileEditInput" class="custom-file-button">
-            Elegir Archivos
-          </label>
-        </ion-item>
-      </div>
-
-        <div *ngIf="nuevoProductoForm.imagen.length > 0" class="imagenes-grid">
-          <ion-grid>
-            <ion-row>
-              <ion-col size="4" *ngFor="let img of nuevoProductoForm.imagen; let i = index">
-                <div class="imagen-container">
-                  <img
-                    [src]="img || 'assets/img/placeholder.png'"
-                    class="imagen-preview"
-                  />
-                  <ion-icon
-                    name="close-circle"
-                    class="boton-eliminar-imagen"
-                    (click)="eliminarImagen(i)"
-                  ></ion-icon>
-                </div>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </div>
-
-      <ion-button expand="block" type="submit">
-        <ion-icon name="save-outline" slot="start"></ion-icon>
-        Guardar Producto
+<ion-header translucent>
+  <ion-toolbar>
+    <ion-title>Nuevo producto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrarModal()">
+        <ion-icon name="close-outline"></ion-icon>
       </ion-button>
-    </form>
-  </ion-content>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <form (ngSubmit)="guardarProducto()" class="form-producto" autocomplete="off" novalidate>
+    <div class="seccion-contenedor">
+      <ion-list-header>
+        <ion-label>Información Básica</ion-label>
+      </ion-list-header>
+
+      <!-- Título -->
+      <ion-item>
+        <ion-label position="floating">Nombre del Producto</ion-label>
+        <ion-input [(ngModel)]="nuevoProductoForm.titulo" name="titulo" required (ionBlur)="tocarCampo('titulo')"></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.titulo && !tituloValido()">
+        El nombre debe tener al menos 3 caracteres y no puede ser solo espacios.
+      </ion-text>
+
+      <!-- Descripción -->
+      <ion-item>
+        <ion-label position="floating">Descripción</ion-label>
+        <ion-textarea [(ngModel)]="nuevoProductoForm.descripcion" name="descripcion" rows="3" required (ionBlur)="tocarCampo('descripcion')"></ion-textarea>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.descripcion && !descripcionValida()">
+        La descripción debe tener al menos 10 caracteres y no puede ser solo espacios.
+      </ion-text>
+
+      <!-- Estado -->
+      <ion-item>
+        <ion-label>Estado</ion-label>
+        <ion-select [(ngModel)]="nuevoProductoForm.estado" name="estado" required (ionBlur)="tocarCampo('estado')">
+          <ion-select-option *ngFor="let estado of estados" [value]="estado">{{ estado }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.estado && !estadoValido()">
+        Debes seleccionar un estado válido.
+      </ion-text>
+
+      <!-- Categoría -->
+      <ion-item>
+        <ion-label>Categoría</ion-label>
+        <ion-select [(ngModel)]="nuevoProductoForm.categoria" name="categoria" required (ionBlur)="tocarCampo('categoria')">
+          <ion-select-option *ngFor="let categoria of categorias" [value]="categoria.nombre">
+            {{ categoria.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.categoria && !categoriaValida()">
+        Debes seleccionar una categoría.
+      </ion-text>
+
+      <!-- Etiquetas -->
+      <ion-label>Etiquetas</ion-label>
+      <div class="etiquetas-scroll">
+        <div class="chip-wrapper">
+          <ion-chip *ngFor="let etiqueta of nuevoProductoForm.etiquetas">
+            <ion-label>{{ etiqueta }}</ion-label>
+            <ion-icon name="close" (click)="eliminarEtiqueta(etiqueta)" class="close-icon"></ion-icon>
+          </ion-chip>
+        </div>
+      </div>
+      <ion-item>
+        <ion-input
+          placeholder="Nueva Etiqueta"
+          [(ngModel)]="nuevaEtiqueta"
+          name="nuevaEtiqueta"
+          (keyup.enter)="agregarEtiqueta()"
+        ></ion-input>
+        <ion-button slot="end" (click)="agregarEtiqueta()" [disabled]="nuevoProductoForm.etiquetas.length >= 10">
+          Agregar
+        </ion-button>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.etiquetas && !etiquetasValidas()">
+        Debes agregar al menos una etiqueta.
+      </ion-text>
+
+      <!-- Precio -->
+      <ion-item>
+        <ion-label position="floating">Precio (CLP)</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="nuevoProductoForm.precio"
+          name="precio"
+          min="1"
+          required
+          (ionBlur)="tocarCampo('precio')"
+        ></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.precio && !precioValido()">
+        El precio debe ser un número mayor a 0.
+      </ion-text>
+
+      <!-- Stock -->
+      <ion-item>
+        <ion-label position="floating">Stock disponible</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="nuevoProductoForm.stock"
+          name="stock"
+          min="1"
+          required
+          (ionBlur)="tocarCampo('stock')"
+        ></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.stock && !stockValido()">
+        El stock debe ser un número igual o mayor a 0.
+      </ion-text>
+    </div>
+
+    <div class="seccion-contenedor">
+      <ion-list-header>
+        <ion-label>Dirección de Origen</ion-label>
+      </ion-list-header>
+
+      <!-- Región -->
+      <ion-item>
+        <ion-label position="stacked">Región</ion-label>
+        <ion-select [(ngModel)]="nuevoProductoForm.direccionOrigen.region" name="region" (ionChange)="onRegionChange($event)" required (ionBlur)="tocarCampo('region')">
+          <ion-select-option *ngFor="let region of regiones" [value]="region.nombre">
+            {{ region.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.region && !regionValida()">
+        Debes seleccionar una región.
+      </ion-text>
+
+      <!-- Comuna -->
+      <ion-item>
+        <ion-label position="stacked">Comuna</ion-label>
+        <ion-select
+          [(ngModel)]="nuevoProductoForm.direccionOrigen.comuna"
+          name="comuna"
+          [disabled]="!nuevoProductoForm.direccionOrigen.region"
+          required
+          (ionBlur)="tocarCampo('comuna')"
+        >
+          <ion-select-option *ngFor="let comuna of comunas" [value]="comuna">{{ comuna }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.comuna && !comunaValida()">
+        Debes seleccionar una comuna.
+      </ion-text>
+
+      <!-- Calle -->
+      <ion-item>
+        <ion-label position="floating">Calle</ion-label>
+        <ion-input [(ngModel)]="nuevoProductoForm.direccionOrigen.calle" name="calle" required (ionBlur)="tocarCampo('calle')"></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.calle && !calleValida()">
+        La calle es obligatoria.
+      </ion-text>
+
+      <!-- Número -->
+      <ion-item>
+        <ion-label position="floating">Número</ion-label>
+        <ion-input
+          type="number"
+          [(ngModel)]="nuevoProductoForm.direccionOrigen.numero"
+          name="numero"
+          required
+          (ionBlur)="tocarCampo('numero')"
+        ></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.numero && !numeroValido()">
+        El número es obligatorio y debe ser mayor a 0.
+      </ion-text>
+
+      <!-- Departamento y Descripción (opcionales) -->
+      <ion-item>
+        <ion-label position="floating">Departamento (Opcional)</ion-label>
+        <ion-input [(ngModel)]="nuevoProductoForm.direccionOrigen.departamento" name="departamento"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Descripción (Opcional)</ion-label>
+        <ion-textarea
+          [(ngModel)]="nuevoProductoForm.direccionOrigen.descripcion"
+          name="descripcion"
+          rows="2"
+        ></ion-textarea>
+      </ion-item>
+    </div>
+
+    <div class="seccion-contenedor">
+      <ion-list-header>
+        <ion-label>Imágenes del Producto</ion-label>
+      </ion-list-header>
+
+      <ion-item>
+        <ion-label>Selecciona Imágenes</ion-label>
+        <input
+          id="fileEditInput"
+          type="file"
+          multiple
+          accept="image/*"
+          class="hidden-file-input"
+          (change)="procesarImagenes($event)"
+        />
+        <label for="fileEditInput" class="custom-file-button">
+          Elegir Archivos
+        </label>
+      </ion-item>
+      <ion-text color="danger" *ngIf="tocado.imagen && !imagenesValidas()">
+        Debes subir al menos una imagen.
+      </ion-text>
+    </div>
+
+    <div *ngIf="nuevoProductoForm.imagen.length > 0" class="imagenes-grid">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="4" *ngFor="let img of nuevoProductoForm.imagen; let i = index">
+            <div class="imagen-container">
+              <img
+                [src]="img || 'assets/img/placeholder.png'"
+                class="imagen-preview"
+              />
+              <ion-icon
+                name="close-circle"
+                class="boton-eliminar-imagen"
+                (click)="eliminarImagen(i)"
+              ></ion-icon>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <ion-button expand="block" type="submit" [disabled]="!formularioValido()">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      Guardar Producto
+    </ion-button>
+  </form>
+</ion-content>

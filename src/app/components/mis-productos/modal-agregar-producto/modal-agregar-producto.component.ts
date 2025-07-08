@@ -1,11 +1,11 @@
 import { Component, Output, EventEmitter, Input } from '@angular/core';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
   IonicModule,
   ToastController,
   AlertController,
-  ModalController
+  ModalController,
 } from '@ionic/angular';
 import imageCompression from 'browser-image-compression';
 
@@ -21,16 +21,11 @@ import { UbicacionService } from 'src/app/services/ubicacion/ubicacion.service';
   selector: 'app-modal-agregar-producto',
   templateUrl: './modal-agregar-producto.component.html',
   styleUrls: ['./modal-agregar-producto.component.scss'],
-  imports: [
-    CommonModule,
-    FormsModule,
-    IonicModule,
-  ],
+  imports: [CommonModule, FormsModule, IonicModule],
 })
-export class ModalAgregarProductoComponent{
-
-  @Input() initialProductData?: Producto; 
-  @Input() userId: string = ''; 
+export class ModalAgregarProductoComponent {
+  @Input() initialProductData?: Producto;
+  @Input() userId: string = '';
 
   // Salidas para notificar al componente padre sobre acciones
   @Output() productSaved = new EventEmitter<Producto>();
@@ -55,9 +50,8 @@ export class ModalAgregarProductoComponent{
       calle: '',
       numero: 0,
       departamento: '',
-      descripcion: ''
-    }
-    
+      descripcion: '',
+    },
   };
 
   regiones: any[] = [];
@@ -65,12 +59,13 @@ export class ModalAgregarProductoComponent{
   estados = ['nuevo', 'segunda mano'];
   nuevaEtiqueta = '';
   categorias: Categoria[] = [];
+  tocado: any = {};
 
   constructor(
     private toastController: ToastController,
-    private alertController: AlertController, 
+    private alertController: AlertController,
     private crudService: CrudService,
-    private modalController: ModalController, 
+    private modalController: ModalController,
     private authService: AuthService,
     private ubicacionService: UbicacionService
   ) {}
@@ -81,11 +76,13 @@ export class ModalAgregarProductoComponent{
   }
 
   onRegionChange(event: any) {
-  const regionName = event.detail.value;
-  const region = this.regiones.find(r => r.nombre.trim().toLowerCase() === regionName.trim().toLowerCase());
-  this.comunas = region ? region.comunas : [];
-  this.nuevoProductoForm.direccionOrigen.comuna = '';
-}
+    const regionName = event.detail.value;
+    const region = this.regiones.find(
+      (r) => r.nombre.trim().toLowerCase() === regionName.trim().toLowerCase()
+    );
+    this.comunas = region ? region.comunas : [];
+    this.nuevoProductoForm.direccionOrigen.comuna = '';
+  }
 
   // Lógica para guardar el producto
   async guardarProducto() {
@@ -97,7 +94,9 @@ export class ModalAgregarProductoComponent{
         return;
       }
 
-      const { id, producto } = await this.crudService.guardarProducto(this.nuevoProductoForm);
+      const { id, producto } = await this.crudService.guardarProducto(
+        this.nuevoProductoForm
+      );
       if (!id) {
         throw new Error('No se pudo guardar el producto');
       }
@@ -117,12 +116,18 @@ export class ModalAgregarProductoComponent{
       typeof txt === 'string' && txt.trim().length >= min;
 
     if (!textoValido(producto.titulo, 3)) {
-      this.mostrarToast('El título debe tener al menos 3 caracteres válidos', 'warning');
+      this.mostrarToast(
+        'El título debe tener al menos 3 caracteres válidos',
+        'warning'
+      );
       return false;
     }
 
     if (!textoValido(producto.descripcion, 10)) {
-      this.mostrarToast('La descripción debe tener al menos 10 caracteres válidos', 'warning');
+      this.mostrarToast(
+        'La descripción debe tener al menos 10 caracteres válidos',
+        'warning'
+      );
       return false;
     }
 
@@ -131,13 +136,24 @@ export class ModalAgregarProductoComponent{
       return false;
     }
 
-    if (typeof producto.precio !== 'number' || isNaN(producto.precio) || producto.precio <= 0) {
+    if (
+      typeof producto.precio !== 'number' ||
+      isNaN(producto.precio) ||
+      producto.precio <= 0
+    ) {
       this.mostrarToast('El precio debe ser un número mayor a 0', 'warning');
       return false;
     }
 
-    if (typeof producto.stock !== 'number' || isNaN(producto.stock) || producto.stock < 0) {
-      this.mostrarToast('El stock debe ser un número igual o mayor a 0', 'warning');
+    if (
+      typeof producto.stock !== 'number' ||
+      isNaN(producto.stock) ||
+      producto.stock < 0
+    ) {
+      this.mostrarToast(
+        'El stock debe ser un número igual o mayor a 0',
+        'warning'
+      );
       return false;
     }
 
@@ -152,8 +168,14 @@ export class ModalAgregarProductoComponent{
     }
 
     const estadosValidos = ['nuevo', 'segunda mano'];
-    if (!textoValido(producto.estado) || !estadosValidos.includes(producto.estado.trim().toLowerCase())) {
-      this.mostrarToast('El estado debe ser "nuevo" o "segunda mano"', 'warning');
+    if (
+      !textoValido(producto.estado) ||
+      !estadosValidos.includes(producto.estado.trim().toLowerCase())
+    ) {
+      this.mostrarToast(
+        'El estado debe ser "nuevo" o "segunda mano"',
+        'warning'
+      );
       return false;
     }
 
@@ -163,15 +185,19 @@ export class ModalAgregarProductoComponent{
       !textoValido(dir.region) ||
       !textoValido(dir.comuna) ||
       !textoValido(dir.calle) ||
-      typeof dir.numero !== 'number' || isNaN(dir.numero) || dir.numero <= 0
+      typeof dir.numero !== 'number' ||
+      isNaN(dir.numero) ||
+      dir.numero <= 0
     ) {
-      this.mostrarToast('Completa correctamente la dirección de origen', 'warning');
+      this.mostrarToast(
+        'Completa correctamente la dirección de origen',
+        'warning'
+      );
       return false;
     }
 
     return true;
   }
-
 
   // Métodos para etiquetas
   agregarEtiqueta() {
@@ -182,9 +208,10 @@ export class ModalAgregarProductoComponent{
     }
   }
 
-
   eliminarEtiqueta(etiqueta: string) {
-    this.nuevoProductoForm.etiquetas = this.nuevoProductoForm.etiquetas.filter((e) => e !== etiqueta);
+    this.nuevoProductoForm.etiquetas = this.nuevoProductoForm.etiquetas.filter(
+      (e) => e !== etiqueta
+    );
   }
 
   // Métodos para imágenes
@@ -238,7 +265,7 @@ export class ModalAgregarProductoComponent{
         error: (error) => {
           console.error('Error al obtener las categorías:', error);
           this.mostrarToast('Error al cargar las categorías', 'danger');
-        }
+        },
       });
     } catch (error) {
       console.error('Error al obtener las categorías:', error);
@@ -276,16 +303,92 @@ export class ModalAgregarProductoComponent{
       inventario_minimo: 0,
       auto_stock: false,
       imagen: [],
-      direccionOrigen: 
-      {
+      direccionOrigen: {
         region: '',
         comuna: '',
         calle: '',
         numero: 0,
         departamento: '',
-        descripcion: ''
-      }
+        descripcion: '',
+      },
     };
     this.nuevaEtiqueta = '';
+  }
+
+  tocarCampo(campo: string) {
+    this.tocado[campo] = true;
+  }
+
+  // ====== Métodos de validación por campo ======
+  tituloValido(): boolean {
+    const t = this.nuevoProductoForm.titulo;
+    return typeof t === 'string' && t.trim().length >= 3;
+  }
+  descripcionValida(): boolean {
+    const d = this.nuevoProductoForm.descripcion;
+    return typeof d === 'string' && d.trim().length >= 10;
+  }
+  estadoValido(): boolean {
+    const v = this.nuevoProductoForm.estado;
+    return ['nuevo', 'segunda mano'].includes((v || '').toLowerCase());
+  }
+  categoriaValida(): boolean {
+    return (
+      typeof this.nuevoProductoForm.categoria === 'string' &&
+      this.nuevoProductoForm.categoria.trim() !== ''
+    );
+  }
+  etiquetasValidas(): boolean {
+    return (
+      Array.isArray(this.nuevoProductoForm.etiquetas) &&
+      this.nuevoProductoForm.etiquetas.length > 0
+    );
+  }
+  precioValido(): boolean {
+    const p = this.nuevoProductoForm.precio;
+    return typeof p === 'number' && !isNaN(p) && p > 0;
+  }
+  stockValido(): boolean {
+    const s = this.nuevoProductoForm.stock;
+    return typeof s === 'number' && !isNaN(s) && s >= 0;
+  }
+  regionValida(): boolean {
+    const r = this.nuevoProductoForm.direccionOrigen.region;
+    return typeof r === 'string' && r.trim() !== '';
+  }
+  comunaValida(): boolean {
+    const c = this.nuevoProductoForm.direccionOrigen.comuna;
+    return typeof c === 'string' && c.trim() !== '';
+  }
+  calleValida(): boolean {
+    const c = this.nuevoProductoForm.direccionOrigen.calle;
+    return typeof c === 'string' && c.trim() !== '';
+  }
+  numeroValido(): boolean {
+    const n = this.nuevoProductoForm.direccionOrigen.numero;
+    return typeof n === 'number' && !isNaN(n) && n > 0;
+  }
+  imagenesValidas(): boolean {
+    return (
+      Array.isArray(this.nuevoProductoForm.imagen) &&
+      this.nuevoProductoForm.imagen.length > 0
+    );
+  }
+
+  formularioValido(): boolean {
+    return (
+      this.tituloValido() &&
+      this.descripcionValida() &&
+      this.estadoValido() &&
+      this.categoriaValida() &&
+      this.etiquetasValidas() &&
+      this.precioValido() &&
+      this.stockValido() &&
+      this.regionValida() &&
+      this.comunaValida() &&
+      this.calleValida() &&
+      this.numeroValido() &&
+      this.imagenesValidas()
+    );
   }
 }
