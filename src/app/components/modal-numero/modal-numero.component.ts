@@ -1,6 +1,7 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ModalController } from '@ionic/angular';
+
 @Component({
   selector: 'app-modal-numero',
   templateUrl: './modal-numero.component.html',
@@ -8,13 +9,11 @@ import { ModalController } from '@ionic/angular';
   standalone: false
 })
 export class ModalNumeroComponent implements OnInit {
-  @Output() cancel = new EventEmitter<void>();
-  @Output() submit = new EventEmitter<string>();
-
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder,
-              private modalCtrl: ModalController
+  constructor(
+    private fb: FormBuilder,
+    private modalCtrl: ModalController
   ) {}
 
   ngOnInit(): void {

@@ -10,21 +10,21 @@
           formControlName="telefono"
           placeholder="12345678"
           inputmode="numeric"
+          autocomplete="tel"
           pattern="[0-9]*"
+          maxlength="8"
           (ionInput)="onInputTelefono($event)"
         ></ion-input>
       </ion-item>
 
-      <ion-text color="danger" *ngIf="form.get('telefono')?.invalid && form.get('telefono')?.touched">
-        <p *ngIf="form.get('telefono')?.errors?.['pattern']">Solo se permiten números.</p>
-        <p *ngIf="form.get('telefono')?.errors?.['minlength'] || form.get('telefono')?.errors?.['maxlength']">
-          El número debe tener exactamente 8 dígitos.
-        </p>
+      <ion-text color="danger" *ngIf="form.get('telefono')?.touched && form.get('telefono')?.invalid">
+        <p *ngIf="form.get('telefono')?.errors?.['required']">El número es obligatorio.</p>
+        <p *ngIf="form.get('telefono')?.errors?.['pattern']">Solo se permiten números y deben ser exactamente 8 dígitos.</p>
       </ion-text>
 
       <div class="acciones">
-        <ion-button color="medium" fill="clear" (click)="cancelar()">Cancelar</ion-button>
-        <ion-button class="brown-button" fill="clear" type="submit" [disabled]="!form.valid">Guardar</ion-button>
+        <ion-button color="medium" fill="clear" type="button" (click)="cancelar()">Cancelar</ion-button>
+        <ion-button class="brown-button" fill="clear" type="submit" [disabled]="form.invalid">Guardar</ion-button>
       </div>
     </form>
   </div>
