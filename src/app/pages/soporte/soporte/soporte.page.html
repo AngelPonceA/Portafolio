@@ -1,20 +1,38 @@
 <app-navegacion>
 <ion-content class="ion-padding">
-      <h1>Solicitud de soporte</h1>
+  <h1>Solicitud de soporte</h1>
   <form [formGroup]="formularioSoporte" (ngSubmit)="enviarSolicitud()">
+    <!-- Título -->
     <ion-item>
       <ion-label position="floating">Título</ion-label>
       <ion-input formControlName="titulo"></ion-input>
     </ion-item>
+    <ion-text color="danger" *ngIf="formularioSoporte.get('titulo')?.touched && formularioSoporte.get('titulo')?.hasError('required')">
+      El título es obligatorio.
+    </ion-text>
+    <ion-text color="danger" *ngIf="formularioSoporte.get('titulo')?.touched && formularioSoporte.get('titulo')?.hasError('soloEspacios')">
+      El título no puede estar vacío o ser solo espacios.
+    </ion-text>
 
+    <!-- Descripción -->
     <ion-item>
       <ion-label position="floating">Descripción</ion-label>
       <ion-textarea formControlName="descripcion"></ion-textarea>
     </ion-item>
+    <ion-text color="danger" *ngIf="formularioSoporte.get('descripcion')?.touched && formularioSoporte.get('descripcion')?.hasError('required')">
+      La descripción es obligatoria.
+    </ion-text>
+    <ion-text color="danger" *ngIf="formularioSoporte.get('descripcion')?.touched && formularioSoporte.get('descripcion')?.hasError('soloEspacios')">
+      La descripción no puede estar vacía o ser solo espacios.
+    </ion-text>
+    <ion-text color="danger" *ngIf="formularioSoporte.get('descripcion')?.touched && formularioSoporte.get('descripcion')?.hasError('maxlength')">
+      La descripción no puede superar los 300 caracteres.
+    </ion-text>
 
+    <!-- Motivo -->
     <ion-item>
       <ion-label>Motivo</ion-label>
-      <ion-select formControlName="motivo">
+      <ion-select formControlName="motivo" (ionChange)="formularioSoporte.get('motivo')?.markAsTouched()">
         <ion-select-option value="tecnico">Técnico</ion-select-option>
         <ion-select-option value="envio">Envío</ion-select-option>
         <ion-select-option value="sugerencia">Sugerencia</ion-select-option>
@@ -22,42 +40,40 @@
         <ion-select-option value="otro">Otro</ion-select-option>
       </ion-select>
     </ion-item>
+    <ion-text color="danger" *ngIf="formularioSoporte.get('motivo')?.touched && formularioSoporte.get('motivo')?.hasError('required')">
+      Debes seleccionar un motivo.
+    </ion-text>
 
-     <!-- Imagenes opcionales -->
-      <ion-item>
-        <ion-label position="stacked">Imágenes (opcional)</ion-label>
-        <label class="custom-file-button" for="upload"
-          >Seleccionar imágenes</label
-        >
-        <input
-          id="upload"
-          class="input-img"
-          type="file"
-          multiple
-          (change)="procesarImagenes($event)"
-          accept="image/*"
-        />
-      </ion-item>
+    <!-- Imágenes opcionales -->
+    <ion-item>
+      <ion-label position="stacked">Imágenes (opcional)</ion-label>
+      <label class="custom-file-button" for="upload">Seleccionar imágenes</label>
+      <input
+        id="upload"
+        class="input-img"
+        type="file"
+        multiple
+        (change)="procesarImagenes($event)"
+        accept="image/*"
+      />
+    </ion-item>
 
-      <!-- Mostrar miniaturas y botón de eliminar -->
-      <div class="preview-container" *ngIf="imagenesSeleccionadas.length > 0">
-        <div
-          class="preview-image"
-          *ngFor="let img of imagenesSeleccionadas; let i = index"
-        >
-          <img [src]="img.preview" alt="Imagen seleccionada" />
-          <button class="delete-btn" (click)="eliminarImagen(i)">×</button>
-        </div>
+    <!-- Mostrar miniaturas y botón de eliminar -->
+    <div class="preview-container" *ngIf="imagenesSeleccionadas.length > 0">
+      <div class="preview-image" *ngFor="let img of imagenesSeleccionadas; let i = index">
+        <img [src]="img.preview" alt="Imagen seleccionada" />
+        <button class="delete-btn" (click)="eliminarImagen(i)">×</button>
       </div>
+    </div>
 
-      <!-- Contador -->
-      <div class="imagenes-info" *ngIf="imagenesSeleccionadas.length > 0">
-        {{ imagenesSeleccionadas.length }} imagen{{ imagenesSeleccionadas.length
-        > 1 ? 'es' : '' }} seleccionada{{ imagenesSeleccionadas.length > 1 ? 's'
-        : '' }}
-      </div>
+    <!-- Contador -->
+    <div class="imagenes-info" *ngIf="imagenesSeleccionadas.length > 0">
+      {{ imagenesSeleccionadas.length }} imagen{{ imagenesSeleccionadas.length > 1 ? 'es' : '' }} seleccionada{{ imagenesSeleccionadas.length > 1 ? 's' : '' }}
+    </div>
 
-    <ion-button expand="block" type="submit">Enviar Solicitud</ion-button>
+    <ion-button expand="block" type="submit" [disabled]="formularioSoporte.invalid">
+      Enviar Solicitud
+    </ion-button>
   </form>
 </ion-content>
 </app-navegacion>
