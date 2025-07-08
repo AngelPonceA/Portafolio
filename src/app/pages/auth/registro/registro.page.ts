@@ -89,4 +89,11 @@ export class RegistroPage implements OnInit {
     if (event) event.preventDefault();
     this.router.navigate(['/terminos-ycondiciones']);
   }
+
+  soloNumeros(event: any) {
+  const input = event.target as HTMLInputElement;
+  input.value = input.value.replace(/[^0-9]/g, '').slice(0, 8);
+  this.registerForm.get('number')?.setValue(input.value, { emitEvent: false });
+}
+
 }

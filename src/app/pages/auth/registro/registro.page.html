@@ -89,6 +89,10 @@
             placeholder="Ej: 12345678"
             type="tel"
             formControlName="number"
+            maxlength="8"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            (ionInput)="soloNumeros($event)"
           ></ion-input>
         </ion-item>
         <ion-text
